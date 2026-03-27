@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+termik/.venv/
+termik/output/cron.log
+.claude/
+*.pdf
+3. Meteorologi SPL-teori.md

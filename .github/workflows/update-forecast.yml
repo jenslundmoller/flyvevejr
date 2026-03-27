@@ -1,0 +1,40 @@
+name: Update Termik Forecast
+
+on:
+  schedule:
+    # Run every 3 hours
+    - cron: '15 */3 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update-forecast:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r termik/requirements.txt
+
+      - name: Run forecast
+        run: python -m termik
+
+      - name: Commit and push updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add termik/output/data/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "data: update termik forecast $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi

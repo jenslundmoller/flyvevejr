@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termik-forecast Danmark</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="map"></div>
+
+    <div id="controls">
+        <div id="day-buttons">
+            <button class="day-btn active" data-day="0">I dag</button>
+            <button class="day-btn" data-day="1">I morgen</button>
+            <button class="day-btn" data-day="2">Overmorgen</button>
+        </div>
+        <div id="time-control">
+            <input type="range" id="time-slider" min="6" max="21" value="14" step="1">
+            <span id="time-display">14:00</span>
+        </div>
+        <div id="update-info"></div>
+    </div>
+
+    <div id="sidebar">
+        <div id="sidebar-toggle">&#9654;</div>
+        <h2>Top 5 pladser</h2>
+        <div id="top-list"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
