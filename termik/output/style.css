@@ -52,7 +52,7 @@ html, body {
     border-radius: 14px;
     padding: 12px 20px;
     min-width: 340px;
-    max-width: 520px;
+    max-width: 620px;
     width: auto;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-color);
@@ -65,6 +65,14 @@ html, body {
     gap: 6px;
     justify-content: center;
     margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+#uncertainty-note {
+    font-size: 11px;
+    text-align: center;
+    color: #fbbf24;
+    margin-bottom: 6px;
 }
 
 .day-btn {

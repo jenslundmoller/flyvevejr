@@ -296,11 +296,18 @@ function updateTopList() {
 // === Controls ===
 function setupControls() {
     // Day buttons
+    var uncertaintyNote = document.getElementById('uncertainty-note');
     document.querySelectorAll('.day-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
             document.querySelector('.day-btn.active').classList.remove('active');
             btn.classList.add('active');
             currentDay = parseInt(btn.dataset.day, 10);
+            if (currentDay >= 3) {
+                uncertaintyNote.textContent = '\u26A0\uFE0F Prognose ' + currentDay + ' dage frem \u2014 stor usikkerhed';
+                uncertaintyNote.style.display = 'block';
+            } else {
+                uncertaintyNote.style.display = 'none';
+            }
             updateAll();
         });
     });
@@ -386,7 +393,7 @@ async function init() {
         + String(now.getDate()).padStart(2, '0');
     var baseDateStr = getTargetDateStr(0);
     var dayDiff = Math.round((new Date(todayStr) - new Date(baseDateStr)) / 86400000);
-    if (dayDiff >= 0 && dayDiff <= 2) {
+    if (dayDiff >= 0 && dayDiff <= 6) {
         currentDay = dayDiff;
         var btn = document.querySelector('.day-btn[data-day="' + dayDiff + '"]');
         if (btn) {
