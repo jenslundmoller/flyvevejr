@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-06T11:19:59.205002",
+  "generated": "2026-04-06T11:24:50.727659",
   "forecast_days": 3,
   "points": [
     {
@@ -8400,7 +8400,7 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 4.7,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 700m (2240 ft).",
           "data": {
@@ -9972,7 +9972,7 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 4.5,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 700m (2240 ft).",
           "data": {
@@ -11544,7 +11544,7 @@
         },
         {
           "time": "2026-04-06T17:00",
-          "score": 4.6,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 25 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
@@ -13160,7 +13160,7 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 4.1,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 625m (2000 ft).",
           "data": {
@@ -19536,8 +19536,8 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 5.1,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
             "temp": 9.7,
@@ -22724,8 +22724,8 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 6.4,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.6,
@@ -22746,8 +22746,8 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 5.0,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 27 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 775m (2480 ft).",
           "data": {
             "temp": 8.4,
@@ -24054,7 +24054,7 @@
         },
         {
           "time": "2026-04-06T06:00",
-          "score": 4.1,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 400m (1280 ft).",
           "data": {
@@ -24318,8 +24318,8 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 6.0,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.3,
@@ -24340,7 +24340,7 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 4.3,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 27 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 700m (2240 ft).",
           "data": {
@@ -27484,8 +27484,8 @@
         },
         {
           "time": "2026-04-06T17:00",
-          "score": 6.1,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.7,
@@ -27506,8 +27506,8 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 6.3,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.8,
@@ -27528,7 +27528,7 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 4.9,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 675m (2160 ft).",
           "data": {
@@ -30694,8 +30694,8 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 6.5,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.7,
@@ -30716,8 +30716,8 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 6.6,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.6,
@@ -30738,7 +30738,7 @@
         },
         {
           "time": "2026-04-06T20:00",
-          "score": 4.5,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 875m (2800 ft).",
           "data": {
@@ -37554,8 +37554,8 @@
         },
         {
           "time": "2026-04-07T16:00",
-          "score": 6.0,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 1875m (6000 ft).",
           "data": {
             "temp": 11.4,
@@ -37576,7 +37576,7 @@
         },
         {
           "time": "2026-04-07T17:00",
-          "score": 4.9,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 25 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 1675m (5360 ft).",
           "data": {
@@ -43930,7 +43930,7 @@
         },
         {
           "time": "2026-04-07T16:00",
-          "score": 4.4,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Labil atmosfære — god konvektion. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
@@ -45018,7 +45018,7 @@
         },
         {
           "time": "2026-04-06T17:00",
-          "score": 4.4,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 475m (1520 ft).",
           "data": {
@@ -47964,7 +47964,7 @@
         },
         {
           "time": "2026-04-06T06:00",
-          "score": 4.2,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 27 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 400m (1280 ft).",
           "data": {
@@ -48206,8 +48206,8 @@
         },
         {
           "time": "2026-04-06T17:00",
-          "score": 6.2,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.6,
@@ -48228,7 +48228,7 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 4.3,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 27 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
@@ -48250,7 +48250,7 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 4.1,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 700m (2240 ft).",
           "data": {
@@ -57770,8 +57770,8 @@
         },
         {
           "time": "2026-04-06T17:00",
-          "score": 6.1,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 30 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.7,
@@ -57792,7 +57792,7 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 4.9,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 750m (2400 ft).",
           "data": {
@@ -60980,8 +60980,8 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 6.4,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.2,
@@ -61002,8 +61002,8 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 5.2,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 1138m (3640 ft).",
           "data": {
             "temp": 9.2,
@@ -61024,7 +61024,7 @@
         },
         {
           "time": "2026-04-06T20:00",
-          "score": 4.5,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 912m (2920 ft).",
           "data": {
@@ -66246,8 +66246,8 @@
         },
         {
           "time": "2026-04-07T16:00",
-          "score": 6.1,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 25 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 1862m (5960 ft).",
           "data": {
             "temp": 11.4,
@@ -66268,8 +66268,8 @@
         },
         {
           "time": "2026-04-07T17:00",
-          "score": 5.0,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 25 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 1725m (5520 ft).",
           "data": {
             "temp": 10.7,
@@ -67796,7 +67796,7 @@
         },
         {
           "time": "2026-04-07T14:00",
-          "score": 4.4,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 25 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
@@ -67818,7 +67818,7 @@
         },
         {
           "time": "2026-04-07T15:00",
-          "score": 4.4,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
@@ -67840,7 +67840,7 @@
         },
         {
           "time": "2026-04-07T16:00",
-          "score": 4.2,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 27 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
@@ -70544,7 +70544,7 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 4.1,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
@@ -72138,8 +72138,8 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 6.3,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.9,
@@ -72160,7 +72160,7 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 4.8,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 700m (2240 ft).",
           "data": {
@@ -78998,8 +78998,8 @@
         },
         {
           "time": "2026-04-07T16:00",
-          "score": 5.8,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 25 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 1312m (4200 ft).",
           "data": {
             "temp": 10.0,
@@ -83274,7 +83274,7 @@
         },
         {
           "time": "2026-04-06T17:00",
-          "score": 4.4,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr.",
           "data": {
@@ -84890,7 +84890,7 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 4.5,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 29 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 650m (2080 ft).",
           "data": {
@@ -84912,7 +84912,7 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 4.1,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 27 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 575m (1840 ft).",
           "data": {
@@ -86462,8 +86462,8 @@
         },
         {
           "time": "2026-04-06T17:00",
-          "score": 5.9,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 27 kt (vind+gust/2) — nedsat flyvevejr. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.5,
@@ -86484,7 +86484,7 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 4.9,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 26 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 675m (2160 ft).",
           "data": {
@@ -86506,7 +86506,7 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 4.3,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 25 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 600m (1920 ft).",
           "data": {
@@ -88100,8 +88100,8 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 5.1,
-          "label": "Moderat termik",
+          "score": 4,
+          "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 700m (2240 ft).",
           "data": {
             "temp": 8.7,
@@ -96048,7 +96048,7 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 4.8,
+          "score": 4,
           "label": "Svag termik",
           "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 28 kt (vind+gust/2) — nedsat flyvevejr. Skybase ca. 475m (1520 ft).",
           "data": {
