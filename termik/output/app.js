@@ -183,15 +183,15 @@ function createPopupContent(airfield) {
         + '</div>'
         + '<p class="popup-comment">' + escapeHtml(hourData.comment) + '</p>'
         + '<div class="popup-grid">'
-        +   popupItem('Temp', d.temp + '\u00B0C')
-        +   popupItem('Spread', d.spread + '\u00B0C')
-        +   popupItem('Skybase', d.skybase_m + 'm (' + d.skybase_ft + ' ft)')
-        +   popupItem('Vind', windArrow + ' ' + d.wind_dir + '\u00B0/' + Math.round(d.wind_speed_kt) + ' kt')
-        +   popupItem('Lapse rate', d.lapse_rate + '\u00B0C/100m')
-        +   popupItem('Vindst\u00F8d', Math.round(d.wind_gusts_kt) + ' kt (eff. ' + Math.round(d.wind_speed_kt + d.wind_gusts_kt / 2) + ')')
-        +   popupItem('CAPE', d.cape + ' J/kg')
-        +   popupItem('Skyd\u00E6kke', d.cloud_cover + '%')
-        +   popupItem('Fugtighed', d.relative_humidity + '%')
+        +   popupItem('Temp', d.temp + '\u00B0C', 'Temperatur ved jordoverfladen (2m)')
+        +   popupItem('Spread', d.spread + '\u00B0C', 'Forskellen mellem temperatur og dugpunkt. Optimalt 8\u201315\u00B0C for cumulus.')
+        +   popupItem('Skybase', d.skybase_m + 'm (' + d.skybase_ft + ' ft)', 'Estimeret skybase (Henning-formel: spread \u00D7 125m)')
+        +   popupItem('Vind', windArrow + ' ' + d.wind_dir + '\u00B0/' + Math.round(d.wind_speed_kt) + ' kt', 'Gennemsnitlig vindretning og -hastighed i 10m h\u00F8jde')
+        +   popupItem('Lapse rate', d.lapse_rate + '\u00B0C/100m', 'Temperaturfaldet pr. 100m stigning. H\u00F8jere = mere ustabil luft = bedre termik.')
+        +   popupItem('Vindst\u00F8d', Math.round(d.wind_gusts_kt) + ' kt (eff. ' + Math.round(d.wind_speed_kt + d.wind_gusts_kt / 2) + ')', 'Vindst\u00F8d i kt. Eff. = vind+(gust/2). Over 25 = nedsat, over 30 = kun erfarne.')
+        +   popupItem('CAPE', d.cape + ' J/kg', 'Convective Available Potential Energy. H\u00F8j v\u00E6rdi = risiko for byger/overudvikling.')
+        +   popupItem('Skyd\u00E6kke', d.cloud_cover + '%', 'Samlet skyd\u00E6kke. Over 87% blokerer solinstr\u00E5ling og dr\u00E6ber termik.')
+        +   popupItem('Fugtighed', d.relative_humidity + '%', 'Relativ luftfugtighed ved jordoverfladen')
         + '</div>'
         + '<div class="popup-chart-section">'
         +   '<h4>Dagsforl\u00F8b</h4>'
@@ -200,8 +200,9 @@ function createPopupContent(airfield) {
         + '</div>';
 }
 
-function popupItem(key, val) {
-    return '<div class="popup-item">'
+function popupItem(key, val, tooltip) {
+    var titleAttr = tooltip ? ' title="' + escapeHtml(tooltip) + '"' : '';
+    return '<div class="popup-item"' + titleAttr + '>'
         + '<span class="popup-key">' + key + '</span>'
         + '<span class="popup-val">' + val + '</span>'
         + '</div>';
