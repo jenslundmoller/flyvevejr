@@ -52,7 +52,7 @@ html, body {
     border-radius: 14px;
     padding: 12px 20px;
     min-width: 340px;
-    max-width: 620px;
+    max-width: 720px;
     width: auto;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-color);
@@ -79,9 +79,9 @@ html, body {
     background: var(--pill-bg);
     color: var(--text-light);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 6px 18px;
+    padding: 6px 12px;
     border-radius: 20px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
