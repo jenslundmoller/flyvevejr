@@ -11,6 +11,30 @@ let airfieldMarkers = [];
 let map = null;
 let baseDate = null; // Date object for day 0 (parsed from generated timestamp)
 
+// === URL hash parameters ===
+function parseHash() {
+    var params = {};
+    var hash = window.location.hash.replace('#', '');
+    if (!hash) return params;
+    hash.split('&').forEach(function(part) {
+        var kv = part.split('=');
+        if (kv.length === 2) params[kv[0]] = decodeURIComponent(kv[1]);
+    });
+    return params;
+}
+
+function updateHash() {
+    var center = map.getCenter();
+    var parts = [
+        'day=' + currentDay,
+        'hour=' + currentHour,
+        'lat=' + center.lat.toFixed(2),
+        'lon=' + center.lng.toFixed(2),
+        'zoom=' + map.getZoom()
+    ];
+    history.replaceState(null, '', '#' + parts.join('&'));
+}
+
 // === Color interpolation ===
 const COLOR_STOPS = [
     [0,  [30,  60, 150]],   // dark blue
@@ -80,9 +104,13 @@ function getPointAtTime(point, day, hour) {
 
 // === Map ===
 function initMap() {
+    var params = parseHash();
+    var initLat = params.lat ? parseFloat(params.lat) : 56.2;
+    var initLon = params.lon ? parseFloat(params.lon) : 10.5;
+    var initZoom = params.zoom ? parseInt(params.zoom, 10) : 7;
     map = L.map('map', {
         zoomControl: true,
-    }).setView([56.2, 10.5], 7);
+    }).setView([initLat, initLon], initZoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -309,6 +337,7 @@ function setupControls() {
                 uncertaintyNote.style.display = 'none';
             }
             updateAll();
+            updateHash();
         });
     });
 
@@ -319,6 +348,7 @@ function setupControls() {
         currentHour = parseInt(slider.value, 10);
         display.textContent = String(currentHour).padStart(2, '0') + ':00';
         updateAll();
+        updateHash();
     });
 
     // Sidebar toggle
@@ -386,24 +416,34 @@ async function init() {
         parseInt(genParts[2], 10)
     );
 
-    // Set initial day and hour to nearest upcoming hour
-    var now = new Date();
-    var todayStr = now.getFullYear() + '-'
-        + String(now.getMonth() + 1).padStart(2, '0') + '-'
-        + String(now.getDate()).padStart(2, '0');
-    var baseDateStr = getTargetDateStr(0);
-    var dayDiff = Math.round((new Date(todayStr) - new Date(baseDateStr)) / 86400000);
-    if (dayDiff >= 0 && dayDiff <= 6) {
-        currentDay = dayDiff;
-        var btn = document.querySelector('.day-btn[data-day="' + dayDiff + '"]');
-        if (btn) {
-            document.querySelector('.day-btn.active').classList.remove('active');
-            btn.classList.add('active');
+    // Set initial day and hour from URL hash or current time
+    var params = parseHash();
+    if (params.day !== undefined && params.hour !== undefined) {
+        currentDay = Math.max(0, Math.min(6, parseInt(params.day, 10)));
+        currentHour = Math.max(6, Math.min(21, parseInt(params.hour, 10)));
+    } else {
+        var now = new Date();
+        var todayStr = now.getFullYear() + '-'
+            + String(now.getMonth() + 1).padStart(2, '0') + '-'
+            + String(now.getDate()).padStart(2, '0');
+        var baseDateStr = getTargetDateStr(0);
+        var dayDiff = Math.round((new Date(todayStr) - new Date(baseDateStr)) / 86400000);
+        if (dayDiff >= 0 && dayDiff <= 6) {
+            currentDay = dayDiff;
         }
+        var nextHour = now.getMinutes() > 0 ? now.getHours() + 1 : now.getHours();
+        currentHour = Math.max(6, Math.min(21, nextHour));
     }
-    var nextHour = now.getMinutes() > 0 ? now.getHours() + 1 : now.getHours();
-    nextHour = Math.max(6, Math.min(21, nextHour));
-    currentHour = nextHour;
+    var btn = document.querySelector('.day-btn[data-day="' + currentDay + '"]');
+    if (btn) {
+        document.querySelector('.day-btn.active').classList.remove('active');
+        btn.classList.add('active');
+    }
+    var uncertaintyNote = document.getElementById('uncertainty-note');
+    if (currentDay >= 3) {
+        uncertaintyNote.textContent = '\u26A0\uFE0F Prognose ' + currentDay + ' dage frem \u2014 stor usikkerhed';
+        uncertaintyNote.style.display = 'block';
+    }
     var slider = document.getElementById('time-slider');
     var display = document.getElementById('time-display');
     slider.value = currentHour;
@@ -414,6 +454,8 @@ async function init() {
     createAirfieldMarkers();
     setupControls();
     updateAll();
+    updateHash();
+    map.on('moveend', updateHash);
 }
 
 init();
