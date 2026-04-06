@@ -97,25 +97,30 @@ def test_wind_light():
 
 
 # --- Gusts (10% weight) ---
-# High gusts = turbulence. Gust factor (gusts/wind) indicates shear severity.
+# Pilot rule: effective wind = wind + (gust/2). >25 = reduced, >30 = experienced only.
 
-def test_gusts_calm():
+def test_gusts_low_effective():
+    """effective = 10 + 7.5 = 17.5 → fine."""
     assert score_gusts(15, 10) == 10
 
-def test_gusts_moderate():
-    assert score_gusts(23, 15) == 8
+def test_gusts_moderate_effective():
+    """effective = 12 + 10 = 22 → slightly elevated."""
+    assert score_gusts(20, 12) == 7
 
-def test_gusts_strong():
-    assert score_gusts(28, 18) == 5
+def test_gusts_reduced_effective():
+    """effective = 15 + 11.5 = 26.5 → significantly reduced."""
+    assert score_gusts(23, 15) == 2
+
+def test_gusts_experienced_only():
+    """effective = 18 + 14 = 32 → only very experienced pilots."""
+    assert score_gusts(28, 18) == 0
 
 def test_gusts_high_factor():
-    """Gust factor >= 2 with gusts 25-30 kt should score low."""
-    assert score_gusts(28, 10) == 3
-
-def test_gusts_very_strong():
-    assert score_gusts(35, 20) == 2
+    """effective = 10 + 14 = 24 → under 25, but gust factor 2.8 → turbulent."""
+    assert score_gusts(28, 10) == 4
 
 def test_gusts_extreme():
+    """effective = 25 + 22.5 = 47.5 → way above threshold."""
     assert score_gusts(45, 25) == 0
 
 
@@ -237,11 +242,17 @@ def test_dealbreaker_extreme_gusts():
                                 precipitation=0, wind_kt=20, wind_gusts_kt=45, temp=15)
     assert score <= 1
 
-def test_dealbreaker_strong_gusts():
-    """Gusts 30-40 kt should cap score to 3."""
+def test_dealbreaker_effective_wind_over_35():
+    """effective = 15 + 17.5 = 32.5 → but change to wind 20, gusts 35: eff = 20+17.5 = 37.5 → cap 1."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=20, wind_gusts_kt=35, temp=15)
+    assert score <= 1
+
+def test_dealbreaker_effective_wind_over_30():
+    """effective = 15 + 17.5 = 32.5 → cap to 2."""
     score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
                                 precipitation=0, wind_kt=15, wind_gusts_kt=35, temp=15)
-    assert score <= 3
+    assert score <= 2
 
 def test_dealbreaker_cold():
     score = apply_dealbreakers(6.0, lapse_rate=1.0, cloud_cover=30,
@@ -261,7 +272,7 @@ def test_scenario_perfect_day():
     result = compute_thermal_score(
         temp_2m=22, dewpoint_2m=8, temp_850hpa=5,
         cloud_cover=30, shortwave_radiation=700,
-        wind_speed_kt=12, wind_dir=290, wind_gusts_kt=20,
+        wind_speed_kt=12, wind_dir=290, wind_gusts_kt=16,
         precipitation=0, precip_last_6h=0,
         cape=500, surface_pressure=1020, pressure_trend=2.0,
         temp_850hpa_trend=-1.0,

@@ -37,13 +37,23 @@ def test_comment_warns_overdevelopment():
     assert "overudvikling" in comment.lower() or "Cb" in comment
 
 
-def test_comment_warns_strong_gusts():
+def test_comment_warns_effective_wind_high():
+    """effective = 15 + 17.5 = 32.5 → should warn experienced only."""
     comment = generate_comment(
         lapse_rate=1.1, spread=10, skybase_m=1250, wind_kt=15, wind_gusts_kt=35,
         cloud_cover=30, cape=300, precipitation=0,
         seabreeze_risk=0, pressure_trend=0, score=3.0,
     )
-    assert "vindstød" in comment.lower() or "uflyveligt" in comment.lower()
+    assert "erfarne" in comment.lower()
+
+def test_comment_warns_effective_wind_reduced():
+    """effective = 18 + 10 = 28 → should warn reduced conditions."""
+    comment = generate_comment(
+        lapse_rate=1.0, spread=10, skybase_m=1250, wind_kt=18, wind_gusts_kt=20,
+        cloud_cover=30, cape=200, precipitation=0,
+        seabreeze_risk=0, pressure_trend=0, score=5.0,
+    )
+    assert "nedsat" in comment.lower()
 
 
 def test_comment_warns_strong_wind():

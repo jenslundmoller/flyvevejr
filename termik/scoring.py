@@ -78,22 +78,22 @@ def score_wind(wind_kt: float) -> int:
 def score_gusts(wind_gusts_kt: float, wind_speed_kt: float) -> int:
     """Score wind gusts impact on flyability.
 
-    Both absolute gust strength and the gust factor (gusts/wind) matter.
-    High gusts = turbulence and dangerous conditions for gliders.
-    Gust factor > 2 indicates severe turbulence even at lower wind speeds.
+    Uses the pilot rule of thumb: effective wind = wind + (gusts / 2).
+    >25 = significantly reduced flying conditions.
+    >30 = only for very experienced pilots.
+    Also considers the gust factor (gusts/wind) for turbulence assessment.
     """
-    if wind_gusts_kt <= 20:
-        return 10
-    gust_factor = wind_gusts_kt / max(wind_speed_kt, 1)
-    if wind_gusts_kt <= 25 and gust_factor < 2.0:
-        return 8
-    if wind_gusts_kt <= 30 and gust_factor < 2.0:
-        return 5
-    if wind_gusts_kt <= 30:
-        return 3  # gust factor >= 2
-    if wind_gusts_kt <= 40:
+    effective_wind = wind_speed_kt + (wind_gusts_kt / 2)
+    if effective_wind > 30:
+        return 0
+    if effective_wind > 25:
         return 2
-    return 0
+    gust_factor = wind_gusts_kt / max(wind_speed_kt, 1)
+    if gust_factor >= 2.0 and wind_gusts_kt > 15:
+        return 4
+    if effective_wind > 20:
+        return 7
+    return 10
 
 
 def score_temperature(temp: float) -> float:
@@ -204,10 +204,11 @@ def apply_dealbreakers(
         max_score = min(max_score, 1)
     if wind_kt > 35:
         max_score = min(max_score, 2)
-    if wind_gusts_kt > 40:
+    effective_wind = wind_kt + (wind_gusts_kt / 2)
+    if wind_gusts_kt > 40 or effective_wind > 35:
         max_score = min(max_score, 1)
-    elif wind_gusts_kt > 30:
-        max_score = min(max_score, 3)
+    elif effective_wind > 30:
+        max_score = min(max_score, 2)
     if temp < 5:
         max_score = min(max_score, 3)
     return min(score, max_score)
