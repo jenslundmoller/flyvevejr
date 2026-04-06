@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-06T11:01:04.092710",
+  "generated": "2026-04-06T11:19:59.205002",
   "forecast_days": 3,
   "points": [
     {
@@ -14,7 +14,7 @@
           "time": "2026-04-06T00:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 5.0,
             "dewpoint": 1.7,
@@ -80,7 +80,7 @@
           "time": "2026-04-06T03:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 4.4,
             "dewpoint": 0.9,
@@ -122,7 +122,7 @@
         },
         {
           "time": "2026-04-06T05:00",
-          "score": 0.2,
+          "score": 0.4,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -144,9 +144,9 @@
         },
         {
           "time": "2026-04-06T06:00",
-          "score": 0.4,
+          "score": 0.6,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Søbrise-risiko om eftermiddagen. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 4.2,
             "dewpoint": 2.0,
@@ -168,7 +168,7 @@
           "time": "2026-04-06T07:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 4.4,
             "dewpoint": 2.1,
@@ -256,7 +256,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 7.8,
             "dewpoint": 4.4,
@@ -278,7 +278,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 8.7,
             "dewpoint": 4.7,
@@ -300,7 +300,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 43 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 40 kt — kan ikke flyves.",
           "data": {
             "temp": 9.3,
             "dewpoint": 3.9,
@@ -322,7 +322,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 40 kt — kan ikke flyves.",
           "data": {
             "temp": 9.7,
             "dewpoint": 4.7,
@@ -344,7 +344,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 9.9,
             "dewpoint": 4.8,
@@ -366,7 +366,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 9.6,
             "dewpoint": 5.2,
@@ -388,7 +388,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.5,
             "dewpoint": 4.9,
@@ -410,7 +410,7 @@
           "time": "2026-04-06T18:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 9.0,
             "dewpoint": 5.0,
@@ -432,7 +432,7 @@
           "time": "2026-04-06T19:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Søbrise-risiko om eftermiddagen. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Søbrise-risiko om eftermiddagen. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 8.1,
             "dewpoint": 4.8,
@@ -1608,7 +1608,7 @@
           "time": "2026-04-06T00:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 45 kt — kan ikke flyves.",
           "data": {
             "temp": 5.3,
             "dewpoint": 2.5,
@@ -1630,7 +1630,7 @@
           "time": "2026-04-06T01:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 41 kt — kan ikke flyves.",
           "data": {
             "temp": 5.2,
             "dewpoint": 1.5,
@@ -1652,7 +1652,7 @@
           "time": "2026-04-06T02:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 42 kt — kan ikke flyves.",
           "data": {
             "temp": 5.2,
             "dewpoint": 1.7,
@@ -1674,7 +1674,7 @@
           "time": "2026-04-06T03:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 5.0,
             "dewpoint": 1.3,
@@ -1696,7 +1696,7 @@
           "time": "2026-04-06T04:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 4.9,
             "dewpoint": 1.8,
@@ -1718,7 +1718,7 @@
           "time": "2026-04-06T05:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 4.8,
             "dewpoint": 1.9,
@@ -1740,7 +1740,7 @@
           "time": "2026-04-06T06:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 4.8,
             "dewpoint": 1.6,
@@ -1762,7 +1762,7 @@
           "time": "2026-04-06T07:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 4.9,
             "dewpoint": 2.1,
@@ -1784,7 +1784,7 @@
           "time": "2026-04-06T08:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 5.2,
             "dewpoint": 2.6,
@@ -1806,7 +1806,7 @@
           "time": "2026-04-06T09:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 37 kt — kan ikke flyves. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 6.4,
             "dewpoint": 2.7,
@@ -1828,7 +1828,7 @@
           "time": "2026-04-06T10:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 41 kt — kan ikke flyves. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 7.8,
             "dewpoint": 3.5,
@@ -1850,7 +1850,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 44 kt — kan ikke flyves. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 8.4,
             "dewpoint": 4.0,
@@ -1872,7 +1872,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 43 kt — kan ikke flyves. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 8.9,
             "dewpoint": 4.4,
@@ -1894,7 +1894,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 41 kt — kan ikke flyves.",
           "data": {
             "temp": 9.6,
             "dewpoint": 3.8,
@@ -1916,7 +1916,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 40 kt — kan ikke flyves.",
           "data": {
             "temp": 10.1,
             "dewpoint": 4.0,
@@ -1938,7 +1938,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 10.4,
             "dewpoint": 4.3,
@@ -1960,7 +1960,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 10.3,
             "dewpoint": 4.9,
@@ -1982,7 +1982,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 10.0,
             "dewpoint": 4.6,
@@ -2004,7 +2004,7 @@
           "time": "2026-04-06T18:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 9.6,
             "dewpoint": 4.2,
@@ -2026,7 +2026,7 @@
           "time": "2026-04-06T19:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 8.8,
             "dewpoint": 4.0,
@@ -3202,7 +3202,7 @@
           "time": "2026-04-06T00:00",
           "score": 0.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 5.4,
             "dewpoint": 1.1,
@@ -3266,7 +3266,7 @@
         },
         {
           "time": "2026-04-06T03:00",
-          "score": 1.0,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
@@ -3334,7 +3334,7 @@
           "time": "2026-04-06T06:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 5.3,
             "dewpoint": 1.6,
@@ -3444,7 +3444,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 44 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 7.5,
             "dewpoint": 4.4,
@@ -3510,7 +3510,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 43 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 9.1,
             "dewpoint": 4.9,
@@ -3532,7 +3532,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 9.2,
             "dewpoint": 5.4,
@@ -3554,7 +3554,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 9.5,
             "dewpoint": 5.3,
@@ -3576,7 +3576,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 9.4,
             "dewpoint": 5.2,
@@ -3598,7 +3598,7 @@
           "time": "2026-04-06T18:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 8.9,
             "dewpoint": 5.2,
@@ -4906,7 +4906,7 @@
           "time": "2026-04-06T05:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 4.3,
             "dewpoint": 1.7,
@@ -4928,7 +4928,7 @@
           "time": "2026-04-06T06:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 4.8,
             "dewpoint": 2.0,
@@ -4992,9 +4992,9 @@
         },
         {
           "time": "2026-04-06T09:00",
-          "score": 0,
+          "score": 0.2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 6.0,
             "dewpoint": 3.8,
@@ -5014,7 +5014,7 @@
         },
         {
           "time": "2026-04-06T10:00",
-          "score": 0,
+          "score": 0.1,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
@@ -5060,7 +5060,7 @@
           "time": "2026-04-06T12:00",
           "score": 0.1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 7.7,
             "dewpoint": 5.5,
@@ -5082,7 +5082,7 @@
           "time": "2026-04-06T13:00",
           "score": 0.7,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 8.9,
             "dewpoint": 6.2,
@@ -5104,7 +5104,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 43 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 9.4,
             "dewpoint": 6.5,
@@ -5126,7 +5126,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 9.4,
             "dewpoint": 6.3,
@@ -5148,7 +5148,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 9.4,
             "dewpoint": 6.3,
@@ -5170,7 +5170,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 9.1,
             "dewpoint": 6.3,
@@ -5190,9 +5190,9 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 1.0,
+          "score": 1.2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 8.5,
             "dewpoint": 6.1,
@@ -6390,7 +6390,7 @@
           "time": "2026-04-06T00:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Søbrise-risiko om eftermiddagen. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Søbrise-risiko om eftermiddagen. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 4.5,
             "dewpoint": -0.1,
@@ -6476,7 +6476,7 @@
         },
         {
           "time": "2026-04-06T04:00",
-          "score": 1.2,
+          "score": 1.4,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
@@ -6498,7 +6498,7 @@
         },
         {
           "time": "2026-04-06T05:00",
-          "score": 1.2,
+          "score": 1.4,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
@@ -6520,7 +6520,7 @@
         },
         {
           "time": "2026-04-06T06:00",
-          "score": 1.2,
+          "score": 1.4,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
@@ -6542,7 +6542,7 @@
         },
         {
           "time": "2026-04-06T07:00",
-          "score": 0.7,
+          "score": 0.9,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
@@ -6698,7 +6698,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 8.4,
             "dewpoint": 3.5,
@@ -6720,7 +6720,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 9.1,
             "dewpoint": 4.1,
@@ -6742,7 +6742,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 9.1,
             "dewpoint": 4.1,
@@ -6764,7 +6764,7 @@
           "time": "2026-04-06T17:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 9.1,
             "dewpoint": 3.9,
@@ -7984,7 +7984,7 @@
           "time": "2026-04-06T00:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 5.8,
             "dewpoint": 0.3,
@@ -8028,7 +8028,7 @@
           "time": "2026-04-06T02:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 5.5,
             "dewpoint": 0.2,
@@ -8050,7 +8050,7 @@
           "time": "2026-04-06T03:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 4.9,
             "dewpoint": -0.2,
@@ -8070,9 +8070,9 @@
         },
         {
           "time": "2026-04-06T04:00",
-          "score": 2.0,
+          "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 4.7,
             "dewpoint": -0.1,
@@ -8094,7 +8094,7 @@
           "time": "2026-04-06T05:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 4.5,
             "dewpoint": -0.7,
@@ -8114,9 +8114,9 @@
         },
         {
           "time": "2026-04-06T06:00",
-          "score": 2.0,
+          "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 4.1,
             "dewpoint": -0.7,
@@ -8138,7 +8138,7 @@
           "time": "2026-04-06T07:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 4.5,
             "dewpoint": -0.3,
@@ -8160,7 +8160,7 @@
           "time": "2026-04-06T08:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 5.1,
             "dewpoint": 0.1,
@@ -8182,7 +8182,7 @@
           "time": "2026-04-06T09:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 35 kt — kan ikke flyves. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 5.8,
             "dewpoint": 0.9,
@@ -8204,7 +8204,7 @@
           "time": "2026-04-06T10:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 34 kt — kraftig reduktion. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 6.2,
             "dewpoint": 1.3,
@@ -8226,7 +8226,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 7.7,
             "dewpoint": 3.0,
@@ -8248,7 +8248,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 7.3,
             "dewpoint": 2.7,
@@ -8270,7 +8270,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 8.3,
             "dewpoint": 2.9,
@@ -8292,7 +8292,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 8.7,
             "dewpoint": 3.5,
@@ -8314,7 +8314,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 34 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.1,
             "dewpoint": 2.6,
@@ -8336,7 +8336,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 35 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.1,
             "dewpoint": 3.6,
@@ -8358,7 +8358,7 @@
           "time": "2026-04-06T17:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 32 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.0,
             "dewpoint": 3.5,
@@ -8380,7 +8380,7 @@
           "time": "2026-04-06T18:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 30 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.7,
             "dewpoint": 3.2,
@@ -9776,7 +9776,7 @@
           "time": "2026-04-06T09:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.9,
             "dewpoint": 2.0,
@@ -9798,7 +9798,7 @@
           "time": "2026-04-06T10:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 6.6,
             "dewpoint": 2.8,
@@ -9820,7 +9820,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 7.3,
             "dewpoint": 3.4,
@@ -9842,7 +9842,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 8.2,
             "dewpoint": 4.0,
@@ -9864,7 +9864,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 33 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.5,
             "dewpoint": 4.5,
@@ -9886,7 +9886,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 10.0,
             "dewpoint": 4.6,
@@ -9908,7 +9908,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 32 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.1,
             "dewpoint": 4.5,
@@ -9930,7 +9930,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 30 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.3,
             "dewpoint": 4.5,
@@ -11456,8 +11456,8 @@
         },
         {
           "time": "2026-04-06T13:00",
-          "score": 3.1,
-          "label": "Svag termik",
+          "score": 2,
+          "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
             "temp": 8.9,
@@ -11522,8 +11522,8 @@
         },
         {
           "time": "2026-04-06T16:00",
-          "score": 4.2,
-          "label": "Svag termik",
+          "score": 2,
+          "label": "Ingen brugbar termik",
           "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
             "temp": 9.9,
@@ -12764,9 +12764,9 @@
       "hours": [
         {
           "time": "2026-04-06T00:00",
-          "score": 1.5,
+          "score": 1.7,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 5.7,
             "dewpoint": 1.8,
@@ -12786,9 +12786,9 @@
         },
         {
           "time": "2026-04-06T01:00",
-          "score": 1.8,
+          "score": 2.0,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 31 kt — kraftig reduktion. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 5.5,
             "dewpoint": 1.7,
@@ -12808,9 +12808,9 @@
         },
         {
           "time": "2026-04-06T02:00",
-          "score": 1.7,
+          "score": 1.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 30 kt — kraftig reduktion. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 4.9,
             "dewpoint": 1.4,
@@ -12854,7 +12854,7 @@
           "time": "2026-04-06T04:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.1,
             "dewpoint": 0.6,
@@ -12920,7 +12920,7 @@
           "time": "2026-04-06T07:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 30 kt — kraftig reduktion. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 5.2,
             "dewpoint": 1.3,
@@ -12942,7 +12942,7 @@
           "time": "2026-04-06T08:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.4,
             "dewpoint": 1.5,
@@ -12964,7 +12964,7 @@
           "time": "2026-04-06T09:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 6.0,
             "dewpoint": 2.5,
@@ -12986,7 +12986,7 @@
           "time": "2026-04-06T10:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 6.7,
             "dewpoint": 3.5,
@@ -13008,7 +13008,7 @@
           "time": "2026-04-06T11:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 6.8,
             "dewpoint": 3.2,
@@ -13030,7 +13030,7 @@
           "time": "2026-04-06T12:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.0,
             "dewpoint": 4.2,
@@ -13052,7 +13052,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 9.2,
             "dewpoint": 4.2,
@@ -13074,7 +13074,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 33 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.5,
             "dewpoint": 4.5,
@@ -13096,7 +13096,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.6,
             "dewpoint": 4.6,
@@ -13118,7 +13118,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 32 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.9,
             "dewpoint": 4.5,
@@ -14360,7 +14360,7 @@
           "time": "2026-04-06T00:00",
           "score": 0.0,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 5.4,
             "dewpoint": 1.5,
@@ -14380,9 +14380,9 @@
         },
         {
           "time": "2026-04-06T01:00",
-          "score": 0.1,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 5.3,
             "dewpoint": 1.6,
@@ -14402,7 +14402,7 @@
         },
         {
           "time": "2026-04-06T02:00",
-          "score": 0,
+          "score": 0.1,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
@@ -14426,7 +14426,7 @@
           "time": "2026-04-06T03:00",
           "score": 0.8,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 4.8,
             "dewpoint": 0.5,
@@ -14448,7 +14448,7 @@
           "time": "2026-04-06T04:00",
           "score": 0.6,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 4.9,
             "dewpoint": 1.0,
@@ -14490,9 +14490,9 @@
         },
         {
           "time": "2026-04-06T06:00",
-          "score": 0.5,
+          "score": 0.7,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 5.2,
             "dewpoint": 1.9,
@@ -14514,7 +14514,7 @@
           "time": "2026-04-06T07:00",
           "score": 0.6,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 5.4,
             "dewpoint": 2.2,
@@ -14602,7 +14602,7 @@
           "time": "2026-04-06T11:00",
           "score": 0.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 7.3,
             "dewpoint": 4.3,
@@ -14624,7 +14624,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 8.2,
             "dewpoint": 4.8,
@@ -14646,7 +14646,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 8.5,
             "dewpoint": 4.9,
@@ -14668,7 +14668,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 8.7,
             "dewpoint": 4.9,
@@ -14690,7 +14690,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.0,
             "dewpoint": 5.0,
@@ -14712,7 +14712,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 9.0,
             "dewpoint": 5.0,
@@ -14732,9 +14732,9 @@
         },
         {
           "time": "2026-04-06T17:00",
-          "score": 1.8,
+          "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.7,
             "dewpoint": 4.9,
@@ -14754,9 +14754,9 @@
         },
         {
           "time": "2026-04-06T18:00",
-          "score": 1.6,
+          "score": 1.8,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.2,
             "dewpoint": 4.8,
@@ -15974,9 +15974,9 @@
         },
         {
           "time": "2026-04-06T01:00",
-          "score": 0.5,
+          "score": 0.7,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 5.5,
             "dewpoint": 2.7,
@@ -15996,7 +15996,7 @@
         },
         {
           "time": "2026-04-06T02:00",
-          "score": 0.5,
+          "score": 0.7,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
@@ -16020,7 +16020,7 @@
           "time": "2026-04-06T03:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 4.9,
             "dewpoint": 0.8,
@@ -16040,9 +16040,9 @@
         },
         {
           "time": "2026-04-06T04:00",
-          "score": 0.6,
+          "score": 0.8,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Søbrise-risiko om eftermiddagen. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 4.3,
             "dewpoint": 0.3,
@@ -16062,7 +16062,7 @@
         },
         {
           "time": "2026-04-06T05:00",
-          "score": 1.0,
+          "score": 1.2,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
@@ -16084,7 +16084,7 @@
         },
         {
           "time": "2026-04-06T06:00",
-          "score": 1.0,
+          "score": 1.2,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Søbrise-risiko om eftermiddagen.",
           "data": {
@@ -16150,7 +16150,7 @@
         },
         {
           "time": "2026-04-06T09:00",
-          "score": 0,
+          "score": 0.1,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -16196,7 +16196,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 7.1,
             "dewpoint": 3.9,
@@ -16218,7 +16218,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 8.1,
             "dewpoint": 4.6,
@@ -16240,7 +16240,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 8.7,
             "dewpoint": 4.7,
@@ -16262,7 +16262,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 8.8,
             "dewpoint": 4.8,
@@ -16284,7 +16284,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 9.2,
             "dewpoint": 4.8,
@@ -16306,7 +16306,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 9.4,
             "dewpoint": 4.8,
@@ -16328,7 +16328,7 @@
           "time": "2026-04-06T17:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 9.2,
             "dewpoint": 4.8,
@@ -17700,9 +17700,9 @@
         },
         {
           "time": "2026-04-06T07:00",
-          "score": 1.7,
+          "score": 1.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.1,
             "dewpoint": 1.6,
@@ -17722,9 +17722,9 @@
         },
         {
           "time": "2026-04-06T08:00",
-          "score": 1.8,
+          "score": 2.0,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.5,
             "dewpoint": 2.0,
@@ -17812,7 +17812,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 8.3,
             "dewpoint": 4.4,
@@ -17834,7 +17834,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 9.0,
             "dewpoint": 4.6,
@@ -17856,7 +17856,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.3,
             "dewpoint": 4.7,
@@ -17878,7 +17878,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.5,
             "dewpoint": 4.7,
@@ -17900,7 +17900,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 9.4,
             "dewpoint": 4.4,
@@ -19428,7 +19428,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 9.8,
             "dewpoint": 3.9,
@@ -19450,7 +19450,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 10.7,
             "dewpoint": 3.7,
@@ -19472,7 +19472,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 10.8,
             "dewpoint": 3.5,
@@ -19494,7 +19494,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 10.9,
             "dewpoint": 3.2,
@@ -20954,9 +20954,9 @@
         },
         {
           "time": "2026-04-06T10:00",
-          "score": 1.8,
+          "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 7.2,
             "dewpoint": 2.5,
@@ -20978,7 +20978,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 8.3,
             "dewpoint": 2.7,
@@ -21000,7 +21000,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.0,
             "dewpoint": 2.8,
@@ -21022,7 +21022,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.4,
             "dewpoint": 3.0,
@@ -21044,7 +21044,7 @@
           "time": "2026-04-06T14:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 10.1,
             "dewpoint": 2.9,
@@ -21066,7 +21066,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 10.5,
             "dewpoint": 2.6,
@@ -21088,7 +21088,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Søbrise-risiko om eftermiddagen. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 10.5,
             "dewpoint": 2.3,
@@ -22528,7 +22528,7 @@
           "time": "2026-04-06T09:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.9,
             "dewpoint": 1.6,
@@ -22550,7 +22550,7 @@
           "time": "2026-04-06T10:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 6.6,
             "dewpoint": 2.1,
@@ -22572,7 +22572,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 7.3,
             "dewpoint": 2.6,
@@ -22594,7 +22594,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 8.6,
             "dewpoint": 3.0,
@@ -22616,7 +22616,7 @@
           "time": "2026-04-06T13:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 32 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.3,
             "dewpoint": 3.3,
@@ -22638,7 +22638,7 @@
           "time": "2026-04-06T14:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 10.1,
             "dewpoint": 3.1,
@@ -22660,7 +22660,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 30 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.6,
             "dewpoint": 2.4,
@@ -22682,7 +22682,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 30 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.6,
             "dewpoint": 2.0,
@@ -24144,7 +24144,7 @@
           "time": "2026-04-06T10:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 7.5,
             "dewpoint": 2.7,
@@ -24166,7 +24166,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 33 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 8.2,
             "dewpoint": 2.9,
@@ -24188,7 +24188,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 35 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.0,
             "dewpoint": 3.2,
@@ -24210,7 +24210,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 9.6,
             "dewpoint": 3.1,
@@ -24232,7 +24232,7 @@
           "time": "2026-04-06T14:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 33 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.1,
             "dewpoint": 2.9,
@@ -24254,7 +24254,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 31 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.4,
             "dewpoint": 2.7,
@@ -24276,7 +24276,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 30 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 30 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.4,
             "dewpoint": 2.4,
@@ -25582,9 +25582,9 @@
         },
         {
           "time": "2026-04-06T03:00",
-          "score": 0.7,
+          "score": 0.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 6.1,
             "dewpoint": 2.0,
@@ -25604,9 +25604,9 @@
         },
         {
           "time": "2026-04-06T04:00",
-          "score": 1.0,
+          "score": 1.2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.9,
             "dewpoint": 2.0,
@@ -25626,9 +25626,9 @@
         },
         {
           "time": "2026-04-06T05:00",
-          "score": 1.0,
+          "score": 1.2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 5.8,
             "dewpoint": 2.3,
@@ -25714,7 +25714,7 @@
         },
         {
           "time": "2026-04-06T09:00",
-          "score": 0.7,
+          "score": 0.9,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
@@ -25760,7 +25760,7 @@
           "time": "2026-04-06T11:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.1,
             "dewpoint": 3.5,
@@ -25782,7 +25782,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 8.6,
             "dewpoint": 3.8,
@@ -25804,7 +25804,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 8.9,
             "dewpoint": 3.8,
@@ -25826,7 +25826,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 9.2,
             "dewpoint": 3.6,
@@ -25848,7 +25848,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 9.5,
             "dewpoint": 3.5,
@@ -27310,7 +27310,7 @@
           "time": "2026-04-06T09:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.9,
             "dewpoint": 1.6,
@@ -27332,7 +27332,7 @@
           "time": "2026-04-06T10:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 6.5,
             "dewpoint": 2.2,
@@ -27354,7 +27354,7 @@
           "time": "2026-04-06T11:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 7.1,
             "dewpoint": 2.6,
@@ -27376,7 +27376,7 @@
           "time": "2026-04-06T12:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 8.6,
             "dewpoint": 3.7,
@@ -27398,7 +27398,7 @@
           "time": "2026-04-06T13:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 32 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 9.8,
             "dewpoint": 4.1,
@@ -27420,7 +27420,7 @@
           "time": "2026-04-06T14:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 10.7,
             "dewpoint": 3.9,
@@ -27442,7 +27442,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 32 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.8,
             "dewpoint": 4.0,
@@ -27464,7 +27464,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 30 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.9,
             "dewpoint": 3.2,
@@ -28704,9 +28704,9 @@
       "hours": [
         {
           "time": "2026-04-06T00:00",
-          "score": 1.0,
+          "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 6.3,
             "dewpoint": 2.4,
@@ -28726,9 +28726,9 @@
         },
         {
           "time": "2026-04-06T01:00",
-          "score": 1.1,
+          "score": 1.3,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 6.2,
             "dewpoint": 2.4,
@@ -28748,9 +28748,9 @@
         },
         {
           "time": "2026-04-06T02:00",
-          "score": 0.5,
+          "score": 0.7,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 6.2,
             "dewpoint": 2.6,
@@ -28924,9 +28924,9 @@
         },
         {
           "time": "2026-04-06T10:00",
-          "score": 1.6,
+          "score": 1.8,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 7.3,
             "dewpoint": 3.0,
@@ -28948,7 +28948,7 @@
           "time": "2026-04-06T11:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.6,
             "dewpoint": 3.6,
@@ -28970,7 +28970,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 9.1,
             "dewpoint": 4.1,
@@ -28992,7 +28992,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.4,
             "dewpoint": 4.0,
@@ -29014,7 +29014,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.9,
             "dewpoint": 4.2,
@@ -29036,7 +29036,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 10.1,
             "dewpoint": 4.2,
@@ -30410,7 +30410,7 @@
           "time": "2026-04-06T05:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 4.4,
             "dewpoint": 0.2,
@@ -30520,7 +30520,7 @@
           "time": "2026-04-06T10:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 7.1,
             "dewpoint": 2.0,
@@ -30542,7 +30542,7 @@
           "time": "2026-04-06T11:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 7.9,
             "dewpoint": 2.6,
@@ -30564,7 +30564,7 @@
           "time": "2026-04-06T12:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 8.9,
             "dewpoint": 3.1,
@@ -30586,7 +30586,7 @@
           "time": "2026-04-06T13:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 9.9,
             "dewpoint": 3.4,
@@ -30608,7 +30608,7 @@
           "time": "2026-04-06T14:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 10.8,
             "dewpoint": 3.3,
@@ -30630,7 +30630,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 11.3,
             "dewpoint": 3.1,
@@ -30652,7 +30652,7 @@
           "time": "2026-04-06T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 11.5,
             "dewpoint": 2.0,
@@ -30674,7 +30674,7 @@
           "time": "2026-04-06T17:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 30 kt — kraftig reduktion. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 11.3,
             "dewpoint": 1.6,
@@ -31894,7 +31894,7 @@
           "time": "2026-04-06T00:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 6.2,
             "dewpoint": 0.3,
@@ -31916,7 +31916,7 @@
           "time": "2026-04-06T01:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 5.9,
             "dewpoint": 0.0,
@@ -31938,7 +31938,7 @@
           "time": "2026-04-06T02:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 5.2,
             "dewpoint": -0.7,
@@ -32004,7 +32004,7 @@
           "time": "2026-04-06T05:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 5.5,
             "dewpoint": -0.2,
@@ -32026,7 +32026,7 @@
           "time": "2026-04-06T06:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 5.5,
             "dewpoint": 0.4,
@@ -32048,7 +32048,7 @@
           "time": "2026-04-06T07:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 5.5,
             "dewpoint": -0.2,
@@ -32070,7 +32070,7 @@
           "time": "2026-04-06T08:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 5.8,
             "dewpoint": 0.6,
@@ -32180,7 +32180,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 40 kt — kan ikke flyves.",
           "data": {
             "temp": 9.3,
             "dewpoint": 3.5,
@@ -32202,7 +32202,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 40 kt — kan ikke flyves.",
           "data": {
             "temp": 9.7,
             "dewpoint": 3.9,
@@ -32246,7 +32246,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 10.0,
             "dewpoint": 3.7,
@@ -32268,7 +32268,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 10.4,
             "dewpoint": 3.7,
@@ -32290,7 +32290,7 @@
           "time": "2026-04-06T18:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 10.2,
             "dewpoint": 3.9,
@@ -32312,7 +32312,7 @@
           "time": "2026-04-06T19:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.3,
             "dewpoint": 4.1,
@@ -32332,9 +32332,9 @@
         },
         {
           "time": "2026-04-06T20:00",
-          "score": 1.1,
+          "score": 1.3,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.4,
             "dewpoint": 3.8,
@@ -33488,7 +33488,7 @@
           "time": "2026-04-06T00:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 6.5,
             "dewpoint": 0.6,
@@ -33510,7 +33510,7 @@
           "time": "2026-04-06T01:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 5.8,
             "dewpoint": 0.1,
@@ -33598,7 +33598,7 @@
           "time": "2026-04-06T05:00",
           "score": 0.8,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 5.7,
             "dewpoint": 0.0,
@@ -33620,7 +33620,7 @@
           "time": "2026-04-06T06:00",
           "score": 0.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 5.8,
             "dewpoint": 0.5,
@@ -33642,7 +33642,7 @@
           "time": "2026-04-06T07:00",
           "score": 0.8,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 5.7,
             "dewpoint": 0.1,
@@ -33664,7 +33664,7 @@
           "time": "2026-04-06T08:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 6.1,
             "dewpoint": 0.6,
@@ -33774,7 +33774,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 40 kt — kan ikke flyves.",
           "data": {
             "temp": 9.7,
             "dewpoint": 4.0,
@@ -33796,7 +33796,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 40 kt — kan ikke flyves.",
           "data": {
             "temp": 10.2,
             "dewpoint": 4.3,
@@ -33818,7 +33818,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 10.4,
             "dewpoint": 4.3,
@@ -33840,7 +33840,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 10.6,
             "dewpoint": 4.3,
@@ -33862,7 +33862,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 10.8,
             "dewpoint": 4.0,
@@ -33884,7 +33884,7 @@
           "time": "2026-04-06T18:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 10.5,
             "dewpoint": 4.4,
@@ -33904,9 +33904,9 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 0.9,
+          "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.7,
             "dewpoint": 4.7,
@@ -33926,9 +33926,9 @@
         },
         {
           "time": "2026-04-06T20:00",
-          "score": 0.7,
+          "score": 0.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.8,
             "dewpoint": 4.2,
@@ -33970,9 +33970,9 @@
         },
         {
           "time": "2026-04-06T22:00",
-          "score": 0,
+          "score": 0.2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 7.6,
             "dewpoint": 4.2,
@@ -33994,7 +33994,7 @@
           "time": "2026-04-06T23:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 7.0,
             "dewpoint": 4.1,
@@ -35080,7 +35080,7 @@
       "hours": [
         {
           "time": "2026-04-06T00:00",
-          "score": 0.3,
+          "score": 0.5,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
@@ -35104,7 +35104,7 @@
           "time": "2026-04-06T01:00",
           "score": 0.5,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 6.1,
             "dewpoint": 0.4,
@@ -35124,9 +35124,9 @@
         },
         {
           "time": "2026-04-06T02:00",
-          "score": 0.1,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 6.1,
             "dewpoint": 1.8,
@@ -35146,9 +35146,9 @@
         },
         {
           "time": "2026-04-06T03:00",
-          "score": 0.1,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 6.0,
             "dewpoint": 1.3,
@@ -35212,9 +35212,9 @@
         },
         {
           "time": "2026-04-06T06:00",
-          "score": 0.2,
+          "score": 0.4,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 5.8,
             "dewpoint": 1.0,
@@ -35234,9 +35234,9 @@
         },
         {
           "time": "2026-04-06T07:00",
-          "score": 0.9,
+          "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 5.6,
             "dewpoint": 0.2,
@@ -35258,7 +35258,7 @@
           "time": "2026-04-06T08:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 6.0,
             "dewpoint": 0.7,
@@ -35280,7 +35280,7 @@
           "time": "2026-04-06T09:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 6.8,
             "dewpoint": 1.3,
@@ -35302,7 +35302,7 @@
           "time": "2026-04-06T10:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 7.6,
             "dewpoint": 2.1,
@@ -35324,7 +35324,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 8.5,
             "dewpoint": 2.9,
@@ -35346,7 +35346,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 42 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 9.1,
             "dewpoint": 3.9,
@@ -35368,7 +35368,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 9.8,
             "dewpoint": 4.1,
@@ -35412,7 +35412,7 @@
           "time": "2026-04-06T15:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 10.4,
             "dewpoint": 4.1,
@@ -35434,7 +35434,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 11.4,
             "dewpoint": 3.9,
@@ -35456,7 +35456,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 11.3,
             "dewpoint": 4.2,
@@ -35478,7 +35478,7 @@
           "time": "2026-04-06T18:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 10.5,
             "dewpoint": 4.2,
@@ -35500,7 +35500,7 @@
           "time": "2026-04-06T19:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 9.8,
             "dewpoint": 3.5,
@@ -36698,7 +36698,7 @@
           "time": "2026-04-06T01:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 5.3,
             "dewpoint": 0.3,
@@ -36720,7 +36720,7 @@
           "time": "2026-04-06T02:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 30 kt — kraftig reduktion. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 5.2,
             "dewpoint": 1.2,
@@ -36742,7 +36742,7 @@
           "time": "2026-04-06T03:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 5.0,
             "dewpoint": 0.4,
@@ -36764,7 +36764,7 @@
           "time": "2026-04-06T04:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 5.0,
             "dewpoint": 0.2,
@@ -36786,7 +36786,7 @@
           "time": "2026-04-06T05:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 5.1,
             "dewpoint": 0.3,
@@ -36808,7 +36808,7 @@
           "time": "2026-04-06T06:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 5.1,
             "dewpoint": -0.3,
@@ -36830,7 +36830,7 @@
           "time": "2026-04-06T07:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 5.0,
             "dewpoint": -0.2,
@@ -36852,7 +36852,7 @@
           "time": "2026-04-06T08:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 5.7,
             "dewpoint": 0.4,
@@ -36874,7 +36874,7 @@
           "time": "2026-04-06T09:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 6.4,
             "dewpoint": 1.0,
@@ -36896,7 +36896,7 @@
           "time": "2026-04-06T10:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 7.2,
             "dewpoint": 1.0,
@@ -36918,7 +36918,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 7.8,
             "dewpoint": 1.2,
@@ -36940,7 +36940,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 8.8,
             "dewpoint": 2.1,
@@ -36962,7 +36962,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 9.4,
             "dewpoint": 2.3,
@@ -36984,7 +36984,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 10.2,
             "dewpoint": 2.3,
@@ -37006,7 +37006,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 45 kt — kan ikke flyves.",
           "data": {
             "temp": 10.5,
             "dewpoint": 2.3,
@@ -37028,7 +37028,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 44 kt — kan ikke flyves.",
           "data": {
             "temp": 10.7,
             "dewpoint": 2.6,
@@ -37050,7 +37050,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 41 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.8,
             "dewpoint": 2.6,
@@ -37072,7 +37072,7 @@
           "time": "2026-04-06T18:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 38 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.2,
             "dewpoint": 2.6,
@@ -37094,7 +37094,7 @@
           "time": "2026-04-06T19:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 9.3,
             "dewpoint": 2.4,
@@ -37116,7 +37116,7 @@
           "time": "2026-04-06T20:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 8.3,
             "dewpoint": 1.9,
@@ -37138,7 +37138,7 @@
           "time": "2026-04-06T21:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 31 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 7.6,
             "dewpoint": 1.9,
@@ -38268,7 +38268,7 @@
       "hours": [
         {
           "time": "2026-04-06T00:00",
-          "score": 0.9,
+          "score": 1.1,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
@@ -38292,7 +38292,7 @@
           "time": "2026-04-06T01:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 5.4,
             "dewpoint": -0.4,
@@ -38314,7 +38314,7 @@
           "time": "2026-04-06T02:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 30 kt — kraftig reduktion. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 5.2,
             "dewpoint": 1.2,
@@ -38336,7 +38336,7 @@
           "time": "2026-04-06T03:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 5.3,
             "dewpoint": 0.3,
@@ -38358,7 +38358,7 @@
           "time": "2026-04-06T04:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 5.4,
             "dewpoint": 0.4,
@@ -38380,7 +38380,7 @@
           "time": "2026-04-06T05:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 5.3,
             "dewpoint": 0.3,
@@ -38402,7 +38402,7 @@
           "time": "2026-04-06T06:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 5.4,
             "dewpoint": 0.2,
@@ -38424,7 +38424,7 @@
           "time": "2026-04-06T07:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 5.3,
             "dewpoint": 0.3,
@@ -38446,7 +38446,7 @@
           "time": "2026-04-06T08:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 5.5,
             "dewpoint": -0.1,
@@ -38468,7 +38468,7 @@
           "time": "2026-04-06T09:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 6.5,
             "dewpoint": 1.0,
@@ -38490,7 +38490,7 @@
           "time": "2026-04-06T10:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 7.1,
             "dewpoint": 1.2,
@@ -38512,7 +38512,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 7.8,
             "dewpoint": 1.7,
@@ -38534,7 +38534,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 8.7,
             "dewpoint": 2.3,
@@ -38556,7 +38556,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 42 kt — kan ikke flyves.",
           "data": {
             "temp": 8.9,
             "dewpoint": 2.3,
@@ -38578,7 +38578,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 44 kt — kan ikke flyves.",
           "data": {
             "temp": 9.7,
             "dewpoint": 2.3,
@@ -38600,7 +38600,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 43 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.2,
             "dewpoint": 2.5,
@@ -38622,7 +38622,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 38 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.5,
             "dewpoint": 2.6,
@@ -38644,7 +38644,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 38 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.5,
             "dewpoint": 3.1,
@@ -38666,7 +38666,7 @@
           "time": "2026-04-06T18:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 37 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 10.0,
             "dewpoint": 3.0,
@@ -38688,7 +38688,7 @@
           "time": "2026-04-06T19:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 9.2,
             "dewpoint": 2.6,
@@ -38710,7 +38710,7 @@
           "time": "2026-04-06T20:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.2,
             "dewpoint": 2.5,
@@ -39864,7 +39864,7 @@
           "time": "2026-04-06T00:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 5.7,
             "dewpoint": 0.0,
@@ -39886,7 +39886,7 @@
           "time": "2026-04-06T01:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 5.5,
             "dewpoint": -0.3,
@@ -39908,7 +39908,7 @@
           "time": "2026-04-06T02:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 36 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 33 kt — kraftig reduktion. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 5.5,
             "dewpoint": 0.8,
@@ -39930,7 +39930,7 @@
           "time": "2026-04-06T03:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter. Risiko for udkagning pga. lav spread.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 33 kt — kraftig reduktion. Risiko for udkagning pga. lav spread.",
           "data": {
             "temp": 5.6,
             "dewpoint": 1.1,
@@ -40016,7 +40016,7 @@
         },
         {
           "time": "2026-04-06T07:00",
-          "score": 1.4,
+          "score": 1.6,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
@@ -40038,9 +40038,9 @@
         },
         {
           "time": "2026-04-06T08:00",
-          "score": 1.7,
+          "score": 1.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 5.6,
             "dewpoint": 0.2,
@@ -40062,7 +40062,7 @@
           "time": "2026-04-06T09:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 6.5,
             "dewpoint": 1.0,
@@ -40106,7 +40106,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 8.3,
             "dewpoint": 1.9,
@@ -40150,7 +40150,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 9.6,
             "dewpoint": 3.7,
@@ -40172,7 +40172,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 43 kt — kan ikke flyves.",
           "data": {
             "temp": 10.5,
             "dewpoint": 3.5,
@@ -40194,7 +40194,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 43 kt — kan ikke flyves.",
           "data": {
             "temp": 10.8,
             "dewpoint": 3.6,
@@ -40216,7 +40216,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 11.2,
             "dewpoint": 3.2,
@@ -40238,7 +40238,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 37 kt — kan ikke flyves.",
           "data": {
             "temp": 11.3,
             "dewpoint": 3.0,
@@ -40260,7 +40260,7 @@
           "time": "2026-04-06T18:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 10.6,
             "dewpoint": 3.6,
@@ -40282,7 +40282,7 @@
           "time": "2026-04-06T19:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 34 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 9.6,
             "dewpoint": 3.3,
@@ -40302,9 +40302,9 @@
         },
         {
           "time": "2026-04-06T20:00",
-          "score": 1.1,
+          "score": 1.3,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 31 kt — kraftig reduktion.",
           "data": {
             "temp": 8.6,
             "dewpoint": 2.6,
@@ -41656,7 +41656,7 @@
           "time": "2026-04-06T09:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 6.8,
             "dewpoint": 1.1,
@@ -41678,7 +41678,7 @@
           "time": "2026-04-06T10:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter. Bagsidevejr — klar luft og gode cumulus.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 38 kt — kan ikke flyves. Bagsidevejr — klar luft og gode cumulus.",
           "data": {
             "temp": 7.5,
             "dewpoint": 0.9,
@@ -41700,7 +41700,7 @@
           "time": "2026-04-06T11:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 41 kt — kan ikke flyves.",
           "data": {
             "temp": 8.1,
             "dewpoint": 0.5,
@@ -41722,7 +41722,7 @@
           "time": "2026-04-06T12:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 41 kt — kan ikke flyves.",
           "data": {
             "temp": 8.9,
             "dewpoint": -0.2,
@@ -41744,7 +41744,7 @@
           "time": "2026-04-06T13:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Vindstød 41 kt — kan ikke flyves.",
           "data": {
             "temp": 9.4,
             "dewpoint": 0.0,
@@ -41766,7 +41766,7 @@
           "time": "2026-04-06T14:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 41 kt — kan ikke flyves.",
           "data": {
             "temp": 9.9,
             "dewpoint": 0.5,
@@ -41788,7 +41788,7 @@
           "time": "2026-04-06T15:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 41 kt — kan ikke flyves.",
           "data": {
             "temp": 10.1,
             "dewpoint": 0.4,
@@ -41810,7 +41810,7 @@
           "time": "2026-04-06T16:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 38 kt — kan ikke flyves.",
           "data": {
             "temp": 10.2,
             "dewpoint": 0.8,
@@ -41832,7 +41832,7 @@
           "time": "2026-04-06T17:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 37 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 10.1,
             "dewpoint": 1.0,
@@ -41854,7 +41854,7 @@
           "time": "2026-04-06T18:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Betinget labil — moderat termikhøjde. Vindstød 32 kt — kraftig reduktion.",
           "data": {
             "temp": 9.5,
             "dewpoint": 1.2,
@@ -41876,7 +41876,7 @@
           "time": "2026-04-06T19:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 8.6,
             "dewpoint": 1.9,
@@ -43052,7 +43052,7 @@
           "time": "2026-04-06T00:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 5.1,
             "dewpoint": 2.9,
@@ -43074,7 +43074,7 @@
           "time": "2026-04-06T01:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 35 kt — kan ikke flyves.",
           "data": {
             "temp": 5.0,
             "dewpoint": 3.1,
@@ -43096,7 +43096,7 @@
           "time": "2026-04-06T02:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 34 kt — kraftig reduktion.",
           "data": {
             "temp": 5.1,
             "dewpoint": 3.1,
@@ -43118,7 +43118,7 @@
           "time": "2026-04-06T03:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 40 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 4.9,
             "dewpoint": 2.9,
@@ -43140,7 +43140,7 @@
           "time": "2026-04-06T04:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 41 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 5.0,
             "dewpoint": 2.9,
@@ -43162,7 +43162,7 @@
           "time": "2026-04-06T05:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 42 kt — kan ikke flyves.",
           "data": {
             "temp": 5.1,
             "dewpoint": 2.3,
@@ -43184,7 +43184,7 @@
           "time": "2026-04-06T06:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 42 kt — kan ikke flyves.",
           "data": {
             "temp": 5.0,
             "dewpoint": 2.0,
@@ -43206,7 +43206,7 @@
           "time": "2026-04-06T07:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød over 40 kt — farligt, kan ikke flyves.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 43 kt — kan ikke flyves.",
           "data": {
             "temp": 4.9,
             "dewpoint": 1.9,
@@ -43272,7 +43272,7 @@
           "time": "2026-04-06T10:00",
           "score": 0.9,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 39 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 5.9,
             "dewpoint": 2.7,
@@ -43382,7 +43382,7 @@
           "time": "2026-04-06T15:00",
           "score": 0.6,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 44 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 39 kt — kan ikke flyves.",
           "data": {
             "temp": 7.7,
             "dewpoint": 4.3,
@@ -43448,7 +43448,7 @@
           "time": "2026-04-06T18:00",
           "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 38 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 36 kt — kan ikke flyves.",
           "data": {
             "temp": 7.4,
             "dewpoint": 4.2,
@@ -43468,9 +43468,9 @@
         },
         {
           "time": "2026-04-06T19:00",
-          "score": 0,
+          "score": 0.1,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 35 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Svagt labil — begrænset termikhøjde. Høj søbrise-risiko — termik dør tidligt. Vindstød 33 kt — kraftig reduktion.",
           "data": {
             "temp": 7.2,
             "dewpoint": 3.8,
@@ -43490,9 +43490,9 @@
         },
         {
           "time": "2026-04-06T20:00",
-          "score": 0,
+          "score": 0.0,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 6.8,
             "dewpoint": 3.4,
@@ -43580,7 +43580,7 @@
           "time": "2026-04-07T00:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Inversion — ingen termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 33 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Inversion — ingen termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 5.8,
             "dewpoint": 3.8,
@@ -43690,7 +43690,7 @@
           "time": "2026-04-07T05:00",
           "score": 0,
           "label": "Ingen brugbar termik",
-          "comment": "Inversion — ingen termik. Høj søbrise-risiko — termik dør tidligt. Effektiv vind 32 kt (vind+gust/2) — kun meget erfarne piloter.",
+          "comment": "Inversion — ingen termik. Høj søbrise-risiko — termik dør tidligt. Vindstød 30 kt — kraftig reduktion.",
           "data": {
             "temp": 4.9,
             "dewpoint": 3.7,
