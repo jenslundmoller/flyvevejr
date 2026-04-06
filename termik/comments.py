@@ -54,11 +54,13 @@ def generate_comment(
     elif seabreeze_risk >= 1:
         extras.append("S\u00f8brise-risiko om eftermiddagen.")
 
-    # Effective wind rule: wind + (gust/2)
+    # Gust and effective wind assessment
     effective_wind = wind_kt + (wind_gusts_kt / 2)
     gust_factor = wind_gusts_kt / max(wind_kt, 1)
-    if wind_gusts_kt > 40:
-        extras.append("Vindst\u00f8d over 40 kt \u2014 farligt, kan ikke flyves.")
+    if wind_gusts_kt >= 35:
+        extras.append(f"Vindst\u00f8d {int(wind_gusts_kt)} kt \u2014 kan ikke flyves.")
+    elif wind_gusts_kt >= 30:
+        extras.append(f"Vindst\u00f8d {int(wind_gusts_kt)} kt \u2014 kraftig reduktion.")
     elif effective_wind > 30:
         extras.append(f"Effektiv vind {int(effective_wind)} kt (vind+gust/2) \u2014 kun meget erfarne piloter.")
     elif effective_wind > 25:

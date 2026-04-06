@@ -119,8 +119,16 @@ def test_gusts_high_factor():
     """effective = 10 + 14 = 24 → under 25, but gust factor 2.8 → turbulent."""
     assert score_gusts(28, 10) == 4
 
+def test_gusts_absolute_30():
+    """Gusts >= 30 kt → cap to 2 regardless of effective wind."""
+    assert score_gusts(30, 20) == 2
+
+def test_gusts_absolute_35():
+    """Gusts >= 35 kt → cap to 0 regardless of effective wind."""
+    assert score_gusts(35, 20) == 0
+
 def test_gusts_extreme():
-    """effective = 25 + 22.5 = 47.5 → way above threshold."""
+    """Gusts 45 kt → 0."""
     assert score_gusts(45, 25) == 0
 
 

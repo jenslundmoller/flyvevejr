@@ -83,6 +83,12 @@ def score_gusts(wind_gusts_kt: float, wind_speed_kt: float) -> int:
     >30 = only for very experienced pilots.
     Also considers the gust factor (gusts/wind) for turbulence assessment.
     """
+    # Absolute gust limits
+    if wind_gusts_kt >= 35:
+        return 0
+    if wind_gusts_kt >= 30:
+        return 2
+    # Effective wind rule: wind + (gust/2)
     effective_wind = wind_speed_kt + (wind_gusts_kt / 2)
     if effective_wind > 30:
         return 0
@@ -204,8 +210,12 @@ def apply_dealbreakers(
         max_score = min(max_score, 1)
     if wind_kt > 35:
         max_score = min(max_score, 2)
+    if wind_gusts_kt >= 35:
+        max_score = min(max_score, 1)
+    elif wind_gusts_kt >= 30:
+        max_score = min(max_score, 2)
     effective_wind = wind_kt + (wind_gusts_kt / 2)
-    if wind_gusts_kt > 40 or effective_wind > 35:
+    if effective_wind > 35:
         max_score = min(max_score, 1)
     elif effective_wind > 30:
         max_score = min(max_score, 2)
