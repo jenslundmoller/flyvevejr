@@ -6,6 +6,7 @@ def generate_comment(
     spread: float,
     skybase_m: int,
     wind_kt: float,
+    wind_gusts_kt: float,
     cloud_cover: float,
     cape: float,
     precipitation: float,
@@ -53,8 +54,19 @@ def generate_comment(
     elif seabreeze_risk >= 1:
         extras.append("S\u00f8brise-risiko om eftermiddagen.")
 
+    # Gust warning (higher priority than average wind)
+    gust_factor = wind_gusts_kt / max(wind_kt, 1)
+    if wind_gusts_kt > 40:
+        extras.append("Vindst\u00f8d over 40 kt \u2014 farligt, kan ikke flyves.")
+    elif wind_gusts_kt > 30:
+        extras.append(f"Kraftige vindst\u00f8d ({int(wind_gusts_kt)} kt) \u2014 uflyveligt.")
+    elif wind_gusts_kt > 20 and gust_factor >= 2.0:
+        extras.append(f"B\u00f8jet vind (faktor {gust_factor:.1f}) \u2014 turbulent.")
+    elif wind_gusts_kt > 25:
+        extras.append(f"Vindst\u00f8d {int(wind_gusts_kt)} kt \u2014 b\u00f8jet.")
+
     # Strong wind warning
-    if wind_kt > 20:
+    if wind_kt > 20 and wind_gusts_kt <= 25:
         extras.append("Kraftig vind \u2014 turbulent termik.")
 
     # Overdevelopment warning

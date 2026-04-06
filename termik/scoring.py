@@ -75,6 +75,27 @@ def score_wind(wind_kt: float) -> int:
         return 0
 
 
+def score_gusts(wind_gusts_kt: float, wind_speed_kt: float) -> int:
+    """Score wind gusts impact on flyability.
+
+    Both absolute gust strength and the gust factor (gusts/wind) matter.
+    High gusts = turbulence and dangerous conditions for gliders.
+    Gust factor > 2 indicates severe turbulence even at lower wind speeds.
+    """
+    if wind_gusts_kt <= 20:
+        return 10
+    gust_factor = wind_gusts_kt / max(wind_speed_kt, 1)
+    if wind_gusts_kt <= 25 and gust_factor < 2.0:
+        return 8
+    if wind_gusts_kt <= 30 and gust_factor < 2.0:
+        return 5
+    if wind_gusts_kt <= 30:
+        return 3  # gust factor >= 2
+    if wind_gusts_kt <= 40:
+        return 2
+    return 0
+
+
 def score_temperature(temp: float) -> float:
     """Score surface temperature. Higher = more heating potential.
 
@@ -168,6 +189,7 @@ def apply_dealbreakers(
     cloud_cover: float,
     precipitation: float,
     wind_kt: float,
+    wind_gusts_kt: float,
     temp: float,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
@@ -182,6 +204,10 @@ def apply_dealbreakers(
         max_score = min(max_score, 1)
     if wind_kt > 35:
         max_score = min(max_score, 2)
+    if wind_gusts_kt > 40:
+        max_score = min(max_score, 1)
+    elif wind_gusts_kt > 30:
+        max_score = min(max_score, 3)
     if temp < 5:
         max_score = min(max_score, 3)
     return min(score, max_score)
@@ -224,6 +250,7 @@ def compute_thermal_score(
         "solar": score_solar(cloud_cover, shortwave_radiation),
         "spread": score_spread(spread),
         "wind": score_wind(wind_speed_kt),
+        "gusts": score_gusts(wind_gusts_kt, wind_speed_kt),
         "temperature": score_temperature(temp_2m),
         "precipitation": score_precipitation(precipitation, precip_last_6h),
     }
@@ -247,7 +274,8 @@ def compute_thermal_score(
 
     # Apply dealbreakers
     total = apply_dealbreakers(
-        total, lapse_rate, cloud_cover, precipitation, wind_speed_kt, temp_2m,
+        total, lapse_rate, cloud_cover, precipitation,
+        wind_speed_kt, wind_gusts_kt, temp_2m,
     )
 
     # Clamp and round

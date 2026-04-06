@@ -33,9 +33,10 @@ WEIGHTS = {
     "lapse_rate": 0.30,
     "solar": 0.20,
     "spread": 0.15,
-    "wind": 0.15,
-    "temperature": 0.10,
-    "precipitation": 0.10,
+    "wind": 0.10,
+    "gusts": 0.10,
+    "temperature": 0.08,
+    "precipitation": 0.07,
 }
 
 # Score labels (min_score, max_score, label)

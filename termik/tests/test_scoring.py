@@ -4,6 +4,7 @@ from termik.scoring import (
     score_solar,
     score_spread,
     score_wind,
+    score_gusts,
     score_temperature,
     score_precipitation,
     calculate_seabreeze_penalty,
@@ -95,7 +96,30 @@ def test_wind_light():
     assert score_wind(4) == 7
 
 
-# --- Temperature (10% weight) ---
+# --- Gusts (10% weight) ---
+# High gusts = turbulence. Gust factor (gusts/wind) indicates shear severity.
+
+def test_gusts_calm():
+    assert score_gusts(15, 10) == 10
+
+def test_gusts_moderate():
+    assert score_gusts(23, 15) == 8
+
+def test_gusts_strong():
+    assert score_gusts(28, 18) == 5
+
+def test_gusts_high_factor():
+    """Gust factor >= 2 with gusts 25-30 kt should score low."""
+    assert score_gusts(28, 10) == 3
+
+def test_gusts_very_strong():
+    assert score_gusts(35, 20) == 2
+
+def test_gusts_extreme():
+    assert score_gusts(45, 25) == 0
+
+
+# --- Temperature (8% weight) ---
 # Higher surface temp = more heating. Linear scale.
 
 def test_temp_warm():
@@ -184,37 +208,49 @@ def test_modifiers_combined():
 
 def test_dealbreaker_stable():
     score = apply_dealbreakers(7.0, lapse_rate=0.55, cloud_cover=30,
-                                precipitation=0, wind_kt=10, temp=15)
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15)
     assert score <= 3
 
 def test_dealbreaker_inversion():
     score = apply_dealbreakers(5.0, lapse_rate=0.4, cloud_cover=30,
-                                precipitation=0, wind_kt=10, temp=15)
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15)
     assert score <= 1
 
 def test_dealbreaker_overcast():
     score = apply_dealbreakers(5.0, lapse_rate=1.0, cloud_cover=90,
-                                precipitation=0, wind_kt=10, temp=15)
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15)
     assert score <= 2
 
 def test_dealbreaker_rain():
     score = apply_dealbreakers(5.0, lapse_rate=1.0, cloud_cover=50,
-                                precipitation=2.0, wind_kt=10, temp=15)
+                                precipitation=2.0, wind_kt=10, wind_gusts_kt=15, temp=15)
     assert score <= 1
 
 def test_dealbreaker_extreme_wind():
     score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
-                                precipitation=0, wind_kt=40, temp=15)
-    assert score <= 2
+                                precipitation=0, wind_kt=40, wind_gusts_kt=50, temp=15)
+    assert score <= 1
+
+def test_dealbreaker_extreme_gusts():
+    """Gusts > 40 kt should cap score to 1 even with moderate avg wind."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=20, wind_gusts_kt=45, temp=15)
+    assert score <= 1
+
+def test_dealbreaker_strong_gusts():
+    """Gusts 30-40 kt should cap score to 3."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=15, wind_gusts_kt=35, temp=15)
+    assert score <= 3
 
 def test_dealbreaker_cold():
     score = apply_dealbreakers(6.0, lapse_rate=1.0, cloud_cover=30,
-                                precipitation=0, wind_kt=10, temp=3)
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=3)
     assert score <= 3
 
 def test_no_dealbreaker():
     score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
-                                precipitation=0, wind_kt=10, temp=15)
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15)
     assert score == 8.0
 
 
@@ -273,6 +309,19 @@ def test_scenario_seabreeze_coast_vs_inland():
     inland = compute_thermal_score(**params, coast_distance_km=65, coast_direction_deg=270)
     assert inland["score"] > coast["score"]
     assert inland["score"] - coast["score"] >= 1.5
+
+def test_scenario_gusty_day():
+    """Good thermals but strong gusts — must score low due to safety."""
+    result = compute_thermal_score(
+        temp_2m=22, dewpoint_2m=10, temp_850hpa=6,
+        cloud_cover=25, shortwave_radiation=700,
+        wind_speed_kt=15, wind_dir=270, wind_gusts_kt=38,
+        precipitation=0, precip_last_6h=0,
+        cape=400, surface_pressure=1015, pressure_trend=0,
+        temp_850hpa_trend=0,
+        coast_distance_km=65, coast_direction_deg=270, month=4,
+    )
+    assert result["score"] <= 3.0
 
 def test_scenario_moderate_day():
     """Typical moderate Danish summer day."""

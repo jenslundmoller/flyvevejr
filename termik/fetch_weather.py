@@ -169,6 +169,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         spread=result["spread"],
         skybase_m=result["skybase_m"],
         wind_kt=wind_speed,
+        wind_gusts_kt=wind_gusts,
         cloud_cover=cloud_cover,
         cape=cape,
         precipitation=precipitation,
