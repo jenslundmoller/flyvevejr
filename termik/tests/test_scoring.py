@@ -262,6 +262,12 @@ def test_dealbreaker_effective_wind_over_30():
                                 precipitation=0, wind_kt=15, wind_gusts_kt=35, temp=15)
     assert score <= 2
 
+def test_dealbreaker_effective_wind_over_25():
+    """effective = 15 + 13.5 = 28.5 → cap to 4 (reduced conditions)."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=15, wind_gusts_kt=27, temp=15)
+    assert score <= 4
+
 def test_dealbreaker_cold():
     score = apply_dealbreakers(6.0, lapse_rate=1.0, cloud_cover=30,
                                 precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=3)

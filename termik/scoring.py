@@ -219,6 +219,8 @@ def apply_dealbreakers(
         max_score = min(max_score, 1)
     elif effective_wind > 30:
         max_score = min(max_score, 2)
+    elif effective_wind > 25:
+        max_score = min(max_score, 4)
     if temp < 5:
         max_score = min(max_score, 3)
     return min(score, max_score)
