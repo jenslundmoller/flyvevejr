@@ -379,6 +379,29 @@ async function init() {
         parseInt(genParts[2], 10)
     );
 
+    // Set initial day and hour to nearest upcoming hour
+    var now = new Date();
+    var todayStr = now.getFullYear() + '-'
+        + String(now.getMonth() + 1).padStart(2, '0') + '-'
+        + String(now.getDate()).padStart(2, '0');
+    var baseDateStr = getTargetDateStr(0);
+    var dayDiff = Math.round((new Date(todayStr) - new Date(baseDateStr)) / 86400000);
+    if (dayDiff >= 0 && dayDiff <= 2) {
+        currentDay = dayDiff;
+        var btn = document.querySelector('.day-btn[data-day="' + dayDiff + '"]');
+        if (btn) {
+            document.querySelector('.day-btn.active').classList.remove('active');
+            btn.classList.add('active');
+        }
+    }
+    var nextHour = now.getMinutes() > 0 ? now.getHours() + 1 : now.getHours();
+    nextHour = Math.max(6, Math.min(21, nextHour));
+    currentHour = nextHour;
+    var slider = document.getElementById('time-slider');
+    var display = document.getElementById('time-display');
+    slider.value = currentHour;
+    display.textContent = String(currentHour).padStart(2, '0') + ':00';
+
     hideLoading();
     initMap();
     createAirfieldMarkers();
