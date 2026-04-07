@@ -84,3 +84,15 @@ def test_calculate_temp_850_trend_start():
     temps = [5.0, 4.5]
     trend = calculate_temp_850_trend(temps, 0)
     assert trend == 0
+
+
+def test_build_api_url_includes_altitude_params():
+    points = [{"lat": 55.92, "lon": 9.07}]
+    url = build_api_url(points)
+    assert "wind_speed_80m" in url
+    assert "wind_speed_120m" in url
+    assert "wind_speed_180m" in url
+    assert "wind_direction_80m" in url
+    assert "temperature_80m" in url
+    assert "temperature_180m" in url
+    assert "boundary_layer_height" in url

@@ -14,6 +14,18 @@ HOURLY_PARAMS = [
     "wind_speed_10m",
     "wind_direction_10m",
     "wind_gusts_10m",
+    # Multi-level wind (80m/120m/180m)
+    "wind_speed_80m",
+    "wind_direction_80m",
+    "wind_speed_120m",
+    "wind_direction_120m",
+    "wind_speed_180m",
+    "wind_direction_180m",
+    # Multi-level temperature
+    "temperature_80m",
+    "temperature_120m",
+    "temperature_180m",
+    # Standard parameters
     "cloud_cover",
     "cloud_cover_low",
     "cloud_cover_mid",
@@ -22,6 +34,8 @@ HOURLY_PARAMS = [
     "shortwave_radiation",
     "cape",
     "surface_pressure",
+    "boundary_layer_height",
+    # Pressure levels
     "temperature_850hPa",
     "temperature_700hPa",
     "wind_speed_850hPa",
