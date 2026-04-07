@@ -251,6 +251,7 @@ def apply_dealbreakers(
     wind_kt: float,
     wind_gusts_kt: float,
     temp: float,
+    surface_lapse_rate: float | None = None,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
     max_score = 10.0
@@ -258,6 +259,12 @@ def apply_dealbreakers(
         max_score = min(max_score, 1)
     elif lapse_rate < 0.65:
         max_score = min(max_score, 3)
+    # Surface lapse rate dealbreaker (thermal initiation gate)
+    if surface_lapse_rate is not None:
+        if surface_lapse_rate < 0.3:
+            max_score = min(max_score, 1)
+        elif surface_lapse_rate < 0.5:
+            max_score = min(max_score, 2)
     if cloud_cover >= 87:
         max_score = min(max_score, 2)
     if precipitation > 0:
@@ -298,6 +305,11 @@ def compute_thermal_score(
     coast_distance_km: float,
     coast_direction_deg: float,
     month: int,
+    # Multi-level data (optional — enhances scoring when available)
+    temp_180m: float | None = None,
+    wind_speed_80m_kt: float | None = None,
+    wind_speed_180m_kt: float | None = None,
+    boundary_layer_height: float | None = None,
 ) -> dict:
     """Compute the full thermal score from weather parameters.
 
@@ -310,6 +322,11 @@ def compute_thermal_score(
     # Cloud base estimate (Henning formula: spread * 125m)
     skybase_m = round(spread * 125)
     skybase_ft = round(skybase_m * 3.281)
+
+    # Surface lapse rate (2m→180m, height diff = 1.78 hectometers)
+    surface_lapse = None
+    if temp_180m is not None:
+        surface_lapse = (temp_2m - temp_180m) / 1.78
 
     # Score each factor
     scores = {
@@ -339,16 +356,29 @@ def compute_thermal_score(
     )
     total -= seabreeze_penalty
 
+    # Multi-level modifiers
+    wind_shear_mod = 0.0
+    bl_mixing_mod = 0.0
+
+    if wind_speed_80m_kt is not None:
+        wind_shear_mod = calculate_wind_shear_modifier(wind_speed_kt, wind_speed_80m_kt)
+        total += wind_shear_mod
+
+    if wind_speed_80m_kt is not None and wind_speed_180m_kt is not None:
+        bl_mixing_mod = calculate_bl_mixing_modifier(wind_speed_80m_kt, wind_speed_180m_kt)
+        total += bl_mixing_mod
+
     # Apply dealbreakers
     total = apply_dealbreakers(
         total, lapse_rate, cloud_cover, precipitation,
         wind_speed_kt, wind_gusts_kt, temp_2m,
+        surface_lapse_rate=surface_lapse,
     )
 
     # Clamp and round
     total = round(max(0, min(10, total)), 1)
 
-    return {
+    result = {
         "score": total,
         "label": get_score_label(total),
         "spread": round(spread, 1),
@@ -357,6 +387,18 @@ def compute_thermal_score(
         "lapse_rate": round(lapse_rate, 2),
         "seabreeze_penalty": seabreeze_penalty,
     }
+
+    # Add multi-level diagnostics when available
+    if surface_lapse is not None:
+        result["surface_lapse_rate"] = round(surface_lapse, 2)
+    if wind_speed_80m_kt is not None:
+        result["wind_shear_modifier"] = wind_shear_mod
+    if wind_speed_80m_kt is not None and wind_speed_180m_kt is not None:
+        result["bl_mixing_modifier"] = bl_mixing_mod
+    if boundary_layer_height is not None:
+        result["boundary_layer_height"] = round(boundary_layer_height)
+
+    return result
 
 
 def get_score_label(score: float) -> str:

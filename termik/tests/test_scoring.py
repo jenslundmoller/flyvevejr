@@ -458,3 +458,74 @@ def test_score_has_required_fields():
     assert "lapse_rate" in result
     assert "seabreeze_penalty" in result
     assert 0 <= result["score"] <= 10
+
+
+# --- Integration: multi-level data improves scoring ---
+
+def test_surface_inversion_caps_score():
+    """Good bulk lapse rate but surface inversion → score capped."""
+    result = compute_thermal_score(
+        temp_2m=22, dewpoint_2m=8, temp_850hpa=5,
+        cloud_cover=30, shortwave_radiation=700,
+        wind_speed_kt=12, wind_dir=290, wind_gusts_kt=16,
+        precipitation=0, precip_last_6h=0,
+        cape=500, surface_pressure=1020, pressure_trend=2.0,
+        temp_850hpa_trend=-1.0,
+        coast_distance_km=65, coast_direction_deg=270, month=6,
+        # surface lapse = (22 - 21.5) / 1.78 = 0.28 → inversion dealbreaker
+        temp_180m=21.5,
+    )
+    assert result["score"] <= 2.0
+
+
+def test_high_shear_penalizes():
+    """Good conditions but high wind shear → reduced score."""
+    base_params = dict(
+        temp_2m=22, dewpoint_2m=8, temp_850hpa=5,
+        cloud_cover=30, shortwave_radiation=700,
+        wind_speed_kt=8, wind_dir=290, wind_gusts_kt=14,
+        precipitation=0, precip_last_6h=0,
+        cape=400, surface_pressure=1020, pressure_trend=1.0,
+        temp_850hpa_trend=-0.5,
+        coast_distance_km=65, coast_direction_deg=270, month=6,
+        temp_180m=18.5,  # surface lapse = (22-18.5)/1.78 = 1.97 → superadiabatic
+    )
+    # Low shear
+    low_shear = compute_thermal_score(**base_params, wind_speed_80m_kt=10, wind_speed_180m_kt=11)
+    # High shear
+    high_shear = compute_thermal_score(**base_params, wind_speed_80m_kt=25, wind_speed_180m_kt=30)
+    assert low_shear["score"] > high_shear["score"]
+
+
+def test_multilevel_data_in_result():
+    """Result dict includes new diagnostic fields when data is provided."""
+    result = compute_thermal_score(
+        temp_2m=22, dewpoint_2m=8, temp_850hpa=5,
+        cloud_cover=30, shortwave_radiation=700,
+        wind_speed_kt=10, wind_dir=270, wind_gusts_kt=15,
+        precipitation=0, precip_last_6h=0,
+        cape=300, surface_pressure=1018, pressure_trend=0,
+        temp_850hpa_trend=0,
+        coast_distance_km=50, coast_direction_deg=270, month=6,
+        temp_180m=19.0,
+        wind_speed_80m_kt=13,
+        wind_speed_180m_kt=14,
+    )
+    assert "surface_lapse_rate" in result
+    assert "wind_shear_modifier" in result
+    assert "bl_mixing_modifier" in result
+
+
+def test_existing_scoring_unchanged_without_new_data():
+    """When no multi-level data provided, score is identical to before."""
+    result = compute_thermal_score(
+        temp_2m=22, dewpoint_2m=8, temp_850hpa=5,
+        cloud_cover=30, shortwave_radiation=700,
+        wind_speed_kt=12, wind_dir=290, wind_gusts_kt=16,
+        precipitation=0, precip_last_6h=0,
+        cape=500, surface_pressure=1020, pressure_trend=2.0,
+        temp_850hpa_trend=-1.0,
+        coast_distance_km=65, coast_direction_deg=270, month=6,
+    )
+    # This is the same scenario as test_scenario_perfect_day — must still score >= 9.0
+    assert result["score"] >= 9.0
