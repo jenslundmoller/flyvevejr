@@ -215,6 +215,11 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         boundary_layer_height=bl_height,
     )
 
+    # Calculate wind shear for comments
+    wind_shear_for_comment = None
+    if wind_speed_80m is not None and wind_speed is not None:
+        wind_shear_for_comment = abs(wind_speed_80m - wind_speed)
+
     comment = generate_comment(
         lapse_rate=result["lapse_rate"],
         spread=result["spread"],
@@ -227,6 +232,8 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         seabreeze_risk=result["seabreeze_penalty"],
         pressure_trend=pressure_trend,
         score=result["score"],
+        wind_shear_kt=wind_shear_for_comment,
+        boundary_layer_height=bl_height,
     )
 
     return {
