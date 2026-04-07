@@ -1,6 +1,7 @@
 import pytest
 from termik.scoring import (
     score_lapse_rate,
+    score_surface_lapse_rate,
     score_solar,
     score_spread,
     score_wind,
@@ -36,6 +37,30 @@ def test_lapse_stable():
 
 def test_lapse_inversion():
     assert score_lapse_rate(0.3) == 0
+
+
+# --- Surface lapse rate (2m → 180m) ---
+# Measures thermal initiation potential. Superadiabatic (>0.98°C/100m) = thermals starting.
+
+def test_surface_lapse_superadiabatic():
+    """1.5°C/100m — strong surface heating, thermals initiating."""
+    assert score_surface_lapse_rate(1.5) == 10
+
+def test_surface_lapse_adiabatic():
+    """1.0°C/100m — near DALR, convection developing."""
+    assert score_surface_lapse_rate(1.0) == 7
+
+def test_surface_lapse_marginal():
+    """0.7°C/100m — sub-adiabatic, marginal initiation."""
+    assert score_surface_lapse_rate(0.7) == 3
+
+def test_surface_lapse_stable():
+    """0.4°C/100m — stable, no thermal initiation."""
+    assert score_surface_lapse_rate(0.4) == 0
+
+def test_surface_lapse_inversion():
+    """Negative — inversion layer, thermals completely suppressed."""
+    assert score_surface_lapse_rate(-0.5) == 0
 
 
 # --- Solar (20% weight) ---

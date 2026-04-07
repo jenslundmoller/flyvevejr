@@ -24,6 +24,25 @@ def score_lapse_rate(lapse_rate: float) -> int:
         return 0
 
 
+def score_surface_lapse_rate(surface_lapse: float) -> int:
+    """Score thermal initiation potential from the 2m→180m lapse rate.
+
+    The surface layer is expected to be superadiabatic (>0.98°C/100m)
+    during active convection. Values well above DALR are normal here
+    due to the 2m sensor's proximity to the heated ground.
+    """
+    if surface_lapse >= 1.3:
+        return 10
+    elif surface_lapse >= 0.98:
+        return 7
+    elif surface_lapse >= 0.65:
+        return 3
+    elif surface_lapse >= 0.5:
+        return 1
+    else:
+        return 0
+
+
 def score_solar(cloud_cover: float, shortwave_radiation: float) -> float:
     """Score solar heating potential from cloud cover and radiation.
 
