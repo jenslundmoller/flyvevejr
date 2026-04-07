@@ -2,6 +2,7 @@
 
 import json
 import os
+import time
 import requests
 from datetime import datetime
 
@@ -45,12 +46,31 @@ def parse_api_response(raw) -> list[dict]:
     return raw
 
 
-def fetch_batch(points: list[dict]) -> list[dict]:
-    """Call the Open-Meteo API for a batch of points and return parsed data."""
+def fetch_batch(points: list[dict], max_retries: int = 3) -> list[dict]:
+    """Call the Open-Meteo API for a batch of points and return parsed data.
+
+    Retries up to max_retries times on transient errors (5xx, timeouts)
+    with exponential backoff.
+    """
     url = build_api_url(points)
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
-    return parse_api_response(response.json())
+    for attempt in range(max_retries + 1):
+        try:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            return parse_api_response(response.json())
+        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout) as e:
+            is_server_error = (
+                isinstance(e, requests.exceptions.HTTPError)
+                and e.response is not None
+                and e.response.status_code >= 500
+            )
+            is_transient = is_server_error or not isinstance(e, requests.exceptions.HTTPError)
+            if not is_transient or attempt == max_retries:
+                raise
+            wait = 2 ** attempt * 5  # 5s, 10s, 20s
+            print(f"API request failed ({e}), retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
+            time.sleep(wait)
 
 
 def calculate_precip_last_6h(precip_values: list, hour_index: int) -> float:
@@ -282,8 +302,6 @@ def write_output(data: dict):
 
 
 def main():
-    import time
-
     print(f"Termik forecast starting at {datetime.now().isoformat()}")
     start = time.time()
     data = process_all_points()
