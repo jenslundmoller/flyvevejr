@@ -205,6 +205,21 @@ def calculate_wind_shear_modifier(wind_10m_kt: float, wind_80m_kt: float) -> flo
         return -1.0  # Severe shear, thermals destroyed
 
 
+def calculate_bl_mixing_modifier(wind_80m_kt: float, wind_180m_kt: float) -> float:
+    """Assess boundary layer mixing from the 80m-180m wind gradient.
+
+    In a well-mixed convective BL, wind is nearly uniform above the surface
+    layer. A large gradient indicates stable or transitional conditions.
+    """
+    gradient = abs(wind_180m_kt - wind_80m_kt)
+    if gradient < 4:
+        return 0.3   # Well-mixed CBL
+    elif gradient < 8:
+        return 0.0   # Moderate mixing
+    else:
+        return -0.3  # Poor mixing, stable/transitional
+
+
 def calculate_modifiers(
     cape: float, pressure_trend: float, temp_850hpa_trend: float
 ) -> float:

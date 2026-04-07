@@ -11,6 +11,7 @@ from termik.scoring import (
     calculate_seabreeze_penalty,
     calculate_modifiers,
     calculate_wind_shear_modifier,
+    calculate_bl_mixing_modifier,
     apply_dealbreakers,
     compute_thermal_score,
     get_score_label,
@@ -265,6 +266,21 @@ def test_wind_shear_extreme():
 def test_wind_shear_calm():
     """Both calm — no meaningful shear assessment."""
     assert calculate_wind_shear_modifier(0, 2) == 0.0
+
+# --- BL mixing diagnostic (80m vs 180m wind gradient) ---
+# Small gradient = well-mixed CBL (good thermals). Large = stable/transitional.
+
+def test_bl_mixing_wellmixed():
+    """2kt difference — well-mixed convective BL, bonus."""
+    assert calculate_bl_mixing_modifier(12, 14) == 0.3
+
+def test_bl_mixing_moderate():
+    """6kt difference — partially mixed, no modifier."""
+    assert calculate_bl_mixing_modifier(10, 16) == 0.0
+
+def test_bl_mixing_poor():
+    """10kt difference — not well-mixed, penalty."""
+    assert calculate_bl_mixing_modifier(10, 20) == -0.3
 
 
 # --- Dealbreakers ---
