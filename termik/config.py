@@ -2,7 +2,7 @@
 
 # Open-Meteo API
 API_BASE_URL = "https://api.open-meteo.com/v1/forecast"
-API_BATCH_SIZE = 50  # Max locations per request
+API_BATCH_SIZE = 25  # Max locations per request
 FORECAST_DAYS = 7
 TIMEZONE = "Europe/Berlin"
 
