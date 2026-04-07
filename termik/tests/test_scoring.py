@@ -318,6 +318,33 @@ def test_dealbreaker_surface_stable():
                                 surface_lapse_rate=0.4)
     assert score <= 2
 
+def test_dealbreaker_marginal_lapse():
+    """Lapse rate < 0.70 should cap to 5 (marginal conditions)."""
+    score = apply_dealbreakers(8.0, lapse_rate=0.68, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15)
+    assert score <= 5
+
+def test_dealbreaker_cape_overdevelopment():
+    """CAPE > 1000 should cap to 7 (overdevelopment risk)."""
+    score = apply_dealbreakers(9.0, lapse_rate=1.2, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=20,
+                                cape=1200)
+    assert score <= 7
+
+def test_dealbreaker_cape_thunderstorm():
+    """CAPE > 1500 should cap to 5 (thunderstorm risk)."""
+    score = apply_dealbreakers(10.0, lapse_rate=1.3, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=20,
+                                cape=1800)
+    assert score <= 5
+
+def test_dealbreaker_cape_normal():
+    """CAPE <= 1000 should not trigger overdevelopment cap."""
+    score = apply_dealbreakers(9.0, lapse_rate=1.2, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=20,
+                                cape=800)
+    assert score == 9.0
+
 def test_dealbreaker_rain():
     score = apply_dealbreakers(5.0, lapse_rate=1.0, cloud_cover=50,
                                 precipitation=2.0, wind_kt=10, wind_gusts_kt=15, temp=15)

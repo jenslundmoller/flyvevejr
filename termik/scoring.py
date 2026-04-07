@@ -251,6 +251,7 @@ def apply_dealbreakers(
     wind_kt: float,
     wind_gusts_kt: float,
     temp: float,
+    cape: float = 0,
     surface_lapse_rate: float | None = None,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
@@ -259,6 +260,8 @@ def apply_dealbreakers(
         max_score = min(max_score, 1)
     elif lapse_rate < 0.65:
         max_score = min(max_score, 3)
+    elif lapse_rate < 0.70:
+        max_score = min(max_score, 5)
     # Surface lapse rate dealbreaker (thermal initiation gate)
     if surface_lapse_rate is not None:
         if surface_lapse_rate < 0.3:
@@ -284,6 +287,11 @@ def apply_dealbreakers(
         max_score = min(max_score, 4)
     if temp < 5:
         max_score = min(max_score, 3)
+    # Overdevelopment / thunderstorm risk from high CAPE
+    if cape > 1500:
+        max_score = min(max_score, 5)
+    elif cape > 1000:
+        max_score = min(max_score, 7)
     return min(score, max_score)
 
 
@@ -372,6 +380,7 @@ def compute_thermal_score(
     total = apply_dealbreakers(
         total, lapse_rate, cloud_cover, precipitation,
         wind_speed_kt, wind_gusts_kt, temp_2m,
+        cape=cape,
         surface_lapse_rate=surface_lapse,
     )
 
