@@ -48,6 +48,10 @@ def test_surface_lapse_superadiabatic():
     """1.5°C/100m — strong surface heating, thermals initiating."""
     assert score_surface_lapse_rate(1.5) == 10
 
+def test_surface_lapse_boundary():
+    """0.5°C/100m — exact boundary between stable (0) and marginal (1)."""
+    assert score_surface_lapse_rate(0.5) == 1
+
 def test_surface_lapse_adiabatic():
     """1.0°C/100m — near DALR, convection developing."""
     assert score_surface_lapse_rate(1.0) == 7
@@ -298,6 +302,20 @@ def test_dealbreaker_inversion():
 def test_dealbreaker_overcast():
     score = apply_dealbreakers(5.0, lapse_rate=1.0, cloud_cover=90,
                                 precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15)
+    assert score <= 2
+
+def test_dealbreaker_surface_inversion():
+    """Surface lapse < 0.3 should cap to 1."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                surface_lapse_rate=0.2)
+    assert score <= 1
+
+def test_dealbreaker_surface_stable():
+    """Surface lapse < 0.5 should cap to 2."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                surface_lapse_rate=0.4)
     assert score <= 2
 
 def test_dealbreaker_rain():
