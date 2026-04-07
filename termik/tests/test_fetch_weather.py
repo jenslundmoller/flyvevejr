@@ -96,3 +96,58 @@ def test_build_api_url_includes_altitude_params():
     assert "temperature_80m" in url
     assert "temperature_180m" in url
     assert "boundary_layer_height" in url
+
+
+def test_process_point_hour_passes_multilevel_data():
+    """process_point_hour extracts multi-level data and includes in output."""
+    from termik.fetch_weather import process_point_hour
+
+    point = {
+        "id": "test", "lat": 55.5, "lon": 9.5,
+        "coast_distance_km": 50, "coast_direction_deg": 270,
+    }
+    hourly_data = {
+        "time": ["2026-06-15T12:00"],
+        "temperature_2m": [22.0],
+        "dewpoint_2m": [8.0],
+        "relative_humidity_2m": [40],
+        "temperature_850hPa": [5.0],
+        "temperature_700hPa": [0.0],
+        "wind_speed_10m": [10.0],
+        "wind_direction_10m": [270.0],
+        "wind_gusts_10m": [15.0],
+        "wind_speed_80m": [13.0],
+        "wind_direction_80m": [275.0],
+        "wind_speed_120m": [14.0],
+        "wind_direction_120m": [278.0],
+        "wind_speed_180m": [14.5],
+        "wind_direction_180m": [280.0],
+        "temperature_80m": [20.5],
+        "temperature_120m": [19.8],
+        "temperature_180m": [19.0],
+        "cloud_cover": [30.0],
+        "cloud_cover_low": [10.0],
+        "cloud_cover_mid": [20.0],
+        "cloud_cover_high": [5.0],
+        "precipitation": [0.0],
+        "shortwave_radiation": [700.0],
+        "cape": [300.0],
+        "surface_pressure": [1018.0],
+        "boundary_layer_height": [1200.0],
+        "wind_speed_850hPa": [20.0],
+        "wind_direction_850hPa": [290.0],
+    }
+
+    result = process_point_hour(point, hourly_data, 0, 6)
+
+    # Verify multi-level data in output
+    d = result["data"]
+    assert d["wind_speed_80m_kt"] == 13.0
+    assert d["wind_speed_120m_kt"] == 14.0
+    assert d["wind_speed_180m_kt"] == 14.5
+    assert d["wind_dir_80m"] == 275.0
+    assert d["temp_180m"] == 19.0
+    assert d["boundary_layer_height"] == 1200.0
+    assert d["surface_lapse_rate"] is not None
+    # Score should be computed (not 0 / "Data mangler")
+    assert result["score"] > 0

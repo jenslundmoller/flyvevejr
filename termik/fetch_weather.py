@@ -121,6 +121,22 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     pressure = hourly_data["surface_pressure"][hour_index]
     humidity = hourly_data["relative_humidity_2m"][hour_index]
 
+    # Multi-level wind
+    wind_speed_80m = hourly_data.get("wind_speed_80m", [None] * (hour_index + 1))[hour_index]
+    wind_dir_80m = hourly_data.get("wind_direction_80m", [None] * (hour_index + 1))[hour_index]
+    wind_speed_120m = hourly_data.get("wind_speed_120m", [None] * (hour_index + 1))[hour_index]
+    wind_dir_120m = hourly_data.get("wind_direction_120m", [None] * (hour_index + 1))[hour_index]
+    wind_speed_180m = hourly_data.get("wind_speed_180m", [None] * (hour_index + 1))[hour_index]
+    wind_dir_180m = hourly_data.get("wind_direction_180m", [None] * (hour_index + 1))[hour_index]
+
+    # Multi-level temperature
+    temp_80m = hourly_data.get("temperature_80m", [None] * (hour_index + 1))[hour_index]
+    temp_120m = hourly_data.get("temperature_120m", [None] * (hour_index + 1))[hour_index]
+    temp_180m = hourly_data.get("temperature_180m", [None] * (hour_index + 1))[hour_index]
+
+    # Boundary layer height
+    bl_height = hourly_data.get("boundary_layer_height", [None] * (hour_index + 1))[hour_index]
+
     # Check for critical None values
     critical = [temp, dewpoint, temp_850, cloud_cover, wind_speed, wind_dir, pressure]
     if any(v is None for v in critical):
@@ -144,6 +160,17 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
                 "precipitation": precipitation,
                 "pressure": pressure,
                 "relative_humidity": humidity,
+                "wind_speed_80m_kt": wind_speed_80m,
+                "wind_speed_120m_kt": wind_speed_120m,
+                "wind_speed_180m_kt": wind_speed_180m,
+                "wind_dir_80m": wind_dir_80m,
+                "wind_dir_120m": wind_dir_120m,
+                "wind_dir_180m": wind_dir_180m,
+                "temp_80m": temp_80m,
+                "temp_120m": temp_120m,
+                "temp_180m": temp_180m,
+                "boundary_layer_height": bl_height,
+                "surface_lapse_rate": None,
             },
         }
 
@@ -182,6 +209,10 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         coast_distance_km=point["coast_distance_km"],
         coast_direction_deg=point["coast_direction_deg"],
         month=month,
+        temp_180m=temp_180m,
+        wind_speed_80m_kt=wind_speed_80m,
+        wind_speed_180m_kt=wind_speed_180m,
+        boundary_layer_height=bl_height,
     )
 
     comment = generate_comment(
@@ -218,6 +249,17 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             "precipitation": precipitation,
             "pressure": pressure,
             "relative_humidity": humidity,
+            "wind_speed_80m_kt": wind_speed_80m,
+            "wind_speed_120m_kt": wind_speed_120m,
+            "wind_speed_180m_kt": wind_speed_180m,
+            "wind_dir_80m": wind_dir_80m,
+            "wind_dir_120m": wind_dir_120m,
+            "wind_dir_180m": wind_dir_180m,
+            "temp_80m": temp_80m,
+            "temp_120m": temp_120m,
+            "temp_180m": temp_180m,
+            "boundary_layer_height": bl_height,
+            "surface_lapse_rate": result.get("surface_lapse_rate"),
         },
     }
 
