@@ -128,3 +128,36 @@ def test_comment_dry_thermal():
         seabreeze_risk=0, pressure_trend=0, score=5.0,
     )
     assert "ørtermik" in comment.lower() or "kondensation" in comment.lower()
+
+
+def test_comment_warns_wind_shear():
+    """High wind shear should produce a warning."""
+    comment = generate_comment(
+        lapse_rate=1.1, spread=10, skybase_m=1250, wind_kt=8, wind_gusts_kt=14,
+        cloud_cover=30, cape=300, precipitation=0,
+        seabreeze_risk=0, pressure_trend=0, score=7.0,
+        wind_shear_kt=18,
+    )
+    assert "vindforskydning" in comment.lower() or "shear" in comment.lower()
+
+
+def test_comment_shows_bl_height():
+    """BL height should appear in comments when conditions are decent."""
+    comment = generate_comment(
+        lapse_rate=1.0, spread=10, skybase_m=1250, wind_kt=10, wind_gusts_kt=15,
+        cloud_cover=30, cape=200, precipitation=0,
+        seabreeze_risk=0, pressure_trend=0, score=7.0,
+        boundary_layer_height=1500,
+    )
+    assert "1500" in comment
+
+
+def test_comment_no_new_params_still_works():
+    """Existing calls without new params still work."""
+    comment = generate_comment(
+        lapse_rate=1.0, spread=10, skybase_m=1250, wind_kt=10, wind_gusts_kt=15,
+        cloud_cover=30, cape=200, precipitation=0,
+        seabreeze_risk=0, pressure_trend=0, score=7.0,
+    )
+    assert isinstance(comment, str)
+    assert len(comment) > 10

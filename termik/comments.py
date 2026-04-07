@@ -13,6 +13,9 @@ def generate_comment(
     seabreeze_risk: float,
     pressure_trend: float,
     score: float,
+    # Multi-level diagnostics (optional)
+    wind_shear_kt: float | None = None,
+    boundary_layer_height: float | None = None,
 ) -> str:
     """Build a 2-3 sentence Danish comment explaining the thermal forecast.
 
@@ -92,6 +95,18 @@ def generate_comment(
     # Low spread warning
     if 3 <= spread < 5 and lapse_rate >= 0.65:
         extras.append("Risiko for udkagning pga. lav spread.")
+
+    # Wind shear warning (from multi-level data)
+    if wind_shear_kt is not None and wind_shear_kt > 15:
+        extras.append(f"Kraftig vindforskydning ({int(wind_shear_kt)} kt) — brudt termik.")
+    elif wind_shear_kt is not None and wind_shear_kt > 12:
+        extras.append("Moderat vindforskydning — termik kan være tiltet.")
+
+    # BL height (informational, when conditions are decent)
+    if boundary_layer_height is not None and score >= 3:
+        bl_m = round(boundary_layer_height)
+        bl_ft = round(bl_m * 3.281)
+        extras.append(f"Blandingslag op til {bl_m}m ({bl_ft} ft).")
 
     # Pick up to 2 extras, staying within ~200 chars total
     max_extras = 2
