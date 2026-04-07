@@ -12,7 +12,7 @@ def test_build_api_url_single():
     url = build_api_url(points)
     assert "latitude=55.92" in url
     assert "longitude=9.07" in url
-    assert "forecast_days=3" in url
+    assert "forecast_days=7" in url
     assert "temperature_2m" in url
     assert "temperature_850hPa" in url
     assert "wind_speed_unit=kn" in url
