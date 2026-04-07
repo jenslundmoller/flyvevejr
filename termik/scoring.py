@@ -185,6 +185,26 @@ def calculate_seabreeze_penalty(
     return round(seabreeze_risk * distance_factor, 1)
 
 
+def calculate_wind_shear_modifier(wind_10m_kt: float, wind_80m_kt: float) -> float:
+    """Calculate thermal quality modifier from low-level wind shear.
+
+    Based on RASP B/S ratio concept: thermals need to overcome shear
+    to remain organized. Shear is concentrated in the surface layer (0-100m).
+    """
+    # Both winds calm — shear measurement not meaningful
+    if wind_10m_kt <= 3 and wind_80m_kt <= 3:
+        return 0.0
+    shear = abs(wind_80m_kt - wind_10m_kt)
+    if shear < 5:
+        return 0.5   # Well-organized thermals
+    elif shear < 12:
+        return 0.0   # Normal shear
+    elif shear < 20:
+        return -0.5  # Thermals tilted/broken
+    else:
+        return -1.0  # Severe shear, thermals destroyed
+
+
 def calculate_modifiers(
     cape: float, pressure_trend: float, temp_850hpa_trend: float
 ) -> float:

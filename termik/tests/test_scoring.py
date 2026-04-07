@@ -10,6 +10,7 @@ from termik.scoring import (
     score_precipitation,
     calculate_seabreeze_penalty,
     calculate_modifiers,
+    calculate_wind_shear_modifier,
     apply_dealbreakers,
     compute_thermal_score,
     get_score_label,
@@ -240,6 +241,30 @@ def test_modifiers_cold_advection():
 def test_modifiers_combined():
     mods = calculate_modifiers(cape=500, pressure_trend=2.0, temp_850hpa_trend=-1.5)
     assert mods == 1.5  # 0.5 + 0.5 + 0.5
+
+
+# --- Wind shear modifier (10m vs 80m) ---
+# Low shear = well-organized thermals. High shear = broken thermals.
+
+def test_wind_shear_low():
+    """3kt difference — well-organized thermals, bonus."""
+    assert calculate_wind_shear_modifier(10, 13) == 0.5
+
+def test_wind_shear_moderate():
+    """8kt difference — normal, no modifier."""
+    assert calculate_wind_shear_modifier(10, 18) == 0.0
+
+def test_wind_shear_high():
+    """16kt difference — thermals tilted/broken, penalty."""
+    assert calculate_wind_shear_modifier(8, 24) == -0.5
+
+def test_wind_shear_extreme():
+    """22kt difference — severe shear, strong penalty."""
+    assert calculate_wind_shear_modifier(5, 27) == -1.0
+
+def test_wind_shear_calm():
+    """Both calm — no meaningful shear assessment."""
+    assert calculate_wind_shear_modifier(0, 2) == 0.0
 
 
 # --- Dealbreakers ---
