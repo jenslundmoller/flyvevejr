@@ -65,7 +65,12 @@ def fetch_batch(points: list[dict], max_retries: int = 3) -> list[dict]:
                 and e.response is not None
                 and e.response.status_code >= 500
             )
-            is_transient = is_server_error or not isinstance(e, requests.exceptions.HTTPError)
+            is_rate_limited = (
+                isinstance(e, requests.exceptions.HTTPError)
+                and e.response is not None
+                and e.response.status_code == 429
+            )
+            is_transient = is_server_error or is_rate_limited or not isinstance(e, requests.exceptions.HTTPError)
             if not is_transient or attempt == max_retries:
                 raise
             wait = 2 ** attempt * 5  # 5s, 10s, 20s
@@ -280,7 +285,9 @@ def process_all_points() -> dict:
     all_results = []
 
     # Batch points
-    for i in range(0, len(ALL_POINTS), API_BATCH_SIZE):
+    for batch_num, i in enumerate(range(0, len(ALL_POINTS), API_BATCH_SIZE)):
+        if batch_num > 0:
+            time.sleep(2)  # Avoid rate limiting between batches
         batch_points = ALL_POINTS[i : i + API_BATCH_SIZE]
         batch_data = fetch_batch(batch_points)
 
