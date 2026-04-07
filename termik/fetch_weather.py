@@ -73,7 +73,7 @@ def fetch_batch(points: list[dict], max_retries: int = 3) -> list[dict]:
             is_transient = is_server_error or is_rate_limited or not isinstance(e, requests.exceptions.HTTPError)
             if not is_transient or attempt == max_retries:
                 raise
-            wait = 2 ** attempt * 5  # 5s, 10s, 20s
+            wait = 2 ** attempt * 15  # 15s, 30s, 60s
             print(f"API request failed ({e}), retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
             time.sleep(wait)
 
@@ -283,13 +283,21 @@ def process_all_points() -> dict:
     for each group, processes every hour, and returns the full output dict.
     """
     all_results = []
+    failed_batches = 0
+    total_batches = (len(ALL_POINTS) + API_BATCH_SIZE - 1) // API_BATCH_SIZE
 
     # Batch points
     for batch_num, i in enumerate(range(0, len(ALL_POINTS), API_BATCH_SIZE)):
         if batch_num > 0:
-            time.sleep(2)  # Avoid rate limiting between batches
+            time.sleep(5)  # Avoid rate limiting between batches
         batch_points = ALL_POINTS[i : i + API_BATCH_SIZE]
-        batch_data = fetch_batch(batch_points)
+        try:
+            batch_data = fetch_batch(batch_points)
+        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout) as e:
+            failed_batches += 1
+            print(f"Batch {batch_num + 1}/{total_batches} failed permanently: {e}")
+            continue
 
         for point, hourly_response in zip(batch_points, batch_data):
             hourly_data = hourly_response["hourly"]
@@ -314,6 +322,10 @@ def process_all_points() -> dict:
                     "hours": hours,
                 }
             )
+
+    if failed_batches:
+        print(f"WARNING: {failed_batches}/{total_batches} batches failed. "
+              f"Output contains {len(all_results)} of {len(ALL_POINTS)} points.")
 
     return {
         "generated": datetime.now().isoformat(),
@@ -361,6 +373,9 @@ def main():
     print(f"Termik forecast starting at {datetime.now().isoformat()}")
     start = time.time()
     data = process_all_points()
+    if not data["points"]:
+        print("ERROR: All batches failed, no data to write.")
+        raise SystemExit(1)
     write_output(data)
     elapsed = time.time() - start
     print(f"Done. {len(data['points'])} points processed in {elapsed:.1f}s")
