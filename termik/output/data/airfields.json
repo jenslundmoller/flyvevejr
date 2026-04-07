@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-07T16:01:46.451890",
+  "generated": "2026-04-07T16:23:31.876840",
   "forecast_days": 7,
   "points": [
     {
@@ -115472,11 +115472,11 @@
             "wind_dir_80m": 118,
             "wind_dir_120m": 144,
             "wind_dir_180m": 144,
-            "temp_80m": 5.6,
-            "temp_120m": 4.8,
-            "temp_180m": 4.0,
+            "temp_80m": 5.1,
+            "temp_120m": 4.3,
+            "temp_180m": 3.5,
             "boundary_layer_height": 1015.0,
-            "surface_lapse_rate": 2.7
+            "surface_lapse_rate": 2.98
           }
         },
         {
@@ -115505,11 +115505,11 @@
             "wind_dir_80m": 124,
             "wind_dir_120m": 144,
             "wind_dir_180m": 144,
-            "temp_80m": 6.7,
-            "temp_120m": 5.9,
-            "temp_180m": 5.1,
+            "temp_80m": 5.7,
+            "temp_120m": 4.9,
+            "temp_180m": 4.1,
             "boundary_layer_height": 1035.0,
-            "surface_lapse_rate": 2.3
+            "surface_lapse_rate": 2.87
           }
         },
         {
@@ -115538,11 +115538,11 @@
             "wind_dir_80m": 126,
             "wind_dir_120m": 143,
             "wind_dir_180m": 143,
-            "temp_80m": 7.4,
-            "temp_120m": 6.6,
-            "temp_180m": 5.8,
+            "temp_80m": 6.1,
+            "temp_120m": 5.3,
+            "temp_180m": 4.5,
             "boundary_layer_height": 1035.0,
-            "surface_lapse_rate": 2.13
+            "surface_lapse_rate": 2.87
           }
         },
         {
@@ -115571,11 +115571,11 @@
             "wind_dir_80m": 129,
             "wind_dir_120m": 142,
             "wind_dir_180m": 142,
-            "temp_80m": 7.7,
-            "temp_120m": 7.0,
-            "temp_180m": 6.2,
+            "temp_80m": 6.4,
+            "temp_120m": 5.7,
+            "temp_180m": 4.8,
             "boundary_layer_height": 1025.0,
-            "surface_lapse_rate": 2.08
+            "surface_lapse_rate": 2.87
           }
         },
         {
@@ -115604,11 +115604,11 @@
             "wind_dir_80m": 134,
             "wind_dir_120m": 140,
             "wind_dir_180m": 139,
-            "temp_80m": 7.4,
-            "temp_120m": 6.7,
-            "temp_180m": 5.9,
+            "temp_80m": 6.7,
+            "temp_120m": 6.0,
+            "temp_180m": 5.1,
             "boundary_layer_height": 1000.0,
-            "surface_lapse_rate": 2.25
+            "surface_lapse_rate": 2.7
           }
         },
         {
@@ -115637,11 +115637,11 @@
             "wind_dir_80m": 137,
             "wind_dir_120m": 136,
             "wind_dir_180m": 135,
-            "temp_80m": 7.0,
-            "temp_120m": 6.3,
-            "temp_180m": 5.5,
+            "temp_80m": 6.8,
+            "temp_120m": 6.1,
+            "temp_180m": 5.2,
             "boundary_layer_height": 950.0,
-            "surface_lapse_rate": 2.42
+            "surface_lapse_rate": 2.58
           }
         },
         {
@@ -115670,11 +115670,11 @@
             "wind_dir_80m": 136,
             "wind_dir_120m": 130,
             "wind_dir_180m": 130,
-            "temp_80m": 6.5,
-            "temp_120m": 5.8,
-            "temp_180m": 5.0,
+            "temp_80m": 6.8,
+            "temp_120m": 6.1,
+            "temp_180m": 5.2,
             "boundary_layer_height": 865.0,
-            "surface_lapse_rate": 2.47
+            "surface_lapse_rate": 2.36
           }
         },
         {
@@ -115703,11 +115703,11 @@
             "wind_dir_80m": 131,
             "wind_dir_120m": 125,
             "wind_dir_180m": 125,
-            "temp_80m": 5.9,
-            "temp_120m": 5.2,
-            "temp_180m": 4.4,
+            "temp_80m": 6.6,
+            "temp_120m": 5.9,
+            "temp_180m": 5.0,
             "boundary_layer_height": 755.0,
-            "surface_lapse_rate": 2.53
+            "surface_lapse_rate": 2.19
           }
         },
         {
@@ -115736,11 +115736,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 120,
             "wind_dir_180m": 121,
-            "temp_80m": 5.3,
-            "temp_120m": 4.6,
-            "temp_180m": 3.8,
+            "temp_80m": 6.3,
+            "temp_120m": 5.6,
+            "temp_180m": 4.8,
             "boundary_layer_height": 650.0,
-            "surface_lapse_rate": 2.42
+            "surface_lapse_rate": 1.85
           }
         },
         {
@@ -115769,11 +115769,11 @@
             "wind_dir_80m": 127,
             "wind_dir_120m": 117,
             "wind_dir_180m": 120,
-            "temp_80m": 4.6,
-            "temp_120m": 3.9,
-            "temp_180m": 3.1,
+            "temp_80m": 5.9,
+            "temp_120m": 5.3,
+            "temp_180m": 4.5,
             "boundary_layer_height": 550.0,
-            "surface_lapse_rate": 2.25
+            "surface_lapse_rate": 1.46
           }
         },
         {
@@ -115802,11 +115802,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 115,
             "wind_dir_180m": 119,
-            "temp_80m": 3.8,
-            "temp_120m": 3.1,
-            "temp_180m": 2.3,
+            "temp_80m": 5.4,
+            "temp_120m": 4.9,
+            "temp_180m": 4.1,
             "boundary_layer_height": 455.0,
-            "surface_lapse_rate": 1.97
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -115835,11 +115835,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 114,
             "wind_dir_180m": 120,
-            "temp_80m": 3.2,
-            "temp_120m": 2.5,
-            "temp_180m": 1.7,
+            "temp_80m": 5.0,
+            "temp_120m": 4.5,
+            "temp_180m": 3.8,
             "boundary_layer_height": 380.0,
-            "surface_lapse_rate": 1.74
+            "surface_lapse_rate": 0.56
           }
         },
         {
@@ -115868,11 +115868,11 @@
             "wind_dir_80m": 126,
             "wind_dir_120m": 115,
             "wind_dir_180m": 123,
-            "temp_80m": 2.9,
-            "temp_120m": 2.2,
-            "temp_180m": 1.4,
+            "temp_80m": 4.7,
+            "temp_120m": 4.3,
+            "temp_180m": 3.6,
             "boundary_layer_height": 325.0,
-            "surface_lapse_rate": 1.69
+            "surface_lapse_rate": 0.45
           }
         },
         {
@@ -115901,11 +115901,11 @@
             "wind_dir_80m": 123,
             "wind_dir_120m": 117,
             "wind_dir_180m": 128,
-            "temp_80m": 2.9,
-            "temp_120m": 2.2,
-            "temp_180m": 1.4,
+            "temp_80m": 4.4,
+            "temp_120m": 4.1,
+            "temp_180m": 3.6,
             "boundary_layer_height": 290.0,
-            "surface_lapse_rate": 1.69
+            "surface_lapse_rate": 0.45
           }
         },
         {
@@ -115934,11 +115934,11 @@
             "wind_dir_80m": 120,
             "wind_dir_120m": 120,
             "wind_dir_180m": 133,
-            "temp_80m": 2.9,
-            "temp_120m": 2.2,
-            "temp_180m": 1.4,
+            "temp_80m": 4.2,
+            "temp_120m": 3.9,
+            "temp_180m": 3.5,
             "boundary_layer_height": 285.0,
-            "surface_lapse_rate": 1.8
+            "surface_lapse_rate": 0.62
           }
         },
         {
@@ -115967,11 +115967,11 @@
             "wind_dir_80m": 119,
             "wind_dir_120m": 127,
             "wind_dir_180m": 138,
-            "temp_80m": 3.0,
-            "temp_120m": 2.3,
-            "temp_180m": 1.6,
+            "temp_80m": 4.0,
+            "temp_120m": 3.7,
+            "temp_180m": 3.4,
             "boundary_layer_height": 325.0,
-            "surface_lapse_rate": 1.85
+            "surface_lapse_rate": 0.84
           }
         },
         {
@@ -116000,11 +116000,11 @@
             "wind_dir_80m": 117,
             "wind_dir_120m": 135,
             "wind_dir_180m": 143,
-            "temp_80m": 3.1,
-            "temp_120m": 2.5,
-            "temp_180m": 1.9,
+            "temp_80m": 3.8,
+            "temp_120m": 3.5,
+            "temp_180m": 3.4,
             "boundary_layer_height": 390.0,
-            "surface_lapse_rate": 2.02
+            "surface_lapse_rate": 1.18
           }
         },
         {
@@ -116033,11 +116033,11 @@
             "wind_dir_80m": 114,
             "wind_dir_120m": 138,
             "wind_dir_180m": 145,
-            "temp_80m": 3.2,
-            "temp_120m": 2.7,
-            "temp_180m": 2.1,
+            "temp_80m": 3.7,
+            "temp_120m": 3.4,
+            "temp_180m": 3.3,
             "boundary_layer_height": 450.0,
-            "surface_lapse_rate": 2.13
+            "surface_lapse_rate": 1.46
           }
         },
         {
@@ -116066,11 +116066,11 @@
             "wind_dir_80m": 108,
             "wind_dir_120m": 137,
             "wind_dir_180m": 142,
-            "temp_80m": 3.2,
-            "temp_120m": 2.7,
-            "temp_180m": 2.2,
+            "temp_80m": 3.6,
+            "temp_120m": 3.3,
+            "temp_180m": 3.1,
             "boundary_layer_height": 485.0,
-            "surface_lapse_rate": 2.13
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -116099,11 +116099,11 @@
             "wind_dir_80m": 102,
             "wind_dir_120m": 133,
             "wind_dir_180m": 138,
-            "temp_80m": 3.1,
-            "temp_120m": 2.7,
-            "temp_180m": 2.2,
+            "temp_80m": 3.6,
+            "temp_120m": 3.1,
+            "temp_180m": 3.0,
             "boundary_layer_height": 505.0,
-            "surface_lapse_rate": 2.13
+            "surface_lapse_rate": 1.69
           }
         },
         {
@@ -116132,11 +116132,11 @@
             "wind_dir_80m": 95,
             "wind_dir_120m": 130,
             "wind_dir_180m": 134,
-            "temp_80m": 3.3,
-            "temp_120m": 2.8,
-            "temp_180m": 2.3,
+            "temp_80m": 3.7,
+            "temp_120m": 3.2,
+            "temp_180m": 2.9,
             "boundary_layer_height": 520.0,
-            "surface_lapse_rate": 2.02
+            "surface_lapse_rate": 1.69
           }
         },
         {
@@ -116165,11 +116165,11 @@
             "wind_dir_80m": 90,
             "wind_dir_120m": 126,
             "wind_dir_180m": 132,
-            "temp_80m": 3.8,
-            "temp_120m": 3.2,
-            "temp_180m": 2.7,
+            "temp_80m": 4.1,
+            "temp_120m": 3.5,
+            "temp_180m": 3.0,
             "boundary_layer_height": 535.0,
-            "surface_lapse_rate": 2.19
+            "surface_lapse_rate": 2.02
           }
         },
         {
@@ -116198,11 +116198,11 @@
             "wind_dir_80m": 72,
             "wind_dir_120m": 130,
             "wind_dir_180m": 134,
-            "temp_80m": 4.6,
-            "temp_120m": 3.8,
-            "temp_180m": 3.1,
+            "temp_80m": 4.7,
+            "temp_120m": 4.0,
+            "temp_180m": 3.3,
             "boundary_layer_height": 690.0,
-            "surface_lapse_rate": 2.42
+            "surface_lapse_rate": 2.3
           }
         },
         {
@@ -116232,7 +116232,7 @@
             "wind_dir_120m": 134,
             "wind_dir_180m": 136,
             "temp_80m": 5.3,
-            "temp_120m": 4.5,
+            "temp_120m": 4.6,
             "temp_180m": 3.7,
             "boundary_layer_height": 870.0,
             "surface_lapse_rate": 2.53
@@ -116264,8 +116264,8 @@
             "wind_dir_80m": 292,
             "wind_dir_120m": 137,
             "wind_dir_180m": 138,
-            "temp_80m": 6.0,
-            "temp_120m": 5.2,
+            "temp_80m": 6.1,
+            "temp_120m": 5.4,
             "temp_180m": 4.4,
             "boundary_layer_height": 1040.0,
             "surface_lapse_rate": 2.64
@@ -116297,11 +116297,11 @@
             "wind_dir_80m": 293,
             "wind_dir_120m": 139,
             "wind_dir_180m": 139,
-            "temp_80m": 6.8,
-            "temp_120m": 6.0,
-            "temp_180m": 5.1,
+            "temp_80m": 6.9,
+            "temp_120m": 6.2,
+            "temp_180m": 5.3,
             "boundary_layer_height": 1170.0,
-            "surface_lapse_rate": 2.64
+            "surface_lapse_rate": 2.53
           }
         },
         {
@@ -116330,11 +116330,11 @@
             "wind_dir_80m": 299,
             "wind_dir_120m": 140,
             "wind_dir_180m": 140,
-            "temp_80m": 7.3,
-            "temp_120m": 6.6,
-            "temp_180m": 5.7,
+            "temp_80m": 7.5,
+            "temp_120m": 6.8,
+            "temp_180m": 5.9,
             "boundary_layer_height": 1230.0,
-            "surface_lapse_rate": 2.47
+            "surface_lapse_rate": 2.36
           }
         },
         {
@@ -116363,11 +116363,11 @@
             "wind_dir_80m": 311,
             "wind_dir_120m": 140,
             "wind_dir_180m": 140,
-            "temp_80m": 7.5,
+            "temp_80m": 7.7,
             "temp_120m": 6.9,
-            "temp_180m": 5.9,
+            "temp_180m": 6.1,
             "boundary_layer_height": 1205.0,
-            "surface_lapse_rate": 2.42
+            "surface_lapse_rate": 2.3
           }
         },
         {
@@ -116397,10 +116397,10 @@
             "wind_dir_120m": 139,
             "wind_dir_180m": 139,
             "temp_80m": 7.6,
-            "temp_120m": 6.9,
-            "temp_180m": 6.0,
+            "temp_120m": 6.8,
+            "temp_180m": 5.9,
             "boundary_layer_height": 1110.0,
-            "surface_lapse_rate": 2.3
+            "surface_lapse_rate": 2.36
           }
         },
         {
@@ -116429,11 +116429,11 @@
             "wind_dir_80m": 339,
             "wind_dir_120m": 137,
             "wind_dir_180m": 137,
-            "temp_80m": 7.7,
-            "temp_120m": 7.0,
-            "temp_180m": 6.1,
+            "temp_80m": 7.4,
+            "temp_120m": 6.6,
+            "temp_180m": 5.8,
             "boundary_layer_height": 980.0,
-            "surface_lapse_rate": 2.02
+            "surface_lapse_rate": 2.19
           }
         },
         {
@@ -116462,11 +116462,11 @@
             "wind_dir_80m": 3,
             "wind_dir_120m": 135,
             "wind_dir_180m": 135,
-            "temp_80m": 8.0,
-            "temp_120m": 7.3,
-            "temp_180m": 6.4,
+            "temp_80m": 7.2,
+            "temp_120m": 6.4,
+            "temp_180m": 5.7,
             "boundary_layer_height": 830.0,
-            "surface_lapse_rate": 1.63
+            "surface_lapse_rate": 2.02
           }
         },
         {
@@ -116495,11 +116495,11 @@
             "wind_dir_80m": 54,
             "wind_dir_120m": 132,
             "wind_dir_180m": 133,
-            "temp_80m": 8.3,
-            "temp_120m": 7.5,
-            "temp_180m": 6.7,
+            "temp_80m": 7.0,
+            "temp_120m": 6.2,
+            "temp_180m": 5.5,
             "boundary_layer_height": 695.0,
-            "surface_lapse_rate": 1.24
+            "surface_lapse_rate": 1.91
           }
         },
         {
@@ -116528,11 +116528,11 @@
             "wind_dir_80m": 88,
             "wind_dir_120m": 130,
             "wind_dir_180m": 132,
-            "temp_80m": 8.3,
-            "temp_120m": 7.6,
-            "temp_180m": 6.8,
+            "temp_80m": 6.7,
+            "temp_120m": 6.0,
+            "temp_180m": 5.3,
             "boundary_layer_height": 595.0,
-            "surface_lapse_rate": 0.9
+            "surface_lapse_rate": 1.74
           }
         },
         {
@@ -116561,11 +116561,11 @@
             "wind_dir_80m": 106,
             "wind_dir_120m": 128,
             "wind_dir_180m": 131,
-            "temp_80m": 7.8,
-            "temp_120m": 7.3,
-            "temp_180m": 6.6,
+            "temp_80m": 6.2,
+            "temp_120m": 5.7,
+            "temp_180m": 5.1,
             "boundary_layer_height": 530.0,
-            "surface_lapse_rate": 0.84
+            "surface_lapse_rate": 1.69
           }
         },
         {
@@ -116594,11 +116594,11 @@
             "wind_dir_80m": 123,
             "wind_dir_120m": 127,
             "wind_dir_180m": 130,
-            "temp_80m": 7.0,
-            "temp_120m": 6.8,
-            "temp_180m": 6.3,
+            "temp_80m": 5.7,
+            "temp_120m": 5.3,
+            "temp_180m": 4.9,
             "boundary_layer_height": 480.0,
-            "surface_lapse_rate": 0.79
+            "surface_lapse_rate": 1.57
           }
         },
         {
@@ -116627,11 +116627,11 @@
             "wind_dir_80m": 129,
             "wind_dir_120m": 126,
             "wind_dir_180m": 129,
-            "temp_80m": 6.2,
-            "temp_120m": 6.2,
-            "temp_180m": 5.8,
+            "temp_80m": 5.2,
+            "temp_120m": 5.0,
+            "temp_180m": 4.7,
             "boundary_layer_height": 440.0,
-            "surface_lapse_rate": 0.79
+            "surface_lapse_rate": 1.4
           }
         }
       ]
@@ -121026,11 +121026,11 @@
             "wind_dir_80m": 119,
             "wind_dir_120m": 144,
             "wind_dir_180m": 144,
-            "temp_80m": 5.6,
-            "temp_120m": 4.8,
-            "temp_180m": 4.0,
+            "temp_80m": 5.2,
+            "temp_120m": 4.4,
+            "temp_180m": 3.6,
             "boundary_layer_height": 1015.0,
-            "surface_lapse_rate": 2.7
+            "surface_lapse_rate": 2.92
           }
         },
         {
@@ -121059,11 +121059,11 @@
             "wind_dir_80m": 124,
             "wind_dir_120m": 144,
             "wind_dir_180m": 144,
-            "temp_80m": 6.6,
-            "temp_120m": 5.8,
-            "temp_180m": 5.0,
+            "temp_80m": 5.7,
+            "temp_120m": 4.9,
+            "temp_180m": 4.1,
             "boundary_layer_height": 1035.0,
-            "surface_lapse_rate": 2.36
+            "surface_lapse_rate": 2.87
           }
         },
         {
@@ -121092,11 +121092,11 @@
             "wind_dir_80m": 126,
             "wind_dir_120m": 143,
             "wind_dir_180m": 143,
-            "temp_80m": 7.4,
-            "temp_120m": 6.6,
-            "temp_180m": 5.8,
+            "temp_80m": 6.2,
+            "temp_120m": 5.4,
+            "temp_180m": 4.6,
             "boundary_layer_height": 1035.0,
-            "surface_lapse_rate": 2.13
+            "surface_lapse_rate": 2.81
           }
         },
         {
@@ -121125,11 +121125,11 @@
             "wind_dir_80m": 129,
             "wind_dir_120m": 142,
             "wind_dir_180m": 142,
-            "temp_80m": 7.8,
-            "temp_120m": 7.1,
-            "temp_180m": 6.3,
+            "temp_80m": 6.5,
+            "temp_120m": 5.8,
+            "temp_180m": 4.9,
             "boundary_layer_height": 1025.0,
-            "surface_lapse_rate": 2.02
+            "surface_lapse_rate": 2.81
           }
         },
         {
@@ -121158,11 +121158,11 @@
             "wind_dir_80m": 134,
             "wind_dir_120m": 140,
             "wind_dir_180m": 139,
-            "temp_80m": 7.5,
-            "temp_120m": 6.8,
-            "temp_180m": 6.0,
+            "temp_80m": 6.8,
+            "temp_120m": 6.1,
+            "temp_180m": 5.2,
             "boundary_layer_height": 1000.0,
-            "surface_lapse_rate": 2.19
+            "surface_lapse_rate": 2.64
           }
         },
         {
@@ -121191,11 +121191,11 @@
             "wind_dir_80m": 137,
             "wind_dir_120m": 136,
             "wind_dir_180m": 135,
-            "temp_80m": 7.1,
-            "temp_120m": 6.4,
-            "temp_180m": 5.6,
+            "temp_80m": 6.9,
+            "temp_120m": 6.2,
+            "temp_180m": 5.3,
             "boundary_layer_height": 950.0,
-            "surface_lapse_rate": 2.36
+            "surface_lapse_rate": 2.53
           }
         },
         {
@@ -121224,11 +121224,11 @@
             "wind_dir_80m": 136,
             "wind_dir_120m": 130,
             "wind_dir_180m": 130,
-            "temp_80m": 6.6,
-            "temp_120m": 5.9,
-            "temp_180m": 5.1,
+            "temp_80m": 6.9,
+            "temp_120m": 6.2,
+            "temp_180m": 5.3,
             "boundary_layer_height": 865.0,
-            "surface_lapse_rate": 2.42
+            "surface_lapse_rate": 2.3
           }
         },
         {
@@ -121257,11 +121257,11 @@
             "wind_dir_80m": 131,
             "wind_dir_120m": 125,
             "wind_dir_180m": 125,
-            "temp_80m": 6.0,
-            "temp_120m": 5.3,
-            "temp_180m": 4.5,
+            "temp_80m": 6.7,
+            "temp_120m": 6.0,
+            "temp_180m": 5.1,
             "boundary_layer_height": 755.0,
-            "surface_lapse_rate": 2.47
+            "surface_lapse_rate": 2.13
           }
         },
         {
@@ -121290,11 +121290,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 120,
             "wind_dir_180m": 121,
-            "temp_80m": 5.4,
-            "temp_120m": 4.7,
-            "temp_180m": 3.9,
+            "temp_80m": 6.4,
+            "temp_120m": 5.7,
+            "temp_180m": 4.9,
             "boundary_layer_height": 650.0,
-            "surface_lapse_rate": 2.36
+            "surface_lapse_rate": 1.8
           }
         },
         {
@@ -121323,11 +121323,11 @@
             "wind_dir_80m": 127,
             "wind_dir_120m": 117,
             "wind_dir_180m": 120,
-            "temp_80m": 4.7,
-            "temp_120m": 4.0,
-            "temp_180m": 3.2,
+            "temp_80m": 6.0,
+            "temp_120m": 5.4,
+            "temp_180m": 4.6,
             "boundary_layer_height": 550.0,
-            "surface_lapse_rate": 2.19
+            "surface_lapse_rate": 1.4
           }
         },
         {
@@ -121356,11 +121356,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 115,
             "wind_dir_180m": 119,
-            "temp_80m": 3.9,
-            "temp_120m": 3.2,
-            "temp_180m": 2.4,
+            "temp_80m": 5.5,
+            "temp_120m": 5.0,
+            "temp_180m": 4.2,
             "boundary_layer_height": 455.0,
-            "surface_lapse_rate": 1.91
+            "surface_lapse_rate": 0.9
           }
         },
         {
@@ -121389,11 +121389,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 114,
             "wind_dir_180m": 120,
-            "temp_80m": 3.3,
-            "temp_120m": 2.6,
-            "temp_180m": 1.8,
+            "temp_80m": 5.1,
+            "temp_120m": 4.6,
+            "temp_180m": 3.9,
             "boundary_layer_height": 380.0,
-            "surface_lapse_rate": 1.69
+            "surface_lapse_rate": 0.51
           }
         },
         {
@@ -121422,11 +121422,11 @@
             "wind_dir_80m": 126,
             "wind_dir_120m": 115,
             "wind_dir_180m": 123,
-            "temp_80m": 3.0,
-            "temp_120m": 2.3,
-            "temp_180m": 1.5,
+            "temp_80m": 4.8,
+            "temp_120m": 4.4,
+            "temp_180m": 3.7,
             "boundary_layer_height": 325.0,
-            "surface_lapse_rate": 1.63
+            "surface_lapse_rate": 0.39
           }
         },
         {
@@ -121455,11 +121455,11 @@
             "wind_dir_80m": 123,
             "wind_dir_120m": 117,
             "wind_dir_180m": 128,
-            "temp_80m": 3.0,
-            "temp_120m": 2.3,
-            "temp_180m": 1.5,
+            "temp_80m": 4.5,
+            "temp_120m": 4.2,
+            "temp_180m": 3.7,
             "boundary_layer_height": 290.0,
-            "surface_lapse_rate": 1.63
+            "surface_lapse_rate": 0.39
           }
         },
         {
@@ -121488,11 +121488,11 @@
             "wind_dir_80m": 120,
             "wind_dir_120m": 120,
             "wind_dir_180m": 133,
-            "temp_80m": 3.0,
-            "temp_120m": 2.3,
-            "temp_180m": 1.5,
+            "temp_80m": 4.3,
+            "temp_120m": 4.0,
+            "temp_180m": 3.6,
             "boundary_layer_height": 285.0,
-            "surface_lapse_rate": 1.74
+            "surface_lapse_rate": 0.56
           }
         },
         {
@@ -121521,11 +121521,11 @@
             "wind_dir_80m": 119,
             "wind_dir_120m": 127,
             "wind_dir_180m": 138,
-            "temp_80m": 3.1,
-            "temp_120m": 2.4,
-            "temp_180m": 1.7,
+            "temp_80m": 4.1,
+            "temp_120m": 3.8,
+            "temp_180m": 3.5,
             "boundary_layer_height": 325.0,
-            "surface_lapse_rate": 1.8
+            "surface_lapse_rate": 0.79
           }
         },
         {
@@ -121554,11 +121554,11 @@
             "wind_dir_80m": 117,
             "wind_dir_120m": 135,
             "wind_dir_180m": 143,
-            "temp_80m": 3.2,
-            "temp_120m": 2.6,
-            "temp_180m": 2.0,
+            "temp_80m": 3.9,
+            "temp_120m": 3.6,
+            "temp_180m": 3.5,
             "boundary_layer_height": 390.0,
-            "surface_lapse_rate": 1.97
+            "surface_lapse_rate": 1.12
           }
         },
         {
@@ -121587,11 +121587,11 @@
             "wind_dir_80m": 114,
             "wind_dir_120m": 138,
             "wind_dir_180m": 145,
-            "temp_80m": 3.3,
-            "temp_120m": 2.8,
-            "temp_180m": 2.2,
+            "temp_80m": 3.8,
+            "temp_120m": 3.5,
+            "temp_180m": 3.4,
             "boundary_layer_height": 450.0,
-            "surface_lapse_rate": 2.08
+            "surface_lapse_rate": 1.4
           }
         },
         {
@@ -121620,11 +121620,11 @@
             "wind_dir_80m": 108,
             "wind_dir_120m": 137,
             "wind_dir_180m": 142,
-            "temp_80m": 3.3,
-            "temp_120m": 2.8,
-            "temp_180m": 2.3,
+            "temp_80m": 3.7,
+            "temp_120m": 3.4,
+            "temp_180m": 3.2,
             "boundary_layer_height": 485.0,
-            "surface_lapse_rate": 2.08
+            "surface_lapse_rate": 1.57
           }
         },
         {
@@ -121653,11 +121653,11 @@
             "wind_dir_80m": 102,
             "wind_dir_120m": 133,
             "wind_dir_180m": 138,
-            "temp_80m": 3.2,
-            "temp_120m": 2.8,
-            "temp_180m": 2.3,
+            "temp_80m": 3.7,
+            "temp_120m": 3.2,
+            "temp_180m": 3.1,
             "boundary_layer_height": 505.0,
-            "surface_lapse_rate": 2.08
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -121686,11 +121686,11 @@
             "wind_dir_80m": 95,
             "wind_dir_120m": 130,
             "wind_dir_180m": 134,
-            "temp_80m": 3.4,
-            "temp_120m": 2.9,
-            "temp_180m": 2.4,
+            "temp_80m": 3.8,
+            "temp_120m": 3.3,
+            "temp_180m": 3.0,
             "boundary_layer_height": 520.0,
-            "surface_lapse_rate": 1.97
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -121719,11 +121719,11 @@
             "wind_dir_80m": 90,
             "wind_dir_120m": 126,
             "wind_dir_180m": 132,
-            "temp_80m": 3.9,
-            "temp_120m": 3.3,
-            "temp_180m": 2.8,
+            "temp_80m": 4.2,
+            "temp_120m": 3.6,
+            "temp_180m": 3.1,
             "boundary_layer_height": 535.0,
-            "surface_lapse_rate": 2.13
+            "surface_lapse_rate": 1.97
           }
         },
         {
@@ -121752,11 +121752,11 @@
             "wind_dir_80m": 72,
             "wind_dir_120m": 130,
             "wind_dir_180m": 134,
-            "temp_80m": 4.7,
-            "temp_120m": 3.9,
-            "temp_180m": 3.2,
+            "temp_80m": 4.8,
+            "temp_120m": 4.1,
+            "temp_180m": 3.4,
             "boundary_layer_height": 690.0,
-            "surface_lapse_rate": 2.36
+            "surface_lapse_rate": 2.25
           }
         },
         {
@@ -121786,7 +121786,7 @@
             "wind_dir_120m": 134,
             "wind_dir_180m": 136,
             "temp_80m": 5.4,
-            "temp_120m": 4.6,
+            "temp_120m": 4.7,
             "temp_180m": 3.8,
             "boundary_layer_height": 870.0,
             "surface_lapse_rate": 2.47
@@ -121818,8 +121818,8 @@
             "wind_dir_80m": 292,
             "wind_dir_120m": 137,
             "wind_dir_180m": 138,
-            "temp_80m": 6.1,
-            "temp_120m": 5.3,
+            "temp_80m": 6.2,
+            "temp_120m": 5.5,
             "temp_180m": 4.5,
             "boundary_layer_height": 1040.0,
             "surface_lapse_rate": 2.58
@@ -121851,11 +121851,11 @@
             "wind_dir_80m": 293,
             "wind_dir_120m": 139,
             "wind_dir_180m": 139,
-            "temp_80m": 6.9,
-            "temp_120m": 6.1,
-            "temp_180m": 5.2,
+            "temp_80m": 7.0,
+            "temp_120m": 6.3,
+            "temp_180m": 5.4,
             "boundary_layer_height": 1170.0,
-            "surface_lapse_rate": 2.58
+            "surface_lapse_rate": 2.47
           }
         },
         {
@@ -121884,11 +121884,11 @@
             "wind_dir_80m": 299,
             "wind_dir_120m": 140,
             "wind_dir_180m": 140,
-            "temp_80m": 7.4,
-            "temp_120m": 6.7,
-            "temp_180m": 5.8,
+            "temp_80m": 7.6,
+            "temp_120m": 6.9,
+            "temp_180m": 6.0,
             "boundary_layer_height": 1230.0,
-            "surface_lapse_rate": 2.42
+            "surface_lapse_rate": 2.3
           }
         },
         {
@@ -121917,11 +121917,11 @@
             "wind_dir_80m": 311,
             "wind_dir_120m": 140,
             "wind_dir_180m": 140,
-            "temp_80m": 7.6,
+            "temp_80m": 7.8,
             "temp_120m": 7.0,
-            "temp_180m": 6.0,
+            "temp_180m": 6.2,
             "boundary_layer_height": 1205.0,
-            "surface_lapse_rate": 2.36
+            "surface_lapse_rate": 2.25
           }
         },
         {
@@ -121951,10 +121951,10 @@
             "wind_dir_120m": 139,
             "wind_dir_180m": 139,
             "temp_80m": 7.7,
-            "temp_120m": 7.0,
-            "temp_180m": 6.1,
+            "temp_120m": 6.9,
+            "temp_180m": 6.0,
             "boundary_layer_height": 1110.0,
-            "surface_lapse_rate": 2.25
+            "surface_lapse_rate": 2.3
           }
         },
         {
@@ -121983,11 +121983,11 @@
             "wind_dir_80m": 339,
             "wind_dir_120m": 137,
             "wind_dir_180m": 137,
-            "temp_80m": 7.8,
-            "temp_120m": 7.1,
-            "temp_180m": 6.2,
+            "temp_80m": 7.5,
+            "temp_120m": 6.7,
+            "temp_180m": 5.9,
             "boundary_layer_height": 980.0,
-            "surface_lapse_rate": 1.97
+            "surface_lapse_rate": 2.13
           }
         },
         {
@@ -122016,11 +122016,11 @@
             "wind_dir_80m": 3,
             "wind_dir_120m": 135,
             "wind_dir_180m": 135,
-            "temp_80m": 8.1,
-            "temp_120m": 7.4,
-            "temp_180m": 6.5,
+            "temp_80m": 7.3,
+            "temp_120m": 6.5,
+            "temp_180m": 5.8,
             "boundary_layer_height": 830.0,
-            "surface_lapse_rate": 1.57
+            "surface_lapse_rate": 1.97
           }
         },
         {
@@ -122049,11 +122049,11 @@
             "wind_dir_80m": 54,
             "wind_dir_120m": 132,
             "wind_dir_180m": 133,
-            "temp_80m": 8.4,
-            "temp_120m": 7.6,
-            "temp_180m": 6.8,
+            "temp_80m": 7.1,
+            "temp_120m": 6.3,
+            "temp_180m": 5.6,
             "boundary_layer_height": 695.0,
-            "surface_lapse_rate": 1.18
+            "surface_lapse_rate": 1.85
           }
         },
         {
@@ -122082,11 +122082,11 @@
             "wind_dir_80m": 88,
             "wind_dir_120m": 130,
             "wind_dir_180m": 132,
-            "temp_80m": 8.4,
-            "temp_120m": 7.7,
-            "temp_180m": 6.9,
+            "temp_80m": 6.8,
+            "temp_120m": 6.1,
+            "temp_180m": 5.4,
             "boundary_layer_height": 595.0,
-            "surface_lapse_rate": 0.84
+            "surface_lapse_rate": 1.69
           }
         },
         {
@@ -122115,11 +122115,11 @@
             "wind_dir_80m": 106,
             "wind_dir_120m": 128,
             "wind_dir_180m": 131,
-            "temp_80m": 7.9,
-            "temp_120m": 7.4,
-            "temp_180m": 6.7,
+            "temp_80m": 6.3,
+            "temp_120m": 5.8,
+            "temp_180m": 5.2,
             "boundary_layer_height": 530.0,
-            "surface_lapse_rate": 0.79
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -122148,11 +122148,11 @@
             "wind_dir_80m": 123,
             "wind_dir_120m": 127,
             "wind_dir_180m": 130,
-            "temp_80m": 7.1,
-            "temp_120m": 6.9,
-            "temp_180m": 6.4,
+            "temp_80m": 5.8,
+            "temp_120m": 5.4,
+            "temp_180m": 5.0,
             "boundary_layer_height": 480.0,
-            "surface_lapse_rate": 0.73
+            "surface_lapse_rate": 1.52
           }
         },
         {
@@ -122181,11 +122181,11 @@
             "wind_dir_80m": 129,
             "wind_dir_120m": 126,
             "wind_dir_180m": 129,
-            "temp_80m": 6.3,
-            "temp_120m": 6.3,
-            "temp_180m": 5.9,
+            "temp_80m": 5.3,
+            "temp_120m": 5.1,
+            "temp_180m": 4.8,
             "boundary_layer_height": 440.0,
-            "surface_lapse_rate": 0.73
+            "surface_lapse_rate": 1.35
           }
         }
       ]
@@ -126580,11 +126580,11 @@
             "wind_dir_80m": 119,
             "wind_dir_120m": 137,
             "wind_dir_180m": 139,
-            "temp_80m": 5.1,
-            "temp_120m": 4.3,
-            "temp_180m": 3.5,
+            "temp_80m": 4.9,
+            "temp_120m": 4.1,
+            "temp_180m": 3.3,
             "boundary_layer_height": 1015.0,
-            "surface_lapse_rate": 3.6
+            "surface_lapse_rate": 3.71
           }
         },
         {
@@ -126614,10 +126614,10 @@
             "wind_dir_120m": 143,
             "wind_dir_180m": 144,
             "temp_80m": 5.4,
-            "temp_120m": 4.7,
-            "temp_180m": 3.9,
+            "temp_120m": 4.6,
+            "temp_180m": 3.8,
             "boundary_layer_height": 1090.0,
-            "surface_lapse_rate": 3.76
+            "surface_lapse_rate": 3.82
           }
         },
         {
@@ -126646,11 +126646,11 @@
             "wind_dir_80m": 129,
             "wind_dir_120m": 147,
             "wind_dir_180m": 147,
-            "temp_80m": 5.5,
-            "temp_120m": 4.9,
-            "temp_180m": 4.1,
+            "temp_80m": 5.8,
+            "temp_120m": 5.1,
+            "temp_180m": 4.2,
             "boundary_layer_height": 1115.0,
-            "surface_lapse_rate": 3.82
+            "surface_lapse_rate": 3.76
           }
         },
         {
@@ -126679,11 +126679,11 @@
             "wind_dir_80m": 137,
             "wind_dir_120m": 144,
             "wind_dir_180m": 144,
-            "temp_80m": 5.4,
-            "temp_120m": 4.8,
-            "temp_180m": 4.0,
+            "temp_80m": 6.1,
+            "temp_120m": 5.4,
+            "temp_180m": 4.5,
             "boundary_layer_height": 1050.0,
-            "surface_lapse_rate": 3.82
+            "surface_lapse_rate": 3.54
           }
         },
         {
@@ -126712,11 +126712,11 @@
             "wind_dir_80m": 143,
             "wind_dir_120m": 137,
             "wind_dir_180m": 138,
-            "temp_80m": 5.4,
-            "temp_120m": 4.8,
-            "temp_180m": 3.9,
+            "temp_80m": 6.2,
+            "temp_120m": 5.5,
+            "temp_180m": 4.6,
             "boundary_layer_height": 935.0,
-            "surface_lapse_rate": 3.54
+            "surface_lapse_rate": 3.15
           }
         },
         {
@@ -126745,11 +126745,11 @@
             "wind_dir_80m": 148,
             "wind_dir_120m": 131,
             "wind_dir_180m": 132,
-            "temp_80m": 5.3,
-            "temp_120m": 4.7,
-            "temp_180m": 3.8,
+            "temp_80m": 6.2,
+            "temp_120m": 5.5,
+            "temp_180m": 4.6,
             "boundary_layer_height": 815.0,
-            "surface_lapse_rate": 3.26
+            "surface_lapse_rate": 2.81
           }
         },
         {
@@ -126778,11 +126778,11 @@
             "wind_dir_80m": 149,
             "wind_dir_120m": 129,
             "wind_dir_180m": 130,
-            "temp_80m": 5.2,
-            "temp_120m": 4.6,
-            "temp_180m": 3.7,
+            "temp_80m": 6.0,
+            "temp_120m": 5.3,
+            "temp_180m": 4.5,
             "boundary_layer_height": 700.0,
-            "surface_lapse_rate": 2.87
+            "surface_lapse_rate": 2.42
           }
         },
         {
@@ -126811,11 +126811,11 @@
             "wind_dir_80m": 147,
             "wind_dir_120m": 128,
             "wind_dir_180m": 130,
-            "temp_80m": 5.2,
-            "temp_120m": 4.5,
-            "temp_180m": 3.6,
+            "temp_80m": 5.7,
+            "temp_120m": 5.0,
+            "temp_180m": 4.3,
             "boundary_layer_height": 585.0,
-            "surface_lapse_rate": 2.36
+            "surface_lapse_rate": 1.97
           }
         },
         {
@@ -126844,11 +126844,11 @@
             "wind_dir_80m": 144,
             "wind_dir_120m": 127,
             "wind_dir_180m": 129,
-            "temp_80m": 5.1,
-            "temp_120m": 4.4,
-            "temp_180m": 3.6,
+            "temp_80m": 5.4,
+            "temp_120m": 4.8,
+            "temp_180m": 4.3,
             "boundary_layer_height": 495.0,
-            "surface_lapse_rate": 1.91
+            "surface_lapse_rate": 1.52
           }
         },
         {
@@ -126877,11 +126877,11 @@
             "wind_dir_80m": 143,
             "wind_dir_120m": 126,
             "wind_dir_180m": 128,
-            "temp_80m": 5.0,
-            "temp_120m": 4.3,
-            "temp_180m": 3.6,
+            "temp_80m": 5.3,
+            "temp_120m": 4.8,
+            "temp_180m": 4.6,
             "boundary_layer_height": 445.0,
-            "surface_lapse_rate": 1.52
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -126910,11 +126910,11 @@
             "wind_dir_80m": 144,
             "wind_dir_120m": 124,
             "wind_dir_180m": 127,
-            "temp_80m": 5.0,
-            "temp_120m": 4.3,
-            "temp_180m": 3.6,
+            "temp_80m": 5.2,
+            "temp_120m": 4.9,
+            "temp_180m": 5.0,
             "boundary_layer_height": 420.0,
-            "surface_lapse_rate": 1.18
+            "surface_lapse_rate": 0.39
           }
         },
         {
@@ -126943,11 +126943,11 @@
             "wind_dir_80m": 146,
             "wind_dir_120m": 123,
             "wind_dir_180m": 127,
-            "temp_80m": 4.9,
-            "temp_120m": 4.3,
-            "temp_180m": 3.7,
+            "temp_80m": 5.1,
+            "temp_120m": 5.0,
+            "temp_180m": 5.3,
             "boundary_layer_height": 395.0,
-            "surface_lapse_rate": 0.9
+            "surface_lapse_rate": 0.0
           }
         },
         {
@@ -126976,11 +126976,11 @@
             "wind_dir_80m": 149,
             "wind_dir_120m": 122,
             "wind_dir_180m": 128,
-            "temp_80m": 4.8,
-            "temp_120m": 4.3,
-            "temp_180m": 3.8,
+            "temp_80m": 5.1,
+            "temp_120m": 5.0,
+            "temp_180m": 5.4,
             "boundary_layer_height": 350.0,
-            "surface_lapse_rate": 0.73
+            "surface_lapse_rate": -0.17
           }
         },
         {
@@ -127009,11 +127009,11 @@
             "wind_dir_80m": 153,
             "wind_dir_120m": 121,
             "wind_dir_180m": 131,
-            "temp_80m": 4.8,
-            "temp_120m": 4.4,
-            "temp_180m": 3.9,
+            "temp_80m": 5.0,
+            "temp_120m": 5.0,
+            "temp_180m": 5.3,
             "boundary_layer_height": 305.0,
-            "surface_lapse_rate": 0.67
+            "surface_lapse_rate": -0.11
           }
         },
         {
@@ -127042,16 +127042,16 @@
             "wind_dir_80m": 162,
             "wind_dir_120m": 122,
             "wind_dir_180m": 134,
-            "temp_80m": 4.8,
-            "temp_120m": 4.5,
-            "temp_180m": 4.0,
+            "temp_80m": 5.0,
+            "temp_120m": 5.0,
+            "temp_180m": 5.3,
             "boundary_layer_height": 285.0,
-            "surface_lapse_rate": 0.67
+            "surface_lapse_rate": -0.06
           }
         },
         {
           "time": "2026-04-13T03:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Bøjet vind (faktor 2.1) — turbulent.",
           "data": {
@@ -127076,15 +127076,15 @@
             "wind_dir_120m": 126,
             "wind_dir_180m": 137,
             "temp_80m": 5.0,
-            "temp_120m": 4.6,
-            "temp_180m": 4.1,
+            "temp_120m": 5.0,
+            "temp_180m": 5.3,
             "boundary_layer_height": 300.0,
-            "surface_lapse_rate": 0.73
+            "surface_lapse_rate": 0.06
           }
         },
         {
           "time": "2026-04-13T04:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -127108,11 +127108,11 @@
             "wind_dir_80m": 228,
             "wind_dir_120m": 130,
             "wind_dir_180m": 139,
-            "temp_80m": 5.2,
-            "temp_120m": 4.6,
-            "temp_180m": 4.2,
+            "temp_80m": 4.9,
+            "temp_120m": 5.0,
+            "temp_180m": 5.3,
             "boundary_layer_height": 340.0,
-            "surface_lapse_rate": 0.84
+            "surface_lapse_rate": 0.22
           }
         },
         {
@@ -127141,11 +127141,11 @@
             "wind_dir_80m": 248,
             "wind_dir_120m": 133,
             "wind_dir_180m": 140,
-            "temp_80m": 5.4,
-            "temp_120m": 4.7,
-            "temp_180m": 4.3,
+            "temp_80m": 4.9,
+            "temp_120m": 5.0,
+            "temp_180m": 5.3,
             "boundary_layer_height": 375.0,
-            "surface_lapse_rate": 0.9
+            "surface_lapse_rate": 0.34
           }
         },
         {
@@ -127174,11 +127174,11 @@
             "wind_dir_80m": 262,
             "wind_dir_120m": 134,
             "wind_dir_180m": 140,
-            "temp_80m": 5.5,
+            "temp_80m": 4.8,
             "temp_120m": 4.8,
-            "temp_180m": 4.3,
+            "temp_180m": 5.2,
             "boundary_layer_height": 395.0,
-            "surface_lapse_rate": 0.96
+            "surface_lapse_rate": 0.45
           }
         },
         {
@@ -127207,11 +127207,11 @@
             "wind_dir_80m": 278,
             "wind_dir_120m": 133,
             "wind_dir_180m": 140,
-            "temp_80m": 5.5,
-            "temp_120m": 4.8,
-            "temp_180m": 4.1,
+            "temp_80m": 4.7,
+            "temp_120m": 4.5,
+            "temp_180m": 5.1,
             "boundary_layer_height": 405.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": 0.56
           }
         },
         {
@@ -127240,11 +127240,11 @@
             "wind_dir_80m": 292,
             "wind_dir_120m": 133,
             "wind_dir_180m": 139,
-            "temp_80m": 5.6,
-            "temp_120m": 4.9,
-            "temp_180m": 4.1,
+            "temp_80m": 4.8,
+            "temp_120m": 4.4,
+            "temp_180m": 5.0,
             "boundary_layer_height": 415.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": 0.62
           }
         },
         {
@@ -127273,11 +127273,11 @@
             "wind_dir_80m": 289,
             "wind_dir_120m": 130,
             "wind_dir_180m": 136,
-            "temp_80m": 5.7,
-            "temp_120m": 5.0,
-            "temp_180m": 4.1,
+            "temp_80m": 5.2,
+            "temp_120m": 4.7,
+            "temp_180m": 4.9,
             "boundary_layer_height": 565.0,
-            "surface_lapse_rate": 1.52
+            "surface_lapse_rate": 1.07
           }
         },
         {
@@ -127307,10 +127307,10 @@
             "wind_dir_120m": 131,
             "wind_dir_180m": 136,
             "temp_80m": 5.8,
-            "temp_120m": 5.1,
-            "temp_180m": 4.2,
+            "temp_120m": 5.2,
+            "temp_180m": 4.8,
             "boundary_layer_height": 735.0,
-            "surface_lapse_rate": 1.97
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -127339,11 +127339,11 @@
             "wind_dir_80m": 270,
             "wind_dir_120m": 132,
             "wind_dir_180m": 135,
-            "temp_80m": 6.0,
-            "temp_120m": 5.3,
-            "temp_180m": 4.4,
+            "temp_80m": 6.5,
+            "temp_120m": 5.8,
+            "temp_180m": 5.0,
             "boundary_layer_height": 920.0,
-            "surface_lapse_rate": 2.36
+            "surface_lapse_rate": 2.02
           }
         },
         {
@@ -127372,11 +127372,11 @@
             "wind_dir_80m": 275,
             "wind_dir_120m": 133,
             "wind_dir_180m": 135,
-            "temp_80m": 6.4,
-            "temp_120m": 5.7,
-            "temp_180m": 4.8,
+            "temp_80m": 7.3,
+            "temp_120m": 6.6,
+            "temp_180m": 5.7,
             "boundary_layer_height": 1090.0,
-            "surface_lapse_rate": 2.7
+            "surface_lapse_rate": 2.19
           }
         },
         {
@@ -127405,11 +127405,11 @@
             "wind_dir_80m": 297,
             "wind_dir_120m": 133,
             "wind_dir_180m": 135,
-            "temp_80m": 7.0,
-            "temp_120m": 6.3,
-            "temp_180m": 5.4,
+            "temp_80m": 8.2,
+            "temp_120m": 7.5,
+            "temp_180m": 6.6,
             "boundary_layer_height": 1220.0,
-            "surface_lapse_rate": 2.75
+            "surface_lapse_rate": 2.08
           }
         },
         {
@@ -127438,11 +127438,11 @@
             "wind_dir_80m": 351,
             "wind_dir_120m": 133,
             "wind_dir_180m": 134,
-            "temp_80m": 7.4,
-            "temp_120m": 6.7,
-            "temp_180m": 5.8,
+            "temp_80m": 8.9,
+            "temp_120m": 8.2,
+            "temp_180m": 7.3,
             "boundary_layer_height": 1270.0,
-            "surface_lapse_rate": 2.7
+            "surface_lapse_rate": 1.85
           }
         },
         {
@@ -127471,11 +127471,11 @@
             "wind_dir_80m": 6,
             "wind_dir_120m": 132,
             "wind_dir_180m": 133,
-            "temp_80m": 7.7,
-            "temp_120m": 7.0,
-            "temp_180m": 6.1,
+            "temp_80m": 9.2,
+            "temp_120m": 8.5,
+            "temp_180m": 7.6,
             "boundary_layer_height": 1225.0,
-            "surface_lapse_rate": 2.53
+            "surface_lapse_rate": 1.69
           }
         },
         {
@@ -127504,11 +127504,11 @@
             "wind_dir_80m": 12,
             "wind_dir_120m": 131,
             "wind_dir_180m": 132,
-            "temp_80m": 7.9,
-            "temp_120m": 7.1,
-            "temp_180m": 6.3,
+            "temp_80m": 9.3,
+            "temp_120m": 8.6,
+            "temp_180m": 7.7,
             "boundary_layer_height": 1100.0,
-            "surface_lapse_rate": 2.19
+            "surface_lapse_rate": 1.4
           }
         },
         {
@@ -127537,11 +127537,11 @@
             "wind_dir_80m": 21,
             "wind_dir_120m": 130,
             "wind_dir_180m": 131,
-            "temp_80m": 7.9,
-            "temp_120m": 7.2,
-            "temp_180m": 6.4,
+            "temp_80m": 9.2,
+            "temp_120m": 8.5,
+            "temp_180m": 7.6,
             "boundary_layer_height": 930.0,
-            "surface_lapse_rate": 1.8
+            "surface_lapse_rate": 1.12
           }
         },
         {
@@ -127570,11 +127570,11 @@
             "wind_dir_80m": 34,
             "wind_dir_120m": 128,
             "wind_dir_180m": 130,
-            "temp_80m": 7.7,
-            "temp_120m": 7.1,
-            "temp_180m": 6.5,
+            "temp_80m": 8.9,
+            "temp_120m": 8.2,
+            "temp_180m": 7.3,
             "boundary_layer_height": 750.0,
-            "surface_lapse_rate": 1.35
+            "surface_lapse_rate": 0.9
           }
         },
         {
@@ -127603,11 +127603,11 @@
             "wind_dir_80m": 42,
             "wind_dir_120m": 126,
             "wind_dir_180m": 130,
-            "temp_80m": 7.3,
-            "temp_120m": 6.8,
-            "temp_180m": 6.5,
+            "temp_80m": 8.4,
+            "temp_120m": 7.7,
+            "temp_180m": 6.8,
             "boundary_layer_height": 580.0,
-            "surface_lapse_rate": 0.96
+            "surface_lapse_rate": 0.79
           }
         },
         {
@@ -127636,11 +127636,11 @@
             "wind_dir_80m": 50,
             "wind_dir_120m": 126,
             "wind_dir_180m": 129,
-            "temp_80m": 6.9,
-            "temp_120m": 6.6,
-            "temp_180m": 6.5,
+            "temp_80m": 7.8,
+            "temp_120m": 7.1,
+            "temp_180m": 6.3,
             "boundary_layer_height": 460.0,
-            "surface_lapse_rate": 0.67
+            "surface_lapse_rate": 0.79
           }
         },
         {
@@ -127669,16 +127669,16 @@
             "wind_dir_80m": 64,
             "wind_dir_120m": 125,
             "wind_dir_180m": 130,
-            "temp_80m": 6.7,
-            "temp_120m": 6.5,
-            "temp_180m": 6.4,
+            "temp_80m": 7.0,
+            "temp_120m": 6.4,
+            "temp_180m": 5.8,
             "boundary_layer_height": 385.0,
-            "surface_lapse_rate": 0.51
+            "surface_lapse_rate": 0.84
           }
         },
         {
           "time": "2026-04-13T22:00",
-          "score": 1,
+          "score": 2,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Bøjet vind (faktor 3.1) — turbulent.",
           "data": {
@@ -127702,16 +127702,16 @@
             "wind_dir_80m": 83,
             "wind_dir_120m": 126,
             "wind_dir_180m": 132,
-            "temp_80m": 6.6,
-            "temp_120m": 6.5,
-            "temp_180m": 6.4,
+            "temp_80m": 6.1,
+            "temp_120m": 5.7,
+            "temp_180m": 5.3,
             "boundary_layer_height": 330.0,
-            "surface_lapse_rate": 0.28
+            "surface_lapse_rate": 0.9
           }
         },
         {
           "time": "2026-04-13T23:00",
-          "score": 1,
+          "score": 2,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Bøjet vind (faktor 3.2) — turbulent.",
           "data": {
@@ -127735,11 +127735,11 @@
             "wind_dir_80m": 96,
             "wind_dir_120m": 127,
             "wind_dir_180m": 135,
-            "temp_80m": 6.4,
-            "temp_120m": 6.4,
-            "temp_180m": 6.3,
+            "temp_80m": 5.4,
+            "temp_120m": 5.1,
+            "temp_180m": 4.9,
             "boundary_layer_height": 290.0,
-            "surface_lapse_rate": 0.17
+            "surface_lapse_rate": 0.96
           }
         }
       ]
@@ -132134,11 +132134,11 @@
             "wind_dir_80m": 111,
             "wind_dir_120m": 136,
             "wind_dir_180m": 139,
-            "temp_80m": 4.0,
-            "temp_120m": 3.3,
-            "temp_180m": 2.5,
+            "temp_80m": 3.8,
+            "temp_120m": 3.0,
+            "temp_180m": 2.2,
             "boundary_layer_height": 820.0,
-            "surface_lapse_rate": 3.2
+            "surface_lapse_rate": 3.37
           }
         },
         {
@@ -132167,11 +132167,11 @@
             "wind_dir_80m": 115,
             "wind_dir_120m": 133,
             "wind_dir_180m": 136,
-            "temp_80m": 4.3,
-            "temp_120m": 3.6,
-            "temp_180m": 2.8,
+            "temp_80m": 4.0,
+            "temp_120m": 3.3,
+            "temp_180m": 2.4,
             "boundary_layer_height": 835.0,
-            "surface_lapse_rate": 3.37
+            "surface_lapse_rate": 3.6
           }
         },
         {
@@ -132200,11 +132200,11 @@
             "wind_dir_80m": 120,
             "wind_dir_120m": 129,
             "wind_dir_180m": 132,
-            "temp_80m": 4.6,
-            "temp_120m": 3.9,
-            "temp_180m": 3.1,
+            "temp_80m": 4.3,
+            "temp_120m": 3.6,
+            "temp_180m": 2.7,
             "boundary_layer_height": 815.0,
-            "surface_lapse_rate": 3.37
+            "surface_lapse_rate": 3.6
           }
         },
         {
@@ -132233,11 +132233,11 @@
             "wind_dir_80m": 123,
             "wind_dir_120m": 124,
             "wind_dir_180m": 126,
-            "temp_80m": 4.8,
-            "temp_120m": 4.1,
-            "temp_180m": 3.3,
+            "temp_80m": 4.6,
+            "temp_120m": 3.9,
+            "temp_180m": 3.0,
             "boundary_layer_height": 750.0,
-            "surface_lapse_rate": 3.15
+            "surface_lapse_rate": 3.31
           }
         },
         {
@@ -132266,8 +132266,8 @@
             "wind_dir_80m": 122,
             "wind_dir_120m": 118,
             "wind_dir_180m": 121,
-            "temp_80m": 4.7,
-            "temp_120m": 4.0,
+            "temp_80m": 4.8,
+            "temp_120m": 4.1,
             "temp_180m": 3.2,
             "boundary_layer_height": 650.0,
             "surface_lapse_rate": 2.92
@@ -132299,11 +132299,11 @@
             "wind_dir_80m": 120,
             "wind_dir_120m": 114,
             "wind_dir_180m": 117,
-            "temp_80m": 4.6,
-            "temp_120m": 3.9,
-            "temp_180m": 3.1,
+            "temp_80m": 4.9,
+            "temp_120m": 4.2,
+            "temp_180m": 3.3,
             "boundary_layer_height": 560.0,
-            "surface_lapse_rate": 2.64
+            "surface_lapse_rate": 2.53
           }
         },
         {
@@ -132332,11 +132332,11 @@
             "wind_dir_80m": 120,
             "wind_dir_120m": 112,
             "wind_dir_180m": 116,
-            "temp_80m": 4.4,
-            "temp_120m": 3.8,
-            "temp_180m": 3.0,
+            "temp_80m": 4.9,
+            "temp_120m": 4.2,
+            "temp_180m": 3.4,
             "boundary_layer_height": 490.0,
-            "surface_lapse_rate": 2.25
+            "surface_lapse_rate": 2.02
           }
         },
         {
@@ -132365,11 +132365,11 @@
             "wind_dir_80m": 120,
             "wind_dir_120m": 112,
             "wind_dir_180m": 116,
-            "temp_80m": 4.2,
-            "temp_120m": 3.6,
-            "temp_180m": 2.8,
+            "temp_80m": 4.7,
+            "temp_120m": 4.1,
+            "temp_180m": 3.6,
             "boundary_layer_height": 435.0,
-            "surface_lapse_rate": 1.91
+            "surface_lapse_rate": 1.46
           }
         },
         {
@@ -132398,11 +132398,11 @@
             "wind_dir_80m": 121,
             "wind_dir_120m": 113,
             "wind_dir_180m": 116,
-            "temp_80m": 4.0,
-            "temp_120m": 3.5,
-            "temp_180m": 2.7,
+            "temp_80m": 4.6,
+            "temp_120m": 4.0,
+            "temp_180m": 3.7,
             "boundary_layer_height": 390.0,
-            "surface_lapse_rate": 1.52
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -132431,11 +132431,11 @@
             "wind_dir_80m": 121,
             "wind_dir_120m": 111,
             "wind_dir_180m": 115,
-            "temp_80m": 3.9,
-            "temp_120m": 3.4,
-            "temp_180m": 2.7,
+            "temp_80m": 4.5,
+            "temp_120m": 4.0,
+            "temp_180m": 3.8,
             "boundary_layer_height": 370.0,
-            "surface_lapse_rate": 1.35
+            "surface_lapse_rate": 0.73
           }
         },
         {
@@ -132464,11 +132464,11 @@
             "wind_dir_80m": 121,
             "wind_dir_120m": 110,
             "wind_dir_180m": 115,
-            "temp_80m": 3.8,
-            "temp_120m": 3.3,
-            "temp_180m": 2.7,
+            "temp_80m": 4.4,
+            "temp_120m": 4.0,
+            "temp_180m": 3.8,
             "boundary_layer_height": 360.0,
-            "surface_lapse_rate": 1.18
+            "surface_lapse_rate": 0.56
           }
         },
         {
@@ -132497,11 +132497,11 @@
             "wind_dir_80m": 122,
             "wind_dir_120m": 112,
             "wind_dir_180m": 117,
-            "temp_80m": 3.7,
-            "temp_120m": 3.2,
-            "temp_180m": 2.7,
+            "temp_80m": 4.3,
+            "temp_120m": 4.0,
+            "temp_180m": 3.9,
             "boundary_layer_height": 355.0,
-            "surface_lapse_rate": 1.18
+            "surface_lapse_rate": 0.51
           }
         },
         {
@@ -132530,11 +132530,11 @@
             "wind_dir_80m": 130,
             "wind_dir_120m": 120,
             "wind_dir_180m": 126,
-            "temp_80m": 3.7,
-            "temp_120m": 3.2,
-            "temp_180m": 2.7,
+            "temp_80m": 4.2,
+            "temp_120m": 4.0,
+            "temp_180m": 4.0,
             "boundary_layer_height": 335.0,
-            "surface_lapse_rate": 1.24
+            "surface_lapse_rate": 0.51
           }
         },
         {
@@ -132563,11 +132563,11 @@
             "wind_dir_80m": 146,
             "wind_dir_120m": 133,
             "wind_dir_180m": 139,
-            "temp_80m": 3.7,
-            "temp_120m": 3.3,
-            "temp_180m": 2.6,
+            "temp_80m": 4.1,
+            "temp_120m": 4.0,
+            "temp_180m": 4.1,
             "boundary_layer_height": 315.0,
-            "surface_lapse_rate": 1.57
+            "surface_lapse_rate": 0.73
           }
         },
         {
@@ -132596,11 +132596,11 @@
             "wind_dir_80m": 166,
             "wind_dir_120m": 143,
             "wind_dir_180m": 149,
-            "temp_80m": 3.7,
-            "temp_120m": 3.4,
-            "temp_180m": 2.7,
+            "temp_80m": 4.1,
+            "temp_120m": 4.0,
+            "temp_180m": 4.2,
             "boundary_layer_height": 315.0,
-            "surface_lapse_rate": 1.69
+            "surface_lapse_rate": 0.84
           }
         },
         {
@@ -132629,11 +132629,11 @@
             "wind_dir_80m": 190,
             "wind_dir_120m": 146,
             "wind_dir_180m": 151,
-            "temp_80m": 3.8,
-            "temp_120m": 3.6,
-            "temp_180m": 2.9,
+            "temp_80m": 4.1,
+            "temp_120m": 4.0,
+            "temp_180m": 4.3,
             "boundary_layer_height": 345.0,
-            "surface_lapse_rate": 1.63
+            "surface_lapse_rate": 0.84
           }
         },
         {
@@ -132662,11 +132662,11 @@
             "wind_dir_80m": 213,
             "wind_dir_120m": 146,
             "wind_dir_180m": 150,
-            "temp_80m": 4.0,
-            "temp_120m": 3.7,
-            "temp_180m": 3.2,
+            "temp_80m": 4.1,
+            "temp_120m": 4.0,
+            "temp_180m": 4.4,
             "boundary_layer_height": 395.0,
-            "surface_lapse_rate": 1.52
+            "surface_lapse_rate": 0.84
           }
         },
         {
@@ -132696,10 +132696,10 @@
             "wind_dir_120m": 144,
             "wind_dir_180m": 147,
             "temp_80m": 4.1,
-            "temp_120m": 3.9,
-            "temp_180m": 3.4,
+            "temp_120m": 4.0,
+            "temp_180m": 4.4,
             "boundary_layer_height": 435.0,
-            "surface_lapse_rate": 1.4
+            "surface_lapse_rate": 0.84
           }
         },
         {
@@ -132728,11 +132728,11 @@
             "wind_dir_80m": 249,
             "wind_dir_120m": 140,
             "wind_dir_180m": 144,
-            "temp_80m": 4.1,
-            "temp_120m": 4.0,
-            "temp_180m": 3.5,
+            "temp_80m": 4.0,
+            "temp_120m": 3.8,
+            "temp_180m": 4.3,
             "boundary_layer_height": 450.0,
-            "surface_lapse_rate": 1.35
+            "surface_lapse_rate": 0.9
           }
         },
         {
@@ -132761,11 +132761,11 @@
             "wind_dir_80m": 260,
             "wind_dir_120m": 135,
             "wind_dir_180m": 139,
-            "temp_80m": 4.1,
-            "temp_120m": 4.0,
-            "temp_180m": 3.7,
+            "temp_80m": 3.9,
+            "temp_120m": 3.7,
+            "temp_180m": 4.1,
             "boundary_layer_height": 455.0,
-            "surface_lapse_rate": 1.18
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -132794,11 +132794,11 @@
             "wind_dir_80m": 270,
             "wind_dir_120m": 131,
             "wind_dir_180m": 136,
-            "temp_80m": 4.2,
-            "temp_120m": 4.2,
-            "temp_180m": 3.8,
+            "temp_80m": 3.9,
+            "temp_120m": 3.6,
+            "temp_180m": 4.1,
             "boundary_layer_height": 460.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -132827,11 +132827,11 @@
             "wind_dir_80m": 277,
             "wind_dir_120m": 128,
             "wind_dir_180m": 132,
-            "temp_80m": 4.7,
-            "temp_120m": 4.5,
-            "temp_180m": 4.0,
+            "temp_80m": 4.2,
+            "temp_120m": 3.8,
+            "temp_180m": 4.3,
             "boundary_layer_height": 530.0,
-            "surface_lapse_rate": 1.4
+            "surface_lapse_rate": 1.24
           }
         },
         {
@@ -132860,11 +132860,11 @@
             "wind_dir_80m": 283,
             "wind_dir_120m": 127,
             "wind_dir_180m": 131,
-            "temp_80m": 5.3,
-            "temp_120m": 4.8,
-            "temp_180m": 4.1,
+            "temp_80m": 4.6,
+            "temp_120m": 4.1,
+            "temp_180m": 4.6,
             "boundary_layer_height": 620.0,
-            "surface_lapse_rate": 1.74
+            "surface_lapse_rate": 1.46
           }
         },
         {
@@ -132893,11 +132893,11 @@
             "wind_dir_80m": 283,
             "wind_dir_120m": 127,
             "wind_dir_180m": 130,
-            "temp_80m": 6.0,
-            "temp_120m": 5.3,
-            "temp_180m": 4.5,
+            "temp_80m": 5.1,
+            "temp_120m": 4.5,
+            "temp_180m": 4.9,
             "boundary_layer_height": 720.0,
-            "surface_lapse_rate": 1.85
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -132926,11 +132926,11 @@
             "wind_dir_80m": 270,
             "wind_dir_120m": 126,
             "wind_dir_180m": 129,
-            "temp_80m": 6.8,
-            "temp_120m": 6.1,
-            "temp_180m": 5.2,
+            "temp_80m": 5.7,
+            "temp_120m": 5.0,
+            "temp_180m": 5.0,
             "boundary_layer_height": 805.0,
-            "surface_lapse_rate": 1.85
+            "surface_lapse_rate": 1.97
           }
         },
         {
@@ -132959,11 +132959,11 @@
             "wind_dir_80m": 250,
             "wind_dir_120m": 125,
             "wind_dir_180m": 127,
-            "temp_80m": 7.7,
-            "temp_120m": 7.0,
-            "temp_180m": 6.1,
+            "temp_80m": 6.3,
+            "temp_120m": 5.7,
+            "temp_180m": 5.1,
             "boundary_layer_height": 865.0,
-            "surface_lapse_rate": 1.63
+            "surface_lapse_rate": 2.19
           }
         },
         {
@@ -132992,11 +132992,11 @@
             "wind_dir_80m": 239,
             "wind_dir_120m": 124,
             "wind_dir_180m": 126,
-            "temp_80m": 8.4,
-            "temp_120m": 7.7,
-            "temp_180m": 6.8,
+            "temp_80m": 6.8,
+            "temp_120m": 6.1,
+            "temp_180m": 5.2,
             "boundary_layer_height": 885.0,
-            "surface_lapse_rate": 1.35
+            "surface_lapse_rate": 2.25
           }
         },
         {
@@ -133025,11 +133025,11 @@
             "wind_dir_80m": 235,
             "wind_dir_120m": 123,
             "wind_dir_180m": 125,
-            "temp_80m": 8.9,
-            "temp_120m": 8.2,
-            "temp_180m": 7.3,
+            "temp_80m": 7.0,
+            "temp_120m": 6.3,
+            "temp_180m": 5.3,
             "boundary_layer_height": 845.0,
-            "surface_lapse_rate": 1.01
+            "surface_lapse_rate": 2.13
           }
         },
         {
@@ -133058,16 +133058,16 @@
             "wind_dir_80m": 233,
             "wind_dir_120m": 121,
             "wind_dir_180m": 123,
-            "temp_80m": 9.2,
-            "temp_120m": 8.5,
-            "temp_180m": 7.6,
+            "temp_80m": 7.0,
+            "temp_120m": 6.3,
+            "temp_180m": 5.3,
             "boundary_layer_height": 765.0,
-            "surface_lapse_rate": 0.56
+            "surface_lapse_rate": 1.85
           }
         },
         {
           "time": "2026-04-13T17:00",
-          "score": 1,
+          "score": 1.7,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
@@ -133091,11 +133091,11 @@
             "wind_dir_80m": 209,
             "wind_dir_120m": 119,
             "wind_dir_180m": 121,
-            "temp_80m": 9.2,
-            "temp_120m": 8.5,
-            "temp_180m": 7.6,
+            "temp_80m": 6.8,
+            "temp_120m": 6.1,
+            "temp_180m": 5.2,
             "boundary_layer_height": 655.0,
-            "surface_lapse_rate": 0.28
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -133124,16 +133124,16 @@
             "wind_dir_80m": 144,
             "wind_dir_120m": 117,
             "wind_dir_180m": 120,
-            "temp_80m": 8.7,
-            "temp_120m": 8.0,
-            "temp_180m": 7.2,
+            "temp_80m": 6.4,
+            "temp_120m": 5.7,
+            "temp_180m": 4.9,
             "boundary_layer_height": 540.0,
-            "surface_lapse_rate": 0.11
+            "surface_lapse_rate": 1.4
           }
         },
         {
           "time": "2026-04-13T19:00",
-          "score": 1,
+          "score": 1.3,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
@@ -133157,11 +133157,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 116,
             "wind_dir_180m": 119,
-            "temp_80m": 7.9,
-            "temp_120m": 7.2,
-            "temp_180m": 6.4,
+            "temp_80m": 5.9,
+            "temp_120m": 5.2,
+            "temp_180m": 4.6,
             "boundary_layer_height": 435.0,
-            "surface_lapse_rate": 0.22
+            "surface_lapse_rate": 1.24
           }
         },
         {
@@ -133190,11 +133190,11 @@
             "wind_dir_80m": 123,
             "wind_dir_120m": 115,
             "wind_dir_180m": 119,
-            "temp_80m": 7.1,
-            "temp_120m": 6.5,
-            "temp_180m": 5.9,
+            "temp_80m": 5.4,
+            "temp_120m": 4.8,
+            "temp_180m": 4.3,
             "boundary_layer_height": 355.0,
-            "surface_lapse_rate": 0.28
+            "surface_lapse_rate": 1.18
           }
         },
         {
@@ -133223,11 +133223,11 @@
             "wind_dir_80m": 123,
             "wind_dir_120m": 115,
             "wind_dir_180m": 120,
-            "temp_80m": 6.4,
-            "temp_120m": 6.2,
-            "temp_180m": 5.8,
+            "temp_80m": 5.1,
+            "temp_120m": 4.6,
+            "temp_180m": 4.2,
             "boundary_layer_height": 310.0,
-            "surface_lapse_rate": 0.17
+            "surface_lapse_rate": 1.07
           }
         },
         {
@@ -133256,11 +133256,11 @@
             "wind_dir_80m": 121,
             "wind_dir_120m": 116,
             "wind_dir_180m": 122,
-            "temp_80m": 5.8,
-            "temp_120m": 6.0,
-            "temp_180m": 5.9,
+            "temp_80m": 4.8,
+            "temp_120m": 4.6,
+            "temp_180m": 4.3,
             "boundary_layer_height": 275.0,
-            "surface_lapse_rate": 0.0
+            "surface_lapse_rate": 0.9
           }
         },
         {
@@ -133289,11 +133289,11 @@
             "wind_dir_80m": 118,
             "wind_dir_120m": 116,
             "wind_dir_180m": 124,
-            "temp_80m": 5.3,
-            "temp_120m": 5.8,
-            "temp_180m": 5.9,
+            "temp_80m": 4.6,
+            "temp_120m": 4.5,
+            "temp_180m": 4.3,
             "boundary_layer_height": 255.0,
-            "surface_lapse_rate": -0.11
+            "surface_lapse_rate": 0.79
           }
         }
       ]
@@ -137688,11 +137688,11 @@
             "wind_dir_80m": 113,
             "wind_dir_120m": 134,
             "wind_dir_180m": 136,
-            "temp_80m": 4.4,
-            "temp_120m": 3.7,
-            "temp_180m": 2.9,
+            "temp_80m": 4.2,
+            "temp_120m": 3.5,
+            "temp_180m": 2.7,
             "boundary_layer_height": 935.0,
-            "surface_lapse_rate": 3.37
+            "surface_lapse_rate": 3.48
           }
         },
         {
@@ -137721,11 +137721,11 @@
             "wind_dir_80m": 116,
             "wind_dir_120m": 135,
             "wind_dir_180m": 137,
-            "temp_80m": 4.9,
-            "temp_120m": 4.2,
-            "temp_180m": 3.3,
+            "temp_80m": 4.7,
+            "temp_120m": 4.0,
+            "temp_180m": 3.1,
             "boundary_layer_height": 965.0,
-            "surface_lapse_rate": 3.48
+            "surface_lapse_rate": 3.6
           }
         },
         {
@@ -137754,7 +137754,7 @@
             "wind_dir_80m": 121,
             "wind_dir_120m": 135,
             "wind_dir_180m": 137,
-            "temp_80m": 5.0,
+            "temp_80m": 5.1,
             "temp_120m": 4.3,
             "temp_180m": 3.5,
             "boundary_layer_height": 955.0,
@@ -137787,11 +137787,11 @@
             "wind_dir_80m": 126,
             "wind_dir_120m": 131,
             "wind_dir_180m": 133,
-            "temp_80m": 5.1,
-            "temp_120m": 4.4,
-            "temp_180m": 3.6,
+            "temp_80m": 5.4,
+            "temp_120m": 4.6,
+            "temp_180m": 3.8,
             "boundary_layer_height": 890.0,
-            "surface_lapse_rate": 3.37
+            "surface_lapse_rate": 3.26
           }
         },
         {
@@ -137820,11 +137820,11 @@
             "wind_dir_80m": 127,
             "wind_dir_120m": 124,
             "wind_dir_180m": 126,
-            "temp_80m": 5.0,
-            "temp_120m": 4.3,
-            "temp_180m": 3.5,
+            "temp_80m": 5.5,
+            "temp_120m": 4.8,
+            "temp_180m": 3.9,
             "boundary_layer_height": 785.0,
-            "surface_lapse_rate": 3.15
+            "surface_lapse_rate": 2.92
           }
         },
         {
@@ -137853,11 +137853,11 @@
             "wind_dir_80m": 129,
             "wind_dir_120m": 119,
             "wind_dir_180m": 121,
-            "temp_80m": 4.9,
-            "temp_120m": 4.2,
-            "temp_180m": 3.4,
+            "temp_80m": 5.5,
+            "temp_120m": 4.8,
+            "temp_180m": 4.0,
             "boundary_layer_height": 685.0,
-            "surface_lapse_rate": 2.81
+            "surface_lapse_rate": 2.47
           }
         },
         {
@@ -137886,11 +137886,11 @@
             "wind_dir_80m": 129,
             "wind_dir_120m": 117,
             "wind_dir_180m": 119,
-            "temp_80m": 4.7,
-            "temp_120m": 4.0,
-            "temp_180m": 3.2,
+            "temp_80m": 5.4,
+            "temp_120m": 4.7,
+            "temp_180m": 3.9,
             "boundary_layer_height": 595.0,
-            "surface_lapse_rate": 2.53
+            "surface_lapse_rate": 2.13
           }
         },
         {
@@ -137919,11 +137919,11 @@
             "wind_dir_80m": 129,
             "wind_dir_120m": 117,
             "wind_dir_180m": 120,
-            "temp_80m": 4.4,
-            "temp_120m": 3.8,
-            "temp_180m": 3.0,
+            "temp_80m": 5.1,
+            "temp_120m": 4.5,
+            "temp_180m": 3.8,
             "boundary_layer_height": 510.0,
-            "surface_lapse_rate": 2.13
+            "surface_lapse_rate": 1.69
           }
         },
         {
@@ -137952,11 +137952,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 117,
             "wind_dir_180m": 121,
-            "temp_80m": 4.1,
-            "temp_120m": 3.6,
-            "temp_180m": 2.8,
+            "temp_80m": 4.9,
+            "temp_120m": 4.3,
+            "temp_180m": 3.7,
             "boundary_layer_height": 440.0,
-            "surface_lapse_rate": 1.85
+            "surface_lapse_rate": 1.35
           }
         },
         {
@@ -137985,11 +137985,11 @@
             "wind_dir_80m": 126,
             "wind_dir_120m": 116,
             "wind_dir_180m": 120,
-            "temp_80m": 3.9,
-            "temp_120m": 3.5,
-            "temp_180m": 2.7,
+            "temp_80m": 4.7,
+            "temp_120m": 4.2,
+            "temp_180m": 3.9,
             "boundary_layer_height": 405.0,
-            "surface_lapse_rate": 1.52
+            "surface_lapse_rate": 0.84
           }
         },
         {
@@ -138018,11 +138018,11 @@
             "wind_dir_80m": 124,
             "wind_dir_120m": 115,
             "wind_dir_180m": 119,
-            "temp_80m": 3.7,
-            "temp_120m": 3.4,
-            "temp_180m": 2.8,
+            "temp_80m": 4.5,
+            "temp_120m": 4.2,
+            "temp_180m": 4.1,
             "boundary_layer_height": 385.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": 0.39
           }
         },
         {
@@ -138051,11 +138051,11 @@
             "wind_dir_80m": 125,
             "wind_dir_120m": 115,
             "wind_dir_180m": 120,
-            "temp_80m": 3.6,
-            "temp_120m": 3.3,
-            "temp_180m": 2.8,
+            "temp_80m": 4.3,
+            "temp_120m": 4.2,
+            "temp_180m": 4.3,
             "boundary_layer_height": 365.0,
-            "surface_lapse_rate": 1.01
+            "surface_lapse_rate": 0.17
           }
         },
         {
@@ -138084,11 +138084,11 @@
             "wind_dir_80m": 131,
             "wind_dir_120m": 118,
             "wind_dir_180m": 126,
-            "temp_80m": 3.5,
-            "temp_120m": 3.3,
-            "temp_180m": 2.8,
+            "temp_80m": 4.2,
+            "temp_120m": 4.2,
+            "temp_180m": 4.3,
             "boundary_layer_height": 325.0,
-            "surface_lapse_rate": 1.01
+            "surface_lapse_rate": 0.17
           }
         },
         {
@@ -138117,11 +138117,11 @@
             "wind_dir_80m": 140,
             "wind_dir_120m": 123,
             "wind_dir_180m": 133,
-            "temp_80m": 3.5,
-            "temp_120m": 3.3,
-            "temp_180m": 2.9,
+            "temp_80m": 4.1,
+            "temp_120m": 4.1,
+            "temp_180m": 4.3,
             "boundary_layer_height": 285.0,
-            "surface_lapse_rate": 1.07
+            "surface_lapse_rate": 0.28
           }
         },
         {
@@ -138150,11 +138150,11 @@
             "wind_dir_80m": 150,
             "wind_dir_120m": 127,
             "wind_dir_180m": 140,
-            "temp_80m": 3.5,
-            "temp_120m": 3.4,
-            "temp_180m": 3.0,
+            "temp_80m": 4.1,
+            "temp_120m": 4.1,
+            "temp_180m": 4.3,
             "boundary_layer_height": 270.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": 0.39
           }
         },
         {
@@ -138183,11 +138183,11 @@
             "wind_dir_80m": 162,
             "wind_dir_120m": 132,
             "wind_dir_180m": 143,
-            "temp_80m": 3.6,
-            "temp_120m": 3.5,
-            "temp_180m": 3.2,
+            "temp_80m": 4.1,
+            "temp_120m": 4.2,
+            "temp_180m": 4.4,
             "boundary_layer_height": 300.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": 0.45
           }
         },
         {
@@ -138216,11 +138216,11 @@
             "wind_dir_80m": 183,
             "wind_dir_120m": 136,
             "wind_dir_180m": 144,
-            "temp_80m": 3.7,
-            "temp_120m": 3.7,
-            "temp_180m": 3.4,
+            "temp_80m": 4.1,
+            "temp_120m": 4.3,
+            "temp_180m": 4.6,
             "boundary_layer_height": 350.0,
-            "surface_lapse_rate": 1.24
+            "surface_lapse_rate": 0.56
           }
         },
         {
@@ -138249,11 +138249,11 @@
             "wind_dir_80m": 209,
             "wind_dir_120m": 138,
             "wind_dir_180m": 143,
-            "temp_80m": 3.8,
-            "temp_120m": 3.8,
-            "temp_180m": 3.5,
+            "temp_80m": 4.1,
+            "temp_120m": 4.3,
+            "temp_180m": 4.7,
             "boundary_layer_height": 395.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.62
           }
         },
         {
@@ -138282,11 +138282,11 @@
             "wind_dir_80m": 230,
             "wind_dir_120m": 136,
             "wind_dir_180m": 141,
-            "temp_80m": 3.9,
-            "temp_120m": 3.8,
-            "temp_180m": 3.5,
+            "temp_80m": 4.0,
+            "temp_120m": 4.0,
+            "temp_180m": 4.5,
             "boundary_layer_height": 420.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.73
           }
         },
         {
@@ -138316,10 +138316,10 @@
             "wind_dir_120m": 132,
             "wind_dir_180m": 138,
             "temp_80m": 3.9,
-            "temp_120m": 3.8,
-            "temp_180m": 3.4,
+            "temp_120m": 3.7,
+            "temp_180m": 4.3,
             "boundary_layer_height": 440.0,
-            "surface_lapse_rate": 1.35
+            "surface_lapse_rate": 0.84
           }
         },
         {
@@ -138348,11 +138348,11 @@
             "wind_dir_80m": 270,
             "wind_dir_120m": 128,
             "wind_dir_180m": 135,
-            "temp_80m": 4.2,
-            "temp_120m": 4.0,
-            "temp_180m": 3.5,
+            "temp_80m": 4.0,
+            "temp_120m": 3.5,
+            "temp_180m": 4.1,
             "boundary_layer_height": 450.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -138381,11 +138381,11 @@
             "wind_dir_80m": 274,
             "wind_dir_120m": 128,
             "wind_dir_180m": 133,
-            "temp_80m": 4.8,
-            "temp_120m": 4.4,
-            "temp_180m": 3.8,
+            "temp_80m": 4.3,
+            "temp_120m": 3.7,
+            "temp_180m": 4.1,
             "boundary_layer_height": 540.0,
-            "surface_lapse_rate": 1.4
+            "surface_lapse_rate": 1.24
           }
         },
         {
@@ -138414,8 +138414,8 @@
             "wind_dir_80m": 266,
             "wind_dir_120m": 128,
             "wind_dir_180m": 132,
-            "temp_80m": 5.5,
-            "temp_120m": 4.9,
+            "temp_80m": 4.8,
+            "temp_120m": 4.1,
             "temp_180m": 4.2,
             "boundary_layer_height": 660.0,
             "surface_lapse_rate": 1.63
@@ -138447,11 +138447,11 @@
             "wind_dir_80m": 262,
             "wind_dir_120m": 129,
             "wind_dir_180m": 132,
-            "temp_80m": 6.2,
-            "temp_120m": 5.5,
-            "temp_180m": 4.7,
+            "temp_80m": 5.4,
+            "temp_120m": 4.7,
+            "temp_180m": 4.4,
             "boundary_layer_height": 790.0,
-            "surface_lapse_rate": 1.8
+            "surface_lapse_rate": 1.97
           }
         },
         {
@@ -138480,11 +138480,11 @@
             "wind_dir_80m": 260,
             "wind_dir_120m": 128,
             "wind_dir_180m": 131,
-            "temp_80m": 6.9,
-            "temp_120m": 6.1,
-            "temp_180m": 5.3,
+            "temp_80m": 6.2,
+            "temp_120m": 5.5,
+            "temp_180m": 4.9,
             "boundary_layer_height": 910.0,
-            "surface_lapse_rate": 1.97
+            "surface_lapse_rate": 2.19
           }
         },
         {
@@ -138513,11 +138513,11 @@
             "wind_dir_80m": 259,
             "wind_dir_120m": 128,
             "wind_dir_180m": 130,
-            "temp_80m": 7.5,
-            "temp_120m": 6.8,
-            "temp_180m": 5.9,
+            "temp_80m": 7.0,
+            "temp_120m": 6.3,
+            "temp_180m": 5.6,
             "boundary_layer_height": 995.0,
-            "surface_lapse_rate": 1.91
+            "surface_lapse_rate": 2.08
           }
         },
         {
@@ -138546,11 +138546,11 @@
             "wind_dir_80m": 262,
             "wind_dir_120m": 128,
             "wind_dir_180m": 129,
-            "temp_80m": 8.1,
-            "temp_120m": 7.4,
-            "temp_180m": 6.5,
+            "temp_80m": 7.7,
+            "temp_120m": 7.0,
+            "temp_180m": 6.1,
             "boundary_layer_height": 1025.0,
-            "surface_lapse_rate": 1.74
+            "surface_lapse_rate": 1.97
           }
         },
         {
@@ -138579,11 +138579,11 @@
             "wind_dir_80m": 267,
             "wind_dir_120m": 127,
             "wind_dir_180m": 128,
-            "temp_80m": 8.6,
-            "temp_120m": 7.9,
-            "temp_180m": 7.0,
+            "temp_80m": 8.0,
+            "temp_120m": 7.3,
+            "temp_180m": 6.4,
             "boundary_layer_height": 985.0,
-            "surface_lapse_rate": 1.4
+            "surface_lapse_rate": 1.74
           }
         },
         {
@@ -138612,11 +138612,11 @@
             "wind_dir_80m": 279,
             "wind_dir_120m": 125,
             "wind_dir_180m": 127,
-            "temp_80m": 9.1,
-            "temp_120m": 8.4,
-            "temp_180m": 7.5,
+            "temp_80m": 8.1,
+            "temp_120m": 7.4,
+            "temp_180m": 6.5,
             "boundary_layer_height": 885.0,
-            "surface_lapse_rate": 0.9
+            "surface_lapse_rate": 1.46
           }
         },
         {
@@ -138645,11 +138645,11 @@
             "wind_dir_80m": 304,
             "wind_dir_120m": 124,
             "wind_dir_180m": 126,
-            "temp_80m": 9.2,
-            "temp_120m": 8.5,
-            "temp_180m": 7.7,
+            "temp_80m": 8.0,
+            "temp_120m": 7.3,
+            "temp_180m": 6.4,
             "boundary_layer_height": 755.0,
-            "surface_lapse_rate": 0.51
+            "surface_lapse_rate": 1.24
           }
         },
         {
@@ -138678,11 +138678,11 @@
             "wind_dir_80m": 13,
             "wind_dir_120m": 122,
             "wind_dir_180m": 125,
-            "temp_80m": 8.8,
-            "temp_120m": 8.1,
-            "temp_180m": 7.3,
+            "temp_80m": 7.6,
+            "temp_120m": 6.9,
+            "temp_180m": 6.0,
             "boundary_layer_height": 615.0,
-            "surface_lapse_rate": 0.34
+            "surface_lapse_rate": 1.07
           }
         },
         {
@@ -138711,11 +138711,11 @@
             "wind_dir_80m": 39,
             "wind_dir_120m": 121,
             "wind_dir_180m": 124,
-            "temp_80m": 8.2,
-            "temp_120m": 7.5,
-            "temp_180m": 6.6,
+            "temp_80m": 7.0,
+            "temp_120m": 6.3,
+            "temp_180m": 5.5,
             "boundary_layer_height": 485.0,
-            "surface_lapse_rate": 0.34
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -138744,11 +138744,11 @@
             "wind_dir_80m": 51,
             "wind_dir_120m": 119,
             "wind_dir_180m": 124,
-            "temp_80m": 7.5,
-            "temp_120m": 6.9,
-            "temp_180m": 6.1,
+            "temp_80m": 6.4,
+            "temp_120m": 5.8,
+            "temp_180m": 5.0,
             "boundary_layer_height": 390.0,
-            "surface_lapse_rate": 0.39
+            "surface_lapse_rate": 1.01
           }
         },
         {
@@ -138777,11 +138777,11 @@
             "wind_dir_80m": 70,
             "wind_dir_120m": 119,
             "wind_dir_180m": 125,
-            "temp_80m": 6.9,
-            "temp_120m": 6.5,
-            "temp_180m": 6.0,
+            "temp_80m": 5.9,
+            "temp_120m": 5.4,
+            "temp_180m": 4.8,
             "boundary_layer_height": 330.0,
-            "surface_lapse_rate": 0.22
+            "surface_lapse_rate": 0.9
           }
         },
         {
@@ -138810,11 +138810,11 @@
             "wind_dir_80m": 107,
             "wind_dir_120m": 119,
             "wind_dir_180m": 126,
-            "temp_80m": 6.3,
-            "temp_120m": 6.2,
-            "temp_180m": 6.2,
+            "temp_80m": 5.3,
+            "temp_120m": 5.1,
+            "temp_180m": 4.6,
             "boundary_layer_height": 290.0,
-            "surface_lapse_rate": 0.0
+            "surface_lapse_rate": 0.9
           }
         },
         {
@@ -138843,11 +138843,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 119,
             "wind_dir_180m": 127,
-            "temp_80m": 5.7,
-            "temp_120m": 5.9,
-            "temp_180m": 6.2,
+            "temp_80m": 4.9,
+            "temp_120m": 4.8,
+            "temp_180m": 4.5,
             "boundary_layer_height": 260.0,
-            "surface_lapse_rate": -0.17
+            "surface_lapse_rate": 0.79
           }
         }
       ]
@@ -143242,11 +143242,11 @@
             "wind_dir_80m": 118,
             "wind_dir_120m": 137,
             "wind_dir_180m": 139,
-            "temp_80m": 4.5,
-            "temp_120m": 3.8,
-            "temp_180m": 2.9,
+            "temp_80m": 4.3,
+            "temp_120m": 3.6,
+            "temp_180m": 2.7,
             "boundary_layer_height": 990.0,
-            "surface_lapse_rate": 3.54
+            "surface_lapse_rate": 3.65
           }
         },
         {
@@ -143275,11 +143275,11 @@
             "wind_dir_80m": 122,
             "wind_dir_120m": 140,
             "wind_dir_180m": 141,
-            "temp_80m": 4.9,
-            "temp_120m": 4.2,
-            "temp_180m": 3.4,
+            "temp_80m": 4.6,
+            "temp_120m": 3.9,
+            "temp_180m": 3.0,
             "boundary_layer_height": 1030.0,
-            "surface_lapse_rate": 3.65
+            "surface_lapse_rate": 3.88
           }
         },
         {
@@ -143308,11 +143308,11 @@
             "wind_dir_80m": 126,
             "wind_dir_120m": 140,
             "wind_dir_180m": 141,
-            "temp_80m": 5.1,
-            "temp_120m": 4.4,
-            "temp_180m": 3.6,
+            "temp_80m": 4.9,
+            "temp_120m": 4.1,
+            "temp_180m": 3.3,
             "boundary_layer_height": 1035.0,
-            "surface_lapse_rate": 3.76
+            "surface_lapse_rate": 3.93
           }
         },
         {
@@ -143342,10 +143342,10 @@
             "wind_dir_120m": 137,
             "wind_dir_180m": 138,
             "temp_80m": 5.1,
-            "temp_120m": 4.4,
-            "temp_180m": 3.6,
+            "temp_120m": 4.3,
+            "temp_180m": 3.5,
             "boundary_layer_height": 980.0,
-            "surface_lapse_rate": 3.65
+            "surface_lapse_rate": 3.71
           }
         },
         {
@@ -143374,11 +143374,11 @@
             "wind_dir_80m": 127,
             "wind_dir_120m": 132,
             "wind_dir_180m": 132,
-            "temp_80m": 5.0,
-            "temp_120m": 4.3,
-            "temp_180m": 3.5,
+            "temp_80m": 5.3,
+            "temp_120m": 4.5,
+            "temp_180m": 3.7,
             "boundary_layer_height": 890.0,
-            "surface_lapse_rate": 3.43
+            "surface_lapse_rate": 3.31
           }
         },
         {
@@ -143407,11 +143407,11 @@
             "wind_dir_80m": 126,
             "wind_dir_120m": 127,
             "wind_dir_180m": 128,
-            "temp_80m": 4.8,
-            "temp_120m": 4.1,
-            "temp_180m": 3.3,
+            "temp_80m": 5.3,
+            "temp_120m": 4.6,
+            "temp_180m": 3.8,
             "boundary_layer_height": 795.0,
-            "surface_lapse_rate": 3.15
+            "surface_lapse_rate": 2.87
           }
         },
         {
@@ -143440,11 +143440,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 126,
             "wind_dir_180m": 127,
-            "temp_80m": 4.5,
-            "temp_120m": 3.8,
-            "temp_180m": 3.0,
+            "temp_80m": 5.2,
+            "temp_120m": 4.5,
+            "temp_180m": 3.7,
             "boundary_layer_height": 700.0,
-            "surface_lapse_rate": 2.92
+            "surface_lapse_rate": 2.53
           }
         },
         {
@@ -143473,11 +143473,11 @@
             "wind_dir_80m": 131,
             "wind_dir_120m": 127,
             "wind_dir_180m": 127,
-            "temp_80m": 4.1,
-            "temp_120m": 3.4,
-            "temp_180m": 2.6,
+            "temp_80m": 5.0,
+            "temp_120m": 4.4,
+            "temp_180m": 3.5,
             "boundary_layer_height": 605.0,
-            "surface_lapse_rate": 2.75
+            "surface_lapse_rate": 2.25
           }
         },
         {
@@ -143506,11 +143506,11 @@
             "wind_dir_80m": 132,
             "wind_dir_120m": 127,
             "wind_dir_180m": 127,
-            "temp_80m": 3.8,
-            "temp_120m": 3.1,
-            "temp_180m": 2.3,
+            "temp_80m": 4.8,
+            "temp_120m": 4.2,
+            "temp_180m": 3.4,
             "boundary_layer_height": 525.0,
-            "surface_lapse_rate": 2.53
+            "surface_lapse_rate": 1.91
           }
         },
         {
@@ -143539,11 +143539,11 @@
             "wind_dir_80m": 127,
             "wind_dir_120m": 125,
             "wind_dir_180m": 126,
-            "temp_80m": 3.6,
-            "temp_120m": 3.0,
-            "temp_180m": 2.3,
+            "temp_80m": 4.6,
+            "temp_120m": 4.1,
+            "temp_180m": 3.5,
             "boundary_layer_height": 470.0,
-            "surface_lapse_rate": 2.13
+            "surface_lapse_rate": 1.46
           }
         },
         {
@@ -143572,11 +143572,11 @@
             "wind_dir_80m": 120,
             "wind_dir_120m": 123,
             "wind_dir_180m": 125,
-            "temp_80m": 3.5,
-            "temp_120m": 2.9,
-            "temp_180m": 2.3,
+            "temp_80m": 4.3,
+            "temp_120m": 4.0,
+            "temp_180m": 3.6,
             "boundary_layer_height": 435.0,
-            "surface_lapse_rate": 1.69
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -143605,11 +143605,11 @@
             "wind_dir_80m": 116,
             "wind_dir_120m": 122,
             "wind_dir_180m": 125,
-            "temp_80m": 3.4,
-            "temp_120m": 2.9,
-            "temp_180m": 2.4,
+            "temp_80m": 4.1,
+            "temp_120m": 3.9,
+            "temp_180m": 3.7,
             "boundary_layer_height": 395.0,
-            "surface_lapse_rate": 1.35
+            "surface_lapse_rate": 0.62
           }
         },
         {
@@ -143638,11 +143638,11 @@
             "wind_dir_80m": 119,
             "wind_dir_120m": 122,
             "wind_dir_180m": 127,
-            "temp_80m": 3.3,
-            "temp_120m": 2.9,
-            "temp_180m": 2.4,
+            "temp_80m": 4.0,
+            "temp_120m": 3.8,
+            "temp_180m": 3.7,
             "boundary_layer_height": 345.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.56
           }
         },
         {
@@ -143671,11 +143671,11 @@
             "wind_dir_80m": 128,
             "wind_dir_120m": 122,
             "wind_dir_180m": 131,
-            "temp_80m": 3.2,
-            "temp_120m": 2.8,
-            "temp_180m": 2.4,
+            "temp_80m": 3.9,
+            "temp_120m": 3.7,
+            "temp_180m": 3.7,
             "boundary_layer_height": 295.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.56
           }
         },
         {
@@ -143704,11 +143704,11 @@
             "wind_dir_80m": 138,
             "wind_dir_120m": 125,
             "wind_dir_180m": 136,
-            "temp_80m": 3.2,
-            "temp_120m": 2.9,
-            "temp_180m": 2.5,
+            "temp_80m": 3.9,
+            "temp_120m": 3.7,
+            "temp_180m": 3.7,
             "boundary_layer_height": 270.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.62
           }
         },
         {
@@ -143737,11 +143737,11 @@
             "wind_dir_80m": 148,
             "wind_dir_120m": 129,
             "wind_dir_180m": 139,
-            "temp_80m": 3.3,
-            "temp_120m": 3.1,
-            "temp_180m": 2.7,
+            "temp_80m": 3.9,
+            "temp_120m": 3.7,
+            "temp_180m": 3.9,
             "boundary_layer_height": 290.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.62
           }
         },
         {
@@ -143770,11 +143770,11 @@
             "wind_dir_80m": 163,
             "wind_dir_120m": 135,
             "wind_dir_180m": 143,
-            "temp_80m": 3.4,
-            "temp_120m": 3.3,
-            "temp_180m": 3.0,
+            "temp_80m": 3.9,
+            "temp_120m": 3.8,
+            "temp_180m": 4.1,
             "boundary_layer_height": 335.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.67
           }
         },
         {
@@ -143803,11 +143803,11 @@
             "wind_dir_80m": 183,
             "wind_dir_120m": 137,
             "wind_dir_180m": 144,
-            "temp_80m": 3.5,
-            "temp_120m": 3.5,
-            "temp_180m": 3.2,
+            "temp_80m": 3.9,
+            "temp_120m": 3.8,
+            "temp_180m": 4.2,
             "boundary_layer_height": 380.0,
-            "surface_lapse_rate": 1.4
+            "surface_lapse_rate": 0.84
           }
         },
         {
@@ -143836,11 +143836,11 @@
             "wind_dir_80m": 201,
             "wind_dir_120m": 136,
             "wind_dir_180m": 142,
-            "temp_80m": 3.5,
-            "temp_120m": 3.5,
-            "temp_180m": 3.2,
+            "temp_80m": 3.8,
+            "temp_120m": 3.6,
+            "temp_180m": 4.0,
             "boundary_layer_height": 410.0,
-            "surface_lapse_rate": 1.46
+            "surface_lapse_rate": 1.01
           }
         },
         {
@@ -143869,11 +143869,11 @@
             "wind_dir_80m": 229,
             "wind_dir_120m": 133,
             "wind_dir_180m": 138,
-            "temp_80m": 3.6,
-            "temp_120m": 3.5,
-            "temp_180m": 3.1,
+            "temp_80m": 3.7,
+            "temp_120m": 3.4,
+            "temp_180m": 3.8,
             "boundary_layer_height": 435.0,
-            "surface_lapse_rate": 1.52
+            "surface_lapse_rate": 1.12
           }
         },
         {
@@ -143903,10 +143903,10 @@
             "wind_dir_120m": 130,
             "wind_dir_180m": 135,
             "temp_80m": 3.8,
-            "temp_120m": 3.6,
-            "temp_180m": 3.2,
+            "temp_120m": 3.3,
+            "temp_180m": 3.6,
             "boundary_layer_height": 455.0,
-            "surface_lapse_rate": 1.46
+            "surface_lapse_rate": 1.24
           }
         },
         {
@@ -143935,11 +143935,11 @@
             "wind_dir_80m": 276,
             "wind_dir_120m": 130,
             "wind_dir_180m": 135,
-            "temp_80m": 4.3,
-            "temp_120m": 4.0,
-            "temp_180m": 3.4,
+            "temp_80m": 4.1,
+            "temp_120m": 3.5,
+            "temp_180m": 3.6,
             "boundary_layer_height": 550.0,
-            "surface_lapse_rate": 1.74
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -143968,8 +143968,8 @@
             "wind_dir_80m": 276,
             "wind_dir_120m": 131,
             "wind_dir_180m": 135,
-            "temp_80m": 5.0,
-            "temp_120m": 4.5,
+            "temp_80m": 4.5,
+            "temp_120m": 3.8,
             "temp_180m": 3.8,
             "boundary_layer_height": 700.0,
             "surface_lapse_rate": 1.97
@@ -144001,11 +144001,11 @@
             "wind_dir_80m": 275,
             "wind_dir_120m": 132,
             "wind_dir_180m": 135,
-            "temp_80m": 5.8,
-            "temp_120m": 5.1,
-            "temp_180m": 4.3,
+            "temp_80m": 5.0,
+            "temp_120m": 4.3,
+            "temp_180m": 4.1,
             "boundary_layer_height": 865.0,
-            "surface_lapse_rate": 2.19
+            "surface_lapse_rate": 2.3
           }
         },
         {
@@ -144034,11 +144034,11 @@
             "wind_dir_80m": 266,
             "wind_dir_120m": 133,
             "wind_dir_180m": 134,
-            "temp_80m": 6.6,
-            "temp_120m": 5.9,
-            "temp_180m": 5.0,
+            "temp_80m": 5.7,
+            "temp_120m": 5.0,
+            "temp_180m": 4.6,
             "boundary_layer_height": 1020.0,
-            "surface_lapse_rate": 2.3
+            "surface_lapse_rate": 2.53
           }
         },
         {
@@ -144067,11 +144067,11 @@
             "wind_dir_80m": 258,
             "wind_dir_120m": 133,
             "wind_dir_180m": 134,
-            "temp_80m": 7.5,
-            "temp_120m": 6.7,
-            "temp_180m": 5.9,
+            "temp_80m": 6.6,
+            "temp_120m": 5.8,
+            "temp_180m": 5.1,
             "boundary_layer_height": 1135.0,
-            "surface_lapse_rate": 2.19
+            "surface_lapse_rate": 2.64
           }
         },
         {
@@ -144100,11 +144100,11 @@
             "wind_dir_80m": 259,
             "wind_dir_120m": 133,
             "wind_dir_180m": 134,
-            "temp_80m": 8.2,
-            "temp_120m": 7.4,
-            "temp_180m": 6.6,
+            "temp_80m": 7.2,
+            "temp_120m": 6.4,
+            "temp_180m": 5.6,
             "boundary_layer_height": 1180.0,
-            "surface_lapse_rate": 1.97
+            "surface_lapse_rate": 2.53
           }
         },
         {
@@ -144133,11 +144133,11 @@
             "wind_dir_80m": 276,
             "wind_dir_120m": 132,
             "wind_dir_180m": 133,
-            "temp_80m": 8.7,
-            "temp_120m": 8.0,
-            "temp_180m": 7.1,
+            "temp_80m": 7.5,
+            "temp_120m": 6.8,
+            "temp_180m": 5.9,
             "boundary_layer_height": 1135.0,
-            "surface_lapse_rate": 1.57
+            "surface_lapse_rate": 2.25
           }
         },
         {
@@ -144166,11 +144166,11 @@
             "wind_dir_80m": 310,
             "wind_dir_120m": 132,
             "wind_dir_180m": 133,
-            "temp_80m": 9.1,
-            "temp_120m": 8.4,
-            "temp_180m": 7.5,
+            "temp_80m": 7.7,
+            "temp_120m": 6.9,
+            "temp_180m": 6.0,
             "boundary_layer_height": 1025.0,
-            "surface_lapse_rate": 1.18
+            "surface_lapse_rate": 2.02
           }
         },
         {
@@ -144199,11 +144199,11 @@
             "wind_dir_80m": 344,
             "wind_dir_120m": 130,
             "wind_dir_180m": 131,
-            "temp_80m": 9.2,
-            "temp_120m": 8.5,
-            "temp_180m": 7.6,
+            "temp_80m": 7.6,
+            "temp_120m": 6.9,
+            "temp_180m": 6.0,
             "boundary_layer_height": 870.0,
-            "surface_lapse_rate": 0.79
+            "surface_lapse_rate": 1.69
           }
         },
         {
@@ -144232,11 +144232,11 @@
             "wind_dir_80m": 28,
             "wind_dir_120m": 129,
             "wind_dir_180m": 131,
-            "temp_80m": 8.8,
-            "temp_120m": 8.1,
-            "temp_180m": 7.2,
+            "temp_80m": 7.3,
+            "temp_120m": 6.5,
+            "temp_180m": 5.7,
             "boundary_layer_height": 705.0,
-            "surface_lapse_rate": 0.67
+            "surface_lapse_rate": 1.52
           }
         },
         {
@@ -144265,11 +144265,11 @@
             "wind_dir_80m": 58,
             "wind_dir_120m": 128,
             "wind_dir_180m": 130,
-            "temp_80m": 8.0,
-            "temp_120m": 7.3,
-            "temp_180m": 6.4,
+            "temp_80m": 6.7,
+            "temp_120m": 6.0,
+            "temp_180m": 5.1,
             "boundary_layer_height": 555.0,
-            "surface_lapse_rate": 0.79
+            "surface_lapse_rate": 1.52
           }
         },
         {
@@ -144298,11 +144298,11 @@
             "wind_dir_80m": 73,
             "wind_dir_120m": 127,
             "wind_dir_180m": 130,
-            "temp_80m": 7.3,
-            "temp_120m": 6.7,
-            "temp_180m": 5.9,
+            "temp_80m": 6.2,
+            "temp_120m": 5.5,
+            "temp_180m": 4.7,
             "boundary_layer_height": 445.0,
-            "surface_lapse_rate": 0.73
+            "surface_lapse_rate": 1.4
           }
         },
         {
@@ -144331,11 +144331,11 @@
             "wind_dir_80m": 93,
             "wind_dir_120m": 127,
             "wind_dir_180m": 130,
-            "temp_80m": 6.7,
-            "temp_120m": 6.3,
-            "temp_180m": 5.8,
+            "temp_80m": 5.8,
+            "temp_120m": 5.2,
+            "temp_180m": 4.5,
             "boundary_layer_height": 380.0,
-            "surface_lapse_rate": 0.62
+            "surface_lapse_rate": 1.35
           }
         },
         {
@@ -144364,16 +144364,16 @@
             "wind_dir_80m": 122,
             "wind_dir_120m": 127,
             "wind_dir_180m": 131,
-            "temp_80m": 6.0,
-            "temp_120m": 6.1,
-            "temp_180m": 6.0,
+            "temp_80m": 5.3,
+            "temp_120m": 5.0,
+            "temp_180m": 4.4,
             "boundary_layer_height": 340.0,
-            "surface_lapse_rate": 0.34
+            "surface_lapse_rate": 1.24
           }
         },
         {
           "time": "2026-04-13T23:00",
-          "score": 1,
+          "score": 2,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Bøjet vind (faktor 3.0) — turbulent.",
           "data": {
@@ -144397,11 +144397,11 @@
             "wind_dir_80m": 137,
             "wind_dir_120m": 127,
             "wind_dir_180m": 132,
-            "temp_80m": 5.5,
-            "temp_120m": 5.8,
-            "temp_180m": 6.0,
+            "temp_80m": 5.0,
+            "temp_120m": 4.8,
+            "temp_180m": 4.3,
             "boundary_layer_height": 310.0,
-            "surface_lapse_rate": 0.11
+            "surface_lapse_rate": 1.07
           }
         }
       ]
@@ -148772,662 +148772,662 @@
         },
         {
           "time": "2026-04-12T12:00",
-          "score": 0.2,
+          "score": 0.9,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 6.2,
-            "dewpoint": 1.6,
-            "spread": 4.6,
-            "skybase_m": 575,
-            "skybase_ft": 1887,
+            "temp": 6.1,
+            "dewpoint": 1.3,
+            "spread": 4.8,
+            "skybase_m": 600,
+            "skybase_ft": 1969,
             "cloud_cover": 100,
-            "wind_speed_kt": 11.5,
-            "wind_dir": 115,
-            "wind_gusts_kt": 21.5,
-            "lapse_rate": 0.54,
+            "wind_speed_kt": 12.1,
+            "wind_dir": 109,
+            "wind_gusts_kt": 22.5,
+            "lapse_rate": 0.53,
             "cape": 0.0,
-            "precipitation": 0.08,
-            "pressure": 1014.9,
-            "relative_humidity": 72,
+            "precipitation": 0.0,
+            "pressure": 1015.8,
+            "relative_humidity": 71,
             "wind_speed_80m_kt": 17.5,
-            "wind_speed_120m_kt": 18.5,
+            "wind_speed_120m_kt": 19.8,
             "wind_speed_180m_kt": 19.6,
             "wind_dir_80m": 116,
-            "wind_dir_120m": 117,
+            "wind_dir_120m": 113,
             "wind_dir_180m": 118,
-            "temp_80m": 5.0,
-            "temp_120m": 4.2,
-            "temp_180m": 3.4,
+            "temp_80m": 4.8,
+            "temp_120m": 4.1,
+            "temp_180m": 3.1,
             "boundary_layer_height": 760.0,
-            "surface_lapse_rate": 1.57
+            "surface_lapse_rate": 1.69
           }
         },
         {
           "time": "2026-04-12T13:00",
-          "score": 1,
+          "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
             "temp": 6.6,
-            "dewpoint": 2.2,
-            "spread": 4.4,
-            "skybase_m": 550,
-            "skybase_ft": 1805,
+            "dewpoint": 1.3,
+            "spread": 5.3,
+            "skybase_m": 662,
+            "skybase_ft": 2172,
             "cloud_cover": 100,
-            "wind_speed_kt": 9.6,
-            "wind_dir": 130,
-            "wind_gusts_kt": 19.1,
-            "lapse_rate": 0.59,
+            "wind_speed_kt": 11.3,
+            "wind_dir": 110,
+            "wind_gusts_kt": 22.0,
+            "lapse_rate": 0.57,
             "cape": 0.0,
-            "precipitation": 0.15,
-            "pressure": 1014.3,
-            "relative_humidity": 74,
+            "precipitation": 0.0,
+            "pressure": 1015.8,
+            "relative_humidity": 69,
             "wind_speed_80m_kt": 14.5,
-            "wind_speed_120m_kt": 15.4,
+            "wind_speed_120m_kt": 18.9,
             "wind_speed_180m_kt": 16.3,
             "wind_dir_80m": 130,
-            "wind_dir_120m": 130,
+            "wind_dir_120m": 117,
             "wind_dir_180m": 132,
-            "temp_80m": 5.5,
-            "temp_120m": 4.8,
-            "temp_180m": 3.9,
+            "temp_80m": 5.2,
+            "temp_120m": 4.5,
+            "temp_180m": 3.6,
             "boundary_layer_height": 795.0,
-            "surface_lapse_rate": 1.52
+            "surface_lapse_rate": 1.69
           }
         },
         {
           "time": "2026-04-12T14:00",
+          "score": 2,
+          "label": "Ingen brugbar termik",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "data": {
+            "temp": 7.0,
+            "dewpoint": 1.7,
+            "spread": 5.3,
+            "skybase_m": 662,
+            "skybase_ft": 2172,
+            "cloud_cover": 100,
+            "wind_speed_kt": 10.8,
+            "wind_dir": 109,
+            "wind_gusts_kt": 21.2,
+            "lapse_rate": 0.61,
+            "cape": 0.0,
+            "precipitation": 0.0,
+            "pressure": 1015.8,
+            "relative_humidity": 69,
+            "wind_speed_80m_kt": 11.5,
+            "wind_speed_120m_kt": 18.0,
+            "wind_speed_180m_kt": 13.0,
+            "wind_dir_80m": 152,
+            "wind_dir_120m": 121,
+            "wind_dir_180m": 154,
+            "temp_80m": 5.6,
+            "temp_120m": 4.9,
+            "temp_180m": 4.0,
+            "boundary_layer_height": 815.0,
+            "surface_lapse_rate": 1.69
+          }
+        },
+        {
+          "time": "2026-04-12T15:00",
+          "score": 0.4,
+          "label": "Ingen brugbar termik",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
+          "data": {
+            "temp": 7.1,
+            "dewpoint": 2.4,
+            "spread": 4.7,
+            "skybase_m": 587,
+            "skybase_ft": 1926,
+            "cloud_cover": 100,
+            "wind_speed_kt": 9.8,
+            "wind_dir": 108,
+            "wind_gusts_kt": 19.6,
+            "lapse_rate": 0.62,
+            "cape": 0.0,
+            "precipitation": 0.2,
+            "pressure": 1015.8,
+            "relative_humidity": 72,
+            "wind_speed_80m_kt": 7.6,
+            "wind_speed_120m_kt": 16.5,
+            "wind_speed_180m_kt": 8.6,
+            "wind_dir_80m": 181,
+            "wind_dir_120m": 120,
+            "wind_dir_180m": 181,
+            "temp_80m": 5.8,
+            "temp_120m": 5.1,
+            "temp_180m": 4.3,
+            "boundary_layer_height": 815.0,
+            "surface_lapse_rate": 1.57
+          }
+        },
+        {
+          "time": "2026-04-12T16:00",
+          "score": 1.0,
+          "label": "Ingen brugbar termik",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
+          "data": {
+            "temp": 7.1,
+            "dewpoint": 3.1,
+            "spread": 4.0,
+            "skybase_m": 500,
+            "skybase_ft": 1640,
+            "cloud_cover": 100,
+            "wind_speed_kt": 8.9,
+            "wind_dir": 106,
+            "wind_gusts_kt": 17.5,
+            "lapse_rate": 0.63,
+            "cape": 0.0,
+            "precipitation": 0.2,
+            "pressure": 1015.9,
+            "relative_humidity": 76,
+            "wind_speed_80m_kt": 5.2,
+            "wind_speed_120m_kt": 14.5,
+            "wind_speed_180m_kt": 5.5,
+            "wind_dir_80m": 202,
+            "wind_dir_120m": 110,
+            "wind_dir_180m": 198,
+            "temp_80m": 5.9,
+            "temp_120m": 5.3,
+            "temp_180m": 4.5,
+            "boundary_layer_height": 800.0,
+            "surface_lapse_rate": 1.46
+          }
+        },
+        {
+          "time": "2026-04-12T17:00",
+          "score": 0.9,
+          "label": "Ingen brugbar termik",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
+          "data": {
+            "temp": 6.9,
+            "dewpoint": 3.7,
+            "spread": 3.2,
+            "skybase_m": 400,
+            "skybase_ft": 1312,
+            "cloud_cover": 100,
+            "wind_speed_kt": 8.1,
+            "wind_dir": 105,
+            "wind_gusts_kt": 15.7,
+            "lapse_rate": 0.63,
+            "cape": 0.0,
+            "precipitation": 0.2,
+            "pressure": 1016.0,
+            "relative_humidity": 80,
+            "wind_speed_80m_kt": 4.2,
+            "wind_speed_120m_kt": 13.5,
+            "wind_speed_180m_kt": 4.0,
+            "wind_dir_80m": 233,
+            "wind_dir_120m": 101,
+            "wind_dir_180m": 231,
+            "temp_80m": 6.0,
+            "temp_120m": 5.4,
+            "temp_180m": 4.8,
+            "boundary_layer_height": 760.0,
+            "surface_lapse_rate": 1.18
+          }
+        },
+        {
+          "time": "2026-04-12T18:00",
           "score": 0.4,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
             "temp": 6.7,
-            "dewpoint": 3.0,
-            "spread": 3.7,
-            "skybase_m": 462,
-            "skybase_ft": 1516,
-            "cloud_cover": 100,
-            "wind_speed_kt": 7.8,
-            "wind_dir": 152,
-            "wind_gusts_kt": 16.1,
-            "lapse_rate": 0.63,
-            "cape": 0.0,
-            "precipitation": 0.23,
-            "pressure": 1013.6,
-            "relative_humidity": 77,
-            "wind_speed_80m_kt": 11.5,
-            "wind_speed_120m_kt": 12.2,
-            "wind_speed_180m_kt": 13.0,
-            "wind_dir_80m": 152,
-            "wind_dir_120m": 153,
-            "wind_dir_180m": 154,
-            "temp_80m": 5.6,
-            "temp_120m": 4.9,
-            "temp_180m": 4.1,
-            "boundary_layer_height": 815.0,
-            "surface_lapse_rate": 1.46
-          }
-        },
-        {
-          "time": "2026-04-12T15:00",
-          "score": 0.1,
-          "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
-          "data": {
-            "temp": 6.4,
-            "dewpoint": 3.6,
-            "spread": 2.8,
-            "skybase_m": 350,
-            "skybase_ft": 1148,
-            "cloud_cover": 100,
-            "wind_speed_kt": 5.3,
-            "wind_dir": 182,
-            "wind_gusts_kt": 12.1,
-            "lapse_rate": 0.62,
-            "cape": 0.0,
-            "precipitation": 1.1,
-            "pressure": 1012.9,
-            "relative_humidity": 82,
-            "wind_speed_80m_kt": 7.6,
-            "wind_speed_120m_kt": 8.2,
-            "wind_speed_180m_kt": 8.6,
-            "wind_dir_80m": 181,
-            "wind_dir_120m": 181,
-            "wind_dir_180m": 181,
-            "temp_80m": 5.4,
-            "temp_120m": 4.7,
-            "temp_180m": 3.8,
-            "boundary_layer_height": 815.0,
-            "surface_lapse_rate": 1.46
-          }
-        },
-        {
-          "time": "2026-04-12T16:00",
-          "score": 0.2,
-          "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
-          "data": {
-            "temp": 6.0,
-            "dewpoint": 3.3,
+            "dewpoint": 4.0,
             "spread": 2.7,
             "skybase_m": 338,
             "skybase_ft": 1109,
-            "cloud_cover": 100,
-            "wind_speed_kt": 3.8,
-            "wind_dir": 204,
-            "wind_gusts_kt": 9.7,
-            "lapse_rate": 0.58,
-            "cape": 0.0,
-            "precipitation": 1.1,
-            "pressure": 1013.1,
-            "relative_humidity": 83,
-            "wind_speed_80m_kt": 5.2,
-            "wind_speed_120m_kt": 5.4,
-            "wind_speed_180m_kt": 5.5,
-            "wind_dir_80m": 202,
-            "wind_dir_120m": 201,
-            "wind_dir_180m": 198,
-            "temp_80m": 4.9,
-            "temp_120m": 4.2,
-            "temp_180m": 3.3,
-            "boundary_layer_height": 800.0,
-            "surface_lapse_rate": 1.52
-          }
-        },
-        {
-          "time": "2026-04-12T17:00",
-          "score": 0.1,
-          "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
-          "data": {
-            "temp": 5.6,
-            "dewpoint": 3.1,
-            "spread": 2.5,
-            "skybase_m": 312,
-            "skybase_ft": 1024,
-            "cloud_cover": 100,
-            "wind_speed_kt": 3.2,
-            "wind_dir": 232,
-            "wind_gusts_kt": 8.0,
-            "lapse_rate": 0.54,
-            "cape": 0.0,
-            "precipitation": 1.1,
-            "pressure": 1013.2,
-            "relative_humidity": 84,
-            "wind_speed_80m_kt": 4.2,
-            "wind_speed_120m_kt": 4.2,
-            "wind_speed_180m_kt": 4.0,
-            "wind_dir_80m": 233,
-            "wind_dir_120m": 233,
-            "wind_dir_180m": 231,
-            "temp_80m": 4.6,
-            "temp_120m": 3.9,
-            "temp_180m": 3.0,
-            "boundary_layer_height": 760.0,
-            "surface_lapse_rate": 1.46
-          }
-        },
-        {
-          "time": "2026-04-12T18:00",
-          "score": 0,
-          "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
-          "data": {
-            "temp": 5.4,
-            "dewpoint": 3.1,
-            "spread": 2.3,
-            "skybase_m": 288,
-            "skybase_ft": 945,
             "cloud_cover": 99,
-            "wind_speed_kt": 2.9,
-            "wind_dir": 250,
-            "wind_gusts_kt": 7.4,
-            "lapse_rate": 0.54,
+            "wind_speed_kt": 7.3,
+            "wind_dir": 107,
+            "wind_gusts_kt": 14.2,
+            "lapse_rate": 0.63,
             "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1013.4,
-            "relative_humidity": 85,
+            "precipitation": 0.5,
+            "pressure": 1016.3,
+            "relative_humidity": 83,
             "wind_speed_80m_kt": 4.3,
-            "wind_speed_120m_kt": 4.2,
+            "wind_speed_120m_kt": 13.3,
             "wind_speed_180m_kt": 4.2,
             "wind_dir_80m": 252,
-            "wind_dir_120m": 254,
+            "wind_dir_120m": 95,
             "wind_dir_180m": 254,
-            "temp_80m": 4.7,
-            "temp_120m": 4.0,
-            "temp_180m": 3.1,
+            "temp_80m": 6.1,
+            "temp_120m": 5.5,
+            "temp_180m": 5.1,
             "boundary_layer_height": 680.0,
-            "surface_lapse_rate": 1.29
+            "surface_lapse_rate": 0.9
           }
         },
         {
           "time": "2026-04-12T19:00",
-          "score": 0,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 5.3,
-            "dewpoint": 3.2,
-            "spread": 2.1,
-            "skybase_m": 262,
-            "skybase_ft": 860,
+            "temp": 6.5,
+            "dewpoint": 4.3,
+            "spread": 2.2,
+            "skybase_m": 275,
+            "skybase_ft": 902,
             "cloud_cover": 99,
-            "wind_speed_kt": 2.6,
-            "wind_dir": 257,
-            "wind_gusts_kt": 7.4,
-            "lapse_rate": 0.55,
+            "wind_speed_kt": 6.7,
+            "wind_dir": 112,
+            "wind_gusts_kt": 12.8,
+            "lapse_rate": 0.61,
             "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1013.7,
+            "precipitation": 0.5,
+            "pressure": 1016.6,
             "relative_humidity": 86,
             "wind_speed_80m_kt": 4.1,
-            "wind_speed_120m_kt": 4.3,
+            "wind_speed_120m_kt": 13.2,
             "wind_speed_180m_kt": 4.7,
             "wind_dir_80m": 262,
-            "wind_dir_120m": 265,
+            "wind_dir_120m": 92,
             "wind_dir_180m": 265,
-            "temp_80m": 4.9,
-            "temp_120m": 4.2,
-            "temp_180m": 3.3,
+            "temp_80m": 6.1,
+            "temp_120m": 5.7,
+            "temp_180m": 5.3,
             "boundary_layer_height": 575.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": 0.67
           }
         },
         {
           "time": "2026-04-12T20:00",
-          "score": 0,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 5.1,
-            "dewpoint": 3.1,
-            "spread": 2.0,
-            "skybase_m": 250,
-            "skybase_ft": 820,
+            "temp": 6.3,
+            "dewpoint": 4.4,
+            "spread": 1.9,
+            "skybase_m": 237,
+            "skybase_ft": 778,
             "cloud_cover": 98,
-            "wind_speed_kt": 2.1,
-            "wind_dir": 265,
-            "wind_gusts_kt": 7.0,
-            "lapse_rate": 0.55,
+            "wind_speed_kt": 6.4,
+            "wind_dir": 115,
+            "wind_gusts_kt": 12.1,
+            "lapse_rate": 0.61,
             "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1013.9,
-            "relative_humidity": 87,
+            "precipitation": 0.5,
+            "pressure": 1016.9,
+            "relative_humidity": 88,
             "wind_speed_80m_kt": 4.3,
-            "wind_speed_120m_kt": 4.7,
+            "wind_speed_120m_kt": 13.4,
             "wind_speed_180m_kt": 5.3,
             "wind_dir_80m": 267,
-            "wind_dir_120m": 270,
+            "wind_dir_120m": 90,
             "wind_dir_180m": 272,
-            "temp_80m": 5.1,
-            "temp_120m": 4.4,
-            "temp_180m": 3.6,
+            "temp_80m": 6.1,
+            "temp_120m": 5.8,
+            "temp_180m": 5.5,
             "boundary_layer_height": 500.0,
-            "surface_lapse_rate": 0.84
-          }
-        },
-        {
-          "time": "2026-04-12T21:00",
-          "score": 0,
-          "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
-          "data": {
-            "temp": 4.7,
-            "dewpoint": 3.1,
-            "spread": 1.6,
-            "skybase_m": 200,
-            "skybase_ft": 656,
-            "cloud_cover": 95,
-            "wind_speed_kt": 2.0,
-            "wind_dir": 264,
-            "wind_gusts_kt": 5.6,
-            "lapse_rate": 0.53,
-            "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1014.0,
-            "relative_humidity": 89,
-            "wind_speed_80m_kt": 4.5,
-            "wind_speed_120m_kt": 5.1,
-            "wind_speed_180m_kt": 6.0,
-            "wind_dir_80m": 268,
-            "wind_dir_120m": 270,
-            "wind_dir_180m": 274,
-            "temp_80m": 5.1,
-            "temp_120m": 4.5,
-            "temp_180m": 3.9,
-            "boundary_layer_height": 490.0,
             "surface_lapse_rate": 0.45
           }
         },
         {
-          "time": "2026-04-12T22:00",
-          "score": 0.1,
+          "time": "2026-04-12T21:00",
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 4.3,
-            "dewpoint": 2.8,
-            "spread": 1.5,
-            "skybase_m": 188,
-            "skybase_ft": 617,
-            "cloud_cover": 93,
-            "wind_speed_kt": 1.7,
-            "wind_dir": 249,
-            "wind_gusts_kt": 3.9,
-            "lapse_rate": 0.51,
+            "temp": 6.2,
+            "dewpoint": 4.5,
+            "spread": 1.7,
+            "skybase_m": 213,
+            "skybase_ft": 699,
+            "cloud_cover": 95,
+            "wind_speed_kt": 6.4,
+            "wind_dir": 115,
+            "wind_gusts_kt": 11.9,
+            "lapse_rate": 0.6,
             "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1014.1,
-            "relative_humidity": 90,
+            "precipitation": 0.3,
+            "pressure": 1017.2,
+            "relative_humidity": 89,
             "wind_speed_80m_kt": 4.5,
-            "wind_speed_120m_kt": 5.7,
+            "wind_speed_120m_kt": 13.4,
+            "wind_speed_180m_kt": 6.0,
+            "wind_dir_80m": 268,
+            "wind_dir_120m": 90,
+            "wind_dir_180m": 274,
+            "temp_80m": 6.1,
+            "temp_120m": 5.9,
+            "temp_180m": 5.6,
+            "boundary_layer_height": 490.0,
+            "surface_lapse_rate": 0.34
+          }
+        },
+        {
+          "time": "2026-04-12T22:00",
+          "score": 0.3,
+          "label": "Ingen brugbar termik",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
+          "data": {
+            "temp": 6.2,
+            "dewpoint": 4.5,
+            "spread": 1.7,
+            "skybase_m": 213,
+            "skybase_ft": 699,
+            "cloud_cover": 93,
+            "wind_speed_kt": 6.6,
+            "wind_dir": 114,
+            "wind_gusts_kt": 12.2,
+            "lapse_rate": 0.61,
+            "cape": 0.0,
+            "precipitation": 0.3,
+            "pressure": 1017.4,
+            "relative_humidity": 89,
+            "wind_speed_80m_kt": 4.5,
+            "wind_speed_120m_kt": 13.2,
             "wind_speed_180m_kt": 7.0,
             "wind_dir_80m": 260,
-            "wind_dir_120m": 266,
+            "wind_dir_120m": 92,
             "wind_dir_180m": 273,
-            "temp_80m": 5.0,
-            "temp_120m": 4.7,
-            "temp_180m": 4.2,
+            "temp_80m": 6.1,
+            "temp_120m": 6.0,
+            "temp_180m": 5.6,
             "boundary_layer_height": 515.0,
-            "surface_lapse_rate": 0.06
+            "surface_lapse_rate": 0.34
           }
         },
         {
           "time": "2026-04-12T23:00",
-          "score": 0.4,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Inversion — ingen termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 3.9,
-            "dewpoint": 2.7,
-            "spread": 1.2,
-            "skybase_m": 150,
-            "skybase_ft": 492,
+            "temp": 6.1,
+            "dewpoint": 4.4,
+            "spread": 1.7,
+            "skybase_m": 212,
+            "skybase_ft": 696,
             "cloud_cover": 90,
-            "wind_speed_kt": 1.7,
-            "wind_dir": 243,
-            "wind_gusts_kt": 2.9,
-            "lapse_rate": 0.48,
+            "wind_speed_kt": 6.7,
+            "wind_dir": 112,
+            "wind_gusts_kt": 12.4,
+            "lapse_rate": 0.6,
             "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1014.2,
-            "relative_humidity": 92,
+            "precipitation": 0.3,
+            "pressure": 1017.6,
+            "relative_humidity": 89,
             "wind_speed_80m_kt": 5.0,
-            "wind_speed_120m_kt": 6.5,
+            "wind_speed_120m_kt": 13.0,
             "wind_speed_180m_kt": 8.0,
             "wind_dir_80m": 257,
-            "wind_dir_120m": 263,
+            "wind_dir_120m": 93,
             "wind_dir_180m": 271,
-            "temp_80m": 5.0,
-            "temp_120m": 4.8,
-            "temp_180m": 4.4,
+            "temp_80m": 6.1,
+            "temp_120m": 6.0,
+            "temp_180m": 5.6,
             "boundary_layer_height": 530.0,
-            "surface_lapse_rate": -0.28
+            "surface_lapse_rate": 0.28
           }
         },
         {
           "time": "2026-04-13T00:00",
-          "score": 0.4,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Inversion — ingen termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 3.9,
-            "dewpoint": 2.8,
-            "spread": 1.1,
-            "skybase_m": 138,
-            "skybase_ft": 453,
+            "temp": 6.0,
+            "dewpoint": 4.5,
+            "spread": 1.5,
+            "skybase_m": 188,
+            "skybase_ft": 617,
             "cloud_cover": 93,
-            "wind_speed_kt": 2.2,
-            "wind_dir": 243,
-            "wind_gusts_kt": 3.3,
-            "lapse_rate": 0.48,
+            "wind_speed_kt": 6.6,
+            "wind_dir": 111,
+            "wind_gusts_kt": 12.2,
+            "lapse_rate": 0.59,
             "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1014.3,
-            "relative_humidity": 93,
+            "precipitation": 0.2,
+            "pressure": 1017.7,
+            "relative_humidity": 90,
             "wind_speed_80m_kt": 6.2,
-            "wind_speed_120m_kt": 8.1,
+            "wind_speed_120m_kt": 13.1,
             "wind_speed_180m_kt": 9.5,
             "wind_dir_80m": 256,
-            "wind_dir_120m": 262,
+            "wind_dir_120m": 95,
             "wind_dir_180m": 270,
-            "temp_80m": 5.1,
-            "temp_120m": 5.0,
-            "temp_180m": 4.6,
+            "temp_80m": 6.0,
+            "temp_120m": 6.0,
+            "temp_180m": 5.6,
             "boundary_layer_height": 525.0,
-            "surface_lapse_rate": -0.39
+            "surface_lapse_rate": 0.22
           }
         },
         {
           "time": "2026-04-13T01:00",
-          "score": 0,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
-          "comment": "Inversion — ingen termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 4.0,
-            "dewpoint": 3.1,
-            "spread": 0.9,
-            "skybase_m": 112,
-            "skybase_ft": 367,
+            "temp": 5.9,
+            "dewpoint": 4.4,
+            "spread": 1.5,
+            "skybase_m": 188,
+            "skybase_ft": 617,
             "cloud_cover": 97,
-            "wind_speed_kt": 2.7,
-            "wind_dir": 249,
-            "wind_gusts_kt": 4.3,
-            "lapse_rate": 0.49,
+            "wind_speed_kt": 6.2,
+            "wind_dir": 110,
+            "wind_gusts_kt": 11.7,
+            "lapse_rate": 0.59,
             "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1014.3,
-            "relative_humidity": 94,
+            "precipitation": 0.2,
+            "pressure": 1017.6,
+            "relative_humidity": 90,
             "wind_speed_80m_kt": 7.8,
-            "wind_speed_120m_kt": 10.0,
+            "wind_speed_120m_kt": 12.9,
             "wind_speed_180m_kt": 11.3,
             "wind_dir_80m": 257,
-            "wind_dir_120m": 262,
+            "wind_dir_120m": 96,
             "wind_dir_180m": 268,
-            "temp_80m": 5.2,
-            "temp_120m": 5.1,
-            "temp_180m": 4.7,
+            "temp_80m": 5.9,
+            "temp_120m": 5.9,
+            "temp_180m": 5.6,
             "boundary_layer_height": 520.0,
-            "surface_lapse_rate": -0.39
+            "surface_lapse_rate": 0.17
           }
         },
         {
           "time": "2026-04-13T02:00",
-          "score": 0.1,
+          "score": 0.2,
           "label": "Ingen brugbar termik",
-          "comment": "Inversion — ingen termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Aktiv nedbør — ingen termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 4.1,
-            "dewpoint": 3.2,
-            "spread": 0.9,
-            "skybase_m": 112,
-            "skybase_ft": 367,
+            "temp": 5.8,
+            "dewpoint": 4.5,
+            "spread": 1.3,
+            "skybase_m": 162,
+            "skybase_ft": 532,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.1,
-            "wind_dir": 252,
-            "wind_gusts_kt": 5.2,
-            "lapse_rate": 0.49,
+            "wind_speed_kt": 6.0,
+            "wind_dir": 109,
+            "wind_gusts_kt": 11.1,
+            "lapse_rate": 0.59,
             "cape": 0.0,
-            "precipitation": 0.0,
-            "pressure": 1014.4,
-            "relative_humidity": 94,
+            "precipitation": 0.2,
+            "pressure": 1017.6,
+            "relative_humidity": 91,
             "wind_speed_80m_kt": 8.9,
-            "wind_speed_120m_kt": 11.2,
+            "wind_speed_120m_kt": 12.7,
             "wind_speed_180m_kt": 12.4,
             "wind_dir_80m": 259,
-            "wind_dir_120m": 263,
+            "wind_dir_120m": 96,
             "wind_dir_180m": 268,
-            "temp_80m": 5.3,
-            "temp_120m": 5.2,
-            "temp_180m": 4.7,
+            "temp_80m": 5.8,
+            "temp_120m": 5.8,
+            "temp_180m": 5.6,
             "boundary_layer_height": 510.0,
-            "surface_lapse_rate": -0.34
+            "surface_lapse_rate": 0.11
           }
         },
         {
           "time": "2026-04-13T03:00",
-          "score": 0.1,
+          "score": 0.6,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 4.1,
-            "dewpoint": 3.2,
-            "spread": 0.9,
-            "skybase_m": 112,
-            "skybase_ft": 367,
+            "temp": 5.8,
+            "dewpoint": 4.4,
+            "spread": 1.4,
+            "skybase_m": 175,
+            "skybase_ft": 574,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.2,
-            "wind_dir": 256,
-            "wind_gusts_kt": 5.8,
-            "lapse_rate": 0.5,
+            "wind_speed_kt": 5.5,
+            "wind_dir": 108,
+            "wind_gusts_kt": 10.1,
+            "lapse_rate": 0.59,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1014.5,
-            "relative_humidity": 94,
+            "pressure": 1017.5,
+            "relative_humidity": 91,
             "wind_speed_80m_kt": 9.0,
-            "wind_speed_120m_kt": 11.1,
+            "wind_speed_120m_kt": 12.1,
             "wind_speed_180m_kt": 12.4,
             "wind_dir_80m": 261,
-            "wind_dir_120m": 266,
+            "wind_dir_120m": 94,
             "wind_dir_180m": 271,
-            "temp_80m": 5.3,
-            "temp_120m": 5.2,
-            "temp_180m": 4.7,
+            "temp_80m": 5.8,
+            "temp_120m": 5.8,
+            "temp_180m": 5.7,
             "boundary_layer_height": 495.0,
-            "surface_lapse_rate": -0.34
+            "surface_lapse_rate": 0.06
           }
         },
         {
           "time": "2026-04-13T04:00",
-          "score": 0.1,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 4.1,
-            "dewpoint": 3.2,
-            "spread": 0.9,
-            "skybase_m": 112,
-            "skybase_ft": 367,
+            "temp": 5.7,
+            "dewpoint": 4.4,
+            "spread": 1.3,
+            "skybase_m": 162,
+            "skybase_ft": 532,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.2,
-            "wind_dir": 259,
-            "wind_gusts_kt": 6.4,
-            "lapse_rate": 0.5,
+            "wind_speed_kt": 4.9,
+            "wind_dir": 106,
+            "wind_gusts_kt": 8.9,
+            "lapse_rate": 0.57,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1014.6,
-            "relative_humidity": 94,
+            "pressure": 1017.5,
+            "relative_humidity": 91,
             "wind_speed_80m_kt": 8.8,
-            "wind_speed_120m_kt": 10.5,
+            "wind_speed_120m_kt": 11.3,
             "wind_speed_180m_kt": 11.7,
             "wind_dir_80m": 266,
-            "wind_dir_120m": 271,
+            "wind_dir_120m": 89,
             "wind_dir_180m": 275,
-            "temp_80m": 5.3,
-            "temp_120m": 5.1,
-            "temp_180m": 4.6,
+            "temp_80m": 5.9,
+            "temp_120m": 5.9,
+            "temp_180m": 5.8,
             "boundary_layer_height": 480.0,
-            "surface_lapse_rate": -0.28
+            "surface_lapse_rate": -0.06
           }
         },
         {
           "time": "2026-04-13T05:00",
-          "score": 0.1,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 4.2,
-            "dewpoint": 3.3,
-            "spread": 0.9,
-            "skybase_m": 113,
-            "skybase_ft": 371,
+            "temp": 5.7,
+            "dewpoint": 4.4,
+            "spread": 1.3,
+            "skybase_m": 162,
+            "skybase_ft": 532,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.1,
-            "wind_dir": 263,
-            "wind_gusts_kt": 6.8,
-            "lapse_rate": 0.51,
+            "wind_speed_kt": 4.4,
+            "wind_dir": 105,
+            "wind_gusts_kt": 8.0,
+            "lapse_rate": 0.57,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1014.7,
-            "relative_humidity": 94,
+            "pressure": 1017.5,
+            "relative_humidity": 91,
             "wind_speed_80m_kt": 8.6,
-            "wind_speed_120m_kt": 10.1,
+            "wind_speed_120m_kt": 10.7,
             "wind_speed_180m_kt": 11.2,
             "wind_dir_80m": 269,
-            "wind_dir_120m": 273,
+            "wind_dir_120m": 87,
             "wind_dir_180m": 278,
-            "temp_80m": 5.2,
-            "temp_120m": 5.0,
-            "temp_180m": 4.5,
+            "temp_80m": 5.9,
+            "temp_120m": 5.9,
+            "temp_180m": 5.8,
             "boundary_layer_height": 480.0,
-            "surface_lapse_rate": -0.17
+            "surface_lapse_rate": -0.06
           }
         },
         {
           "time": "2026-04-13T06:00",
-          "score": 0.1,
+          "score": 0.3,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 4.4,
-            "dewpoint": 3.5,
-            "spread": 0.9,
-            "skybase_m": 113,
-            "skybase_ft": 371,
+            "temp": 5.8,
+            "dewpoint": 4.4,
+            "spread": 1.4,
+            "skybase_m": 175,
+            "skybase_ft": 574,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.5,
-            "wind_dir": 261,
-            "wind_gusts_kt": 7.0,
-            "lapse_rate": 0.53,
+            "wind_speed_kt": 4.2,
+            "wind_dir": 103,
+            "wind_gusts_kt": 7.4,
+            "lapse_rate": 0.58,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1014.9,
-            "relative_humidity": 94,
+            "pressure": 1017.7,
+            "relative_humidity": 91,
             "wind_speed_80m_kt": 8.8,
-            "wind_speed_120m_kt": 10.5,
+            "wind_speed_120m_kt": 10.3,
             "wind_speed_180m_kt": 11.5,
             "wind_dir_80m": 267,
-            "wind_dir_120m": 271,
+            "wind_dir_120m": 89,
             "wind_dir_180m": 277,
-            "temp_80m": 5.1,
-            "temp_120m": 4.8,
-            "temp_180m": 4.3,
+            "temp_80m": 5.9,
+            "temp_120m": 5.8,
+            "temp_180m": 5.7,
             "boundary_layer_height": 500.0,
             "surface_lapse_rate": 0.06
           }
         },
         {
           "time": "2026-04-13T07:00",
-          "score": 0.1,
+          "score": 0,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 4.8,
-            "dewpoint": 3.9,
-            "spread": 0.9,
-            "skybase_m": 112,
-            "skybase_ft": 367,
+            "temp": 5.9,
+            "dewpoint": 4.7,
+            "spread": 1.2,
+            "skybase_m": 150,
+            "skybase_ft": 492,
             "cloud_cover": 100,
             "wind_speed_kt": 4.0,
-            "wind_dir": 259,
-            "wind_gusts_kt": 7.2,
-            "lapse_rate": 0.55,
+            "wind_dir": 101,
+            "wind_gusts_kt": 7.0,
+            "lapse_rate": 0.59,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1015.2,
-            "relative_humidity": 94,
+            "pressure": 1017.9,
+            "relative_humidity": 92,
             "wind_speed_80m_kt": 9.0,
-            "wind_speed_120m_kt": 11.1,
+            "wind_speed_120m_kt": 10.1,
             "wind_speed_180m_kt": 12.1,
             "wind_dir_80m": 264,
-            "wind_dir_120m": 268,
+            "wind_dir_120m": 92,
             "wind_dir_180m": 275,
-            "temp_80m": 4.9,
-            "temp_120m": 4.6,
-            "temp_180m": 4.1,
+            "temp_80m": 5.9,
+            "temp_120m": 5.7,
+            "temp_180m": 5.5,
             "boundary_layer_height": 530.0,
-            "surface_lapse_rate": 0.39
+            "surface_lapse_rate": 0.22
           }
         },
         {
@@ -149436,194 +149436,194 @@
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 5.4,
-            "dewpoint": 4.2,
-            "spread": 1.2,
-            "skybase_m": 150,
-            "skybase_ft": 492,
+            "temp": 6.1,
+            "dewpoint": 4.8,
+            "spread": 1.3,
+            "skybase_m": 162,
+            "skybase_ft": 532,
             "cloud_cover": 100,
             "wind_speed_kt": 4.2,
-            "wind_dir": 257,
-            "wind_gusts_kt": 7.4,
-            "lapse_rate": 0.59,
+            "wind_dir": 101,
+            "wind_gusts_kt": 7.2,
+            "lapse_rate": 0.61,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1015.5,
-            "relative_humidity": 92,
+            "pressure": 1018.2,
+            "relative_humidity": 91,
             "wind_speed_80m_kt": 8.7,
-            "wind_speed_120m_kt": 10.7,
+            "wind_speed_120m_kt": 10.0,
             "wind_speed_180m_kt": 11.7,
             "wind_dir_80m": 261,
-            "wind_dir_120m": 265,
+            "wind_dir_120m": 96,
             "wind_dir_180m": 273,
-            "temp_80m": 5.0,
-            "temp_120m": 4.6,
-            "temp_180m": 4.1,
+            "temp_80m": 5.9,
+            "temp_120m": 5.6,
+            "temp_180m": 5.3,
             "boundary_layer_height": 565.0,
-            "surface_lapse_rate": 0.73
+            "surface_lapse_rate": 0.45
           }
         },
         {
           "time": "2026-04-13T09:00",
-          "score": 1.4,
+          "score": 0.8,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 6.4,
-            "dewpoint": 4.2,
-            "spread": 2.2,
-            "skybase_m": 275,
-            "skybase_ft": 902,
+            "temp": 6.6,
+            "dewpoint": 4.8,
+            "spread": 1.8,
+            "skybase_m": 225,
+            "skybase_ft": 738,
             "cloud_cover": 100,
-            "wind_speed_kt": 4.0,
-            "wind_dir": 259,
-            "wind_gusts_kt": 7.8,
-            "lapse_rate": 0.66,
+            "wind_speed_kt": 4.9,
+            "wind_dir": 106,
+            "wind_gusts_kt": 8.6,
+            "lapse_rate": 0.64,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1015.8,
-            "relative_humidity": 86,
+            "pressure": 1018.5,
+            "relative_humidity": 88,
             "wind_speed_80m_kt": 7.3,
-            "wind_speed_120m_kt": 8.8,
+            "wind_speed_120m_kt": 9.4,
             "wind_speed_180m_kt": 9.5,
             "wind_dir_80m": 262,
-            "wind_dir_120m": 265,
+            "wind_dir_120m": 95,
             "wind_dir_180m": 272,
-            "temp_80m": 5.5,
-            "temp_120m": 5.0,
-            "temp_180m": 4.4,
+            "temp_80m": 6.0,
+            "temp_120m": 5.6,
+            "temp_180m": 5.1,
             "boundary_layer_height": 615.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": 0.84
           }
         },
         {
           "time": "2026-04-13T10:00",
-          "score": 1.9,
+          "score": 1.7,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 7.7,
-            "dewpoint": 4.3,
-            "spread": 3.4,
-            "skybase_m": 425,
-            "skybase_ft": 1394,
+            "temp": 7.2,
+            "dewpoint": 4.5,
+            "spread": 2.7,
+            "skybase_m": 338,
+            "skybase_ft": 1109,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.7,
-            "wind_dir": 264,
-            "wind_gusts_kt": 8.2,
-            "lapse_rate": 0.76,
+            "wind_speed_kt": 5.7,
+            "wind_dir": 112,
+            "wind_gusts_kt": 10.5,
+            "lapse_rate": 0.67,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.0,
-            "relative_humidity": 79,
+            "pressure": 1018.8,
+            "relative_humidity": 83,
             "wind_speed_80m_kt": 5.3,
-            "wind_speed_120m_kt": 6.0,
+            "wind_speed_120m_kt": 9.0,
             "wind_speed_180m_kt": 6.4,
             "wind_dir_80m": 266,
-            "wind_dir_120m": 266,
+            "wind_dir_120m": 92,
             "wind_dir_180m": 272,
-            "temp_80m": 6.3,
-            "temp_120m": 5.6,
-            "temp_180m": 4.9,
+            "temp_80m": 6.2,
+            "temp_120m": 5.7,
+            "temp_180m": 5.0,
             "boundary_layer_height": 670.0,
-            "surface_lapse_rate": 1.57
+            "surface_lapse_rate": 1.24
           }
         },
         {
           "time": "2026-04-13T11:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 8.7,
-            "dewpoint": 3.9,
-            "spread": 4.8,
-            "skybase_m": 600,
-            "skybase_ft": 1969,
+            "temp": 7.9,
+            "dewpoint": 4.5,
+            "spread": 3.4,
+            "skybase_m": 425,
+            "skybase_ft": 1394,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.3,
-            "wind_dir": 263,
-            "wind_gusts_kt": 8.6,
-            "lapse_rate": 0.83,
+            "wind_speed_kt": 6.6,
+            "wind_dir": 114,
+            "wind_gusts_kt": 12.2,
+            "lapse_rate": 0.71,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.2,
-            "relative_humidity": 72,
+            "pressure": 1019.1,
+            "relative_humidity": 79,
             "wind_speed_80m_kt": 3.7,
-            "wind_speed_120m_kt": 3.9,
+            "wind_speed_120m_kt": 8.6,
             "wind_speed_180m_kt": 3.9,
             "wind_dir_80m": 264,
-            "wind_dir_120m": 264,
+            "wind_dir_120m": 93,
             "wind_dir_180m": 264,
-            "temp_80m": 6.9,
-            "temp_120m": 6.2,
-            "temp_180m": 5.3,
+            "temp_80m": 6.5,
+            "temp_120m": 5.8,
+            "temp_180m": 5.0,
             "boundary_layer_height": 710.0,
-            "surface_lapse_rate": 1.91
+            "surface_lapse_rate": 1.63
           }
         },
         {
           "time": "2026-04-13T12:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 9.3,
-            "dewpoint": 3.7,
-            "spread": 5.6,
-            "skybase_m": 700,
-            "skybase_ft": 2297,
+            "temp": 8.6,
+            "dewpoint": 4.4,
+            "spread": 4.2,
+            "skybase_m": 525,
+            "skybase_ft": 1723,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.4,
-            "wind_dir": 246,
-            "wind_gusts_kt": 8.9,
-            "lapse_rate": 0.85,
+            "wind_speed_kt": 7.1,
+            "wind_dir": 112,
+            "wind_gusts_kt": 13.4,
+            "lapse_rate": 0.75,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.3,
-            "relative_humidity": 68,
+            "pressure": 1019.3,
+            "relative_humidity": 75,
             "wind_speed_80m_kt": 3.5,
-            "wind_speed_120m_kt": 3.5,
+            "wind_speed_120m_kt": 8.7,
             "wind_speed_180m_kt": 3.6,
             "wind_dir_80m": 243,
-            "wind_dir_120m": 243,
+            "wind_dir_120m": 100,
             "wind_dir_180m": 241,
-            "temp_80m": 7.3,
-            "temp_120m": 6.6,
-            "temp_180m": 5.6,
+            "temp_80m": 6.8,
+            "temp_120m": 6.1,
+            "temp_180m": 5.3,
             "boundary_layer_height": 735.0,
-            "surface_lapse_rate": 2.08
+            "surface_lapse_rate": 1.85
           }
         },
         {
           "time": "2026-04-13T13:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 9.6,
-            "dewpoint": 3.4,
-            "spread": 6.2,
-            "skybase_m": 775,
-            "skybase_ft": 2543,
+            "temp": 9.3,
+            "dewpoint": 4.5,
+            "spread": 4.8,
+            "skybase_m": 600,
+            "skybase_ft": 1969,
             "cloud_cover": 100,
-            "wind_speed_kt": 4.0,
-            "wind_dir": 223,
-            "wind_gusts_kt": 9.1,
-            "lapse_rate": 0.85,
+            "wind_speed_kt": 7.6,
+            "wind_dir": 108,
+            "wind_gusts_kt": 14.2,
+            "lapse_rate": 0.79,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.3,
-            "relative_humidity": 65,
+            "pressure": 1019.4,
+            "relative_humidity": 72,
             "wind_speed_80m_kt": 4.4,
-            "wind_speed_120m_kt": 4.3,
+            "wind_speed_120m_kt": 9.5,
             "wind_speed_180m_kt": 4.4,
             "wind_dir_80m": 221,
-            "wind_dir_120m": 223,
+            "wind_dir_120m": 109,
             "wind_dir_180m": 221,
-            "temp_80m": 7.6,
-            "temp_120m": 6.9,
-            "temp_180m": 5.9,
+            "temp_80m": 7.2,
+            "temp_120m": 6.5,
+            "temp_180m": 5.6,
             "boundary_layer_height": 745.0,
             "surface_lapse_rate": 2.08
           }
@@ -149634,31 +149634,31 @@
           "label": "Ingen brugbar termik",
           "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 10.0,
-            "dewpoint": 3.2,
-            "spread": 6.8,
-            "skybase_m": 850,
-            "skybase_ft": 2789,
+            "temp": 9.7,
+            "dewpoint": 4.5,
+            "spread": 5.2,
+            "skybase_m": 650,
+            "skybase_ft": 2133,
             "cloud_cover": 100,
-            "wind_speed_kt": 4.3,
-            "wind_dir": 207,
-            "wind_gusts_kt": 9.1,
-            "lapse_rate": 0.85,
+            "wind_speed_kt": 7.8,
+            "wind_dir": 103,
+            "wind_gusts_kt": 14.8,
+            "lapse_rate": 0.81,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.3,
-            "relative_humidity": 63,
+            "pressure": 1019.5,
+            "relative_humidity": 70,
             "wind_speed_80m_kt": 4.8,
-            "wind_speed_120m_kt": 4.7,
+            "wind_speed_120m_kt": 10.2,
             "wind_speed_180m_kt": 4.7,
             "wind_dir_80m": 207,
-            "wind_dir_120m": 210,
+            "wind_dir_120m": 114,
             "wind_dir_180m": 210,
-            "temp_80m": 7.9,
-            "temp_120m": 7.2,
-            "temp_180m": 6.3,
+            "temp_80m": 7.5,
+            "temp_120m": 6.8,
+            "temp_180m": 5.9,
             "boundary_layer_height": 745.0,
-            "surface_lapse_rate": 2.08
+            "surface_lapse_rate": 2.13
           }
         },
         {
@@ -149667,229 +149667,229 @@
           "label": "Ingen brugbar termik",
           "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 10.6,
-            "dewpoint": 3.1,
-            "spread": 7.5,
-            "skybase_m": 938,
-            "skybase_ft": 3078,
+            "temp": 9.8,
+            "dewpoint": 4.4,
+            "spread": 5.4,
+            "skybase_m": 675,
+            "skybase_ft": 2215,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.7,
-            "wind_dir": 186,
-            "wind_gusts_kt": 8.6,
-            "lapse_rate": 0.87,
+            "wind_speed_kt": 8.1,
+            "wind_dir": 98,
+            "wind_gusts_kt": 15.4,
+            "lapse_rate": 0.8,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.2,
-            "relative_humidity": 60,
+            "pressure": 1019.5,
+            "relative_humidity": 69,
             "wind_speed_80m_kt": 3.9,
-            "wind_speed_120m_kt": 3.8,
+            "wind_speed_120m_kt": 10.4,
             "wind_speed_180m_kt": 3.5,
             "wind_dir_80m": 186,
-            "wind_dir_120m": 192,
+            "wind_dir_120m": 111,
             "wind_dir_180m": 189,
-            "temp_80m": 8.5,
-            "temp_120m": 7.8,
-            "temp_180m": 6.9,
+            "temp_80m": 7.6,
+            "temp_120m": 6.9,
+            "temp_180m": 5.9,
             "boundary_layer_height": 730.0,
-            "surface_lapse_rate": 2.08
+            "surface_lapse_rate": 2.19
           }
         },
         {
           "time": "2026-04-13T16:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
           "data": {
-            "temp": 11.2,
-            "dewpoint": 3.0,
-            "spread": 8.2,
-            "skybase_m": 1025,
-            "skybase_ft": 3363,
+            "temp": 9.6,
+            "dewpoint": 4.4,
+            "spread": 5.2,
+            "skybase_m": 650,
+            "skybase_ft": 2133,
             "cloud_cover": 100,
-            "wind_speed_kt": 3.2,
-            "wind_dir": 147,
-            "wind_gusts_kt": 7.8,
-            "lapse_rate": 0.89,
+            "wind_speed_kt": 8.2,
+            "wind_dir": 93,
+            "wind_gusts_kt": 15.6,
+            "lapse_rate": 0.77,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.0,
-            "relative_humidity": 57,
+            "pressure": 1019.4,
+            "relative_humidity": 70,
             "wind_speed_80m_kt": 3.4,
-            "wind_speed_120m_kt": 3.0,
+            "wind_speed_120m_kt": 10.5,
             "wind_speed_180m_kt": 2.8,
             "wind_dir_80m": 149,
-            "wind_dir_120m": 153,
+            "wind_dir_120m": 105,
             "wind_dir_180m": 146,
-            "temp_80m": 9.2,
-            "temp_120m": 8.4,
-            "temp_180m": 7.6,
+            "temp_80m": 7.5,
+            "temp_120m": 6.8,
+            "temp_180m": 5.8,
             "boundary_layer_height": 705.0,
-            "surface_lapse_rate": 2.02
+            "surface_lapse_rate": 2.13
           }
         },
         {
           "time": "2026-04-13T17:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Betinget labil — moderat termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Risiko for udkagning pga. lav spread.",
           "data": {
-            "temp": 11.1,
-            "dewpoint": 2.9,
-            "spread": 8.2,
-            "skybase_m": 1025,
-            "skybase_ft": 3363,
+            "temp": 9.1,
+            "dewpoint": 4.3,
+            "spread": 4.8,
+            "skybase_m": 600,
+            "skybase_ft": 1969,
             "cloud_cover": 100,
-            "wind_speed_kt": 4.0,
-            "wind_dir": 119,
-            "wind_gusts_kt": 7.6,
-            "lapse_rate": 0.86,
+            "wind_speed_kt": 8.2,
+            "wind_dir": 89,
+            "wind_gusts_kt": 15.6,
+            "lapse_rate": 0.72,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.0,
-            "relative_humidity": 57,
+            "pressure": 1019.4,
+            "relative_humidity": 72,
             "wind_speed_80m_kt": 4.4,
-            "wind_speed_120m_kt": 4.3,
+            "wind_speed_120m_kt": 10.9,
             "wind_speed_180m_kt": 4.1,
             "wind_dir_80m": 119,
-            "wind_dir_120m": 117,
+            "wind_dir_120m": 100,
             "wind_dir_180m": 109,
-            "temp_80m": 9.4,
-            "temp_120m": 8.7,
-            "temp_180m": 7.9,
+            "temp_80m": 7.3,
+            "temp_120m": 6.6,
+            "temp_180m": 5.7,
             "boundary_layer_height": 660.0,
-            "surface_lapse_rate": 1.8
+            "surface_lapse_rate": 1.91
           }
         },
         {
           "time": "2026-04-13T18:00",
           "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Risiko for udkagning pga. lav spread.",
           "data": {
-            "temp": 10.0,
-            "dewpoint": 3.2,
-            "spread": 6.8,
-            "skybase_m": 850,
-            "skybase_ft": 2789,
+            "temp": 8.3,
+            "dewpoint": 4.3,
+            "spread": 4.0,
+            "skybase_m": 500,
+            "skybase_ft": 1640,
             "cloud_cover": 100,
-            "wind_speed_kt": 4.7,
-            "wind_dir": 109,
-            "wind_gusts_kt": 8.9,
-            "lapse_rate": 0.77,
+            "wind_speed_kt": 7.8,
+            "wind_dir": 86,
+            "wind_gusts_kt": 15.2,
+            "lapse_rate": 0.66,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.2,
-            "relative_humidity": 63,
+            "pressure": 1019.5,
+            "relative_humidity": 76,
             "wind_speed_80m_kt": 6.5,
-            "wind_speed_120m_kt": 7.1,
+            "wind_speed_120m_kt": 11.6,
             "wind_speed_180m_kt": 6.7,
             "wind_dir_80m": 107,
-            "wind_dir_120m": 106,
+            "wind_dir_120m": 100,
             "wind_dir_180m": 100,
-            "temp_80m": 8.7,
-            "temp_120m": 8.3,
-            "temp_180m": 7.6,
+            "temp_80m": 6.8,
+            "temp_120m": 6.1,
+            "temp_180m": 5.6,
             "boundary_layer_height": 590.0,
-            "surface_lapse_rate": 1.35
+            "surface_lapse_rate": 1.52
           }
         },
         {
           "time": "2026-04-13T19:00",
-          "score": 1.7,
+          "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 8.2,
-            "dewpoint": 3.3,
-            "spread": 4.9,
-            "skybase_m": 612,
-            "skybase_ft": 2008,
+            "temp": 7.2,
+            "dewpoint": 4.1,
+            "spread": 3.1,
+            "skybase_m": 388,
+            "skybase_ft": 1273,
             "cloud_cover": 100,
-            "wind_speed_kt": 5.2,
-            "wind_dir": 103,
-            "wind_gusts_kt": 11.1,
-            "lapse_rate": 0.63,
+            "wind_speed_kt": 7.1,
+            "wind_dir": 82,
+            "wind_gusts_kt": 14.6,
+            "lapse_rate": 0.57,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.4,
-            "relative_humidity": 71,
+            "pressure": 1019.7,
+            "relative_humidity": 81,
             "wind_speed_80m_kt": 8.8,
-            "wind_speed_120m_kt": 10.4,
+            "wind_speed_120m_kt": 12.7,
             "wind_speed_180m_kt": 9.7,
             "wind_dir_80m": 103,
-            "wind_dir_120m": 103,
+            "wind_dir_120m": 101,
             "wind_dir_180m": 99,
-            "temp_80m": 7.4,
-            "temp_120m": 7.5,
-            "temp_180m": 7.0,
+            "temp_80m": 6.1,
+            "temp_120m": 5.5,
+            "temp_180m": 5.4,
             "boundary_layer_height": 505.0,
-            "surface_lapse_rate": 0.67
+            "surface_lapse_rate": 1.01
           }
         },
         {
           "time": "2026-04-13T20:00",
-          "score": 1.0,
+          "score": 2,
           "label": "Ingen brugbar termik",
-          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
-            "temp": 6.7,
-            "dewpoint": 3.3,
-            "spread": 3.4,
-            "skybase_m": 425,
-            "skybase_ft": 1394,
+            "temp": 6.2,
+            "dewpoint": 4.0,
+            "spread": 2.2,
+            "skybase_m": 275,
+            "skybase_ft": 902,
             "cloud_cover": 100,
-            "wind_speed_kt": 5.5,
-            "wind_dir": 98,
-            "wind_gusts_kt": 12.4,
-            "lapse_rate": 0.53,
+            "wind_speed_kt": 6.3,
+            "wind_dir": 79,
+            "wind_gusts_kt": 13.6,
+            "lapse_rate": 0.51,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.7,
-            "relative_humidity": 79,
+            "pressure": 1019.9,
+            "relative_humidity": 86,
             "wind_speed_80m_kt": 10.7,
-            "wind_speed_120m_kt": 13.1,
+            "wind_speed_120m_kt": 13.5,
             "wind_speed_180m_kt": 12.2,
             "wind_dir_80m": 100,
             "wind_dir_120m": 102,
             "wind_dir_180m": 100,
-            "temp_80m": 6.5,
-            "temp_120m": 6.8,
-            "temp_180m": 6.6,
+            "temp_80m": 5.6,
+            "temp_120m": 5.1,
+            "temp_180m": 5.3,
             "boundary_layer_height": 435.0,
-            "surface_lapse_rate": 0.06
+            "surface_lapse_rate": 0.51
           }
         },
         {
           "time": "2026-04-13T21:00",
-          "score": 0.7,
+          "score": 1,
           "label": "Ingen brugbar termik",
-          "comment": "Inversion — ingen termik. Høj søbrise-risiko — termik dør tidligt.",
+          "comment": "Inversion — ingen termik.",
           "data": {
-            "temp": 5.8,
-            "dewpoint": 3.5,
-            "spread": 2.3,
-            "skybase_m": 288,
-            "skybase_ft": 945,
+            "temp": 5.4,
+            "dewpoint": 3.8,
+            "spread": 1.6,
+            "skybase_m": 200,
+            "skybase_ft": 656,
             "cloud_cover": 70,
             "wind_speed_kt": 5.7,
-            "wind_dir": 94,
+            "wind_dir": 80,
             "wind_gusts_kt": 12.1,
-            "lapse_rate": 0.47,
+            "lapse_rate": 0.45,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1016.9,
-            "relative_humidity": 85,
+            "pressure": 1020.0,
+            "relative_humidity": 89,
             "wind_speed_80m_kt": 12.2,
-            "wind_speed_120m_kt": 14.8,
+            "wind_speed_120m_kt": 14.0,
             "wind_speed_180m_kt": 14.0,
             "wind_dir_80m": 99,
-            "wind_dir_120m": 103,
+            "wind_dir_120m": 104,
             "wind_dir_180m": 104,
-            "temp_80m": 6.2,
-            "temp_120m": 6.5,
-            "temp_180m": 6.6,
+            "temp_80m": 5.4,
+            "temp_120m": 5.0,
+            "temp_180m": 5.2,
             "boundary_layer_height": 400.0,
-            "surface_lapse_rate": -0.45
+            "surface_lapse_rate": 0.11
           }
         },
         {
@@ -149898,31 +149898,31 @@
           "label": "Ingen brugbar termik",
           "comment": "Inversion — ingen termik.",
           "data": {
-            "temp": 5.2,
-            "dewpoint": 3.5,
-            "spread": 1.7,
-            "skybase_m": 213,
-            "skybase_ft": 699,
+            "temp": 4.8,
+            "dewpoint": 3.4,
+            "spread": 1.4,
+            "skybase_m": 175,
+            "skybase_ft": 574,
             "cloud_cover": 40,
-            "wind_speed_kt": 5.6,
-            "wind_dir": 90,
-            "wind_gusts_kt": 10.7,
-            "lapse_rate": 0.43,
+            "wind_speed_kt": 5.1,
+            "wind_dir": 86,
+            "wind_gusts_kt": 10.1,
+            "lapse_rate": 0.41,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1017.1,
-            "relative_humidity": 89,
+            "pressure": 1020.2,
+            "relative_humidity": 91,
             "wind_speed_80m_kt": 13.2,
-            "wind_speed_120m_kt": 15.9,
+            "wind_speed_120m_kt": 14.2,
             "wind_speed_180m_kt": 15.7,
             "wind_dir_80m": 99,
-            "wind_dir_120m": 105,
+            "wind_dir_120m": 107,
             "wind_dir_180m": 110,
-            "temp_80m": 6.2,
-            "temp_120m": 6.4,
-            "temp_180m": 6.8,
+            "temp_80m": 5.3,
+            "temp_120m": 5.1,
+            "temp_180m": 5.1,
             "boundary_layer_height": 380.0,
-            "surface_lapse_rate": -0.9
+            "surface_lapse_rate": -0.17
           }
         },
         {
@@ -149931,31 +149931,31 @@
           "label": "Ingen brugbar termik",
           "comment": "Inversion — ingen termik.",
           "data": {
-            "temp": 4.7,
-            "dewpoint": 3.5,
-            "spread": 1.2,
-            "skybase_m": 150,
-            "skybase_ft": 492,
+            "temp": 4.3,
+            "dewpoint": 3.2,
+            "spread": 1.1,
+            "skybase_m": 137,
+            "skybase_ft": 449,
             "cloud_cover": 10,
-            "wind_speed_kt": 5.7,
-            "wind_dir": 86,
-            "wind_gusts_kt": 9.9,
-            "lapse_rate": 0.39,
+            "wind_speed_kt": 4.7,
+            "wind_dir": 88,
+            "wind_gusts_kt": 8.6,
+            "lapse_rate": 0.37,
             "cape": 0.0,
             "precipitation": 0.0,
-            "pressure": 1017.2,
-            "relative_humidity": 92,
+            "pressure": 1020.2,
+            "relative_humidity": 93,
             "wind_speed_80m_kt": 14.1,
-            "wind_speed_120m_kt": 16.7,
+            "wind_speed_120m_kt": 14.3,
             "wind_speed_180m_kt": 17.3,
             "wind_dir_80m": 98,
-            "wind_dir_120m": 105,
+            "wind_dir_120m": 108,
             "wind_dir_180m": 113,
-            "temp_80m": 6.1,
-            "temp_120m": 6.2,
-            "temp_180m": 6.8,
+            "temp_80m": 5.3,
+            "temp_120m": 5.2,
+            "temp_180m": 5.0,
             "boundary_layer_height": 365.0,
-            "surface_lapse_rate": -1.18
+            "surface_lapse_rate": -0.39
           }
         }
       ]
@@ -154350,11 +154350,11 @@
             "wind_dir_80m": 101,
             "wind_dir_120m": 112,
             "wind_dir_180m": 112,
-            "temp_80m": 5.3,
-            "temp_120m": 4.6,
-            "temp_180m": 3.6,
+            "temp_80m": 5.0,
+            "temp_120m": 4.3,
+            "temp_180m": 3.4,
             "boundary_layer_height": 855.0,
-            "surface_lapse_rate": 3.76
+            "surface_lapse_rate": 3.88
           }
         },
         {
@@ -154383,11 +154383,11 @@
             "wind_dir_80m": 100,
             "wind_dir_120m": 105,
             "wind_dir_180m": 108,
-            "temp_80m": 6.0,
-            "temp_120m": 5.3,
-            "temp_180m": 4.4,
+            "temp_80m": 5.6,
+            "temp_120m": 4.9,
+            "temp_180m": 4.0,
             "boundary_layer_height": 885.0,
-            "surface_lapse_rate": 3.48
+            "surface_lapse_rate": 3.71
           }
         },
         {
@@ -154416,11 +154416,11 @@
             "wind_dir_80m": 97,
             "wind_dir_120m": 98,
             "wind_dir_180m": 103,
-            "temp_80m": 6.4,
-            "temp_120m": 5.7,
-            "temp_180m": 4.9,
+            "temp_80m": 6.0,
+            "temp_120m": 5.3,
+            "temp_180m": 4.4,
             "boundary_layer_height": 850.0,
-            "surface_lapse_rate": 3.15
+            "surface_lapse_rate": 3.43
           }
         },
         {
@@ -154449,11 +154449,11 @@
             "wind_dir_80m": 91,
             "wind_dir_120m": 93,
             "wind_dir_180m": 97,
-            "temp_80m": 6.2,
-            "temp_120m": 5.5,
-            "temp_180m": 4.7,
+            "temp_80m": 6.1,
+            "temp_120m": 5.4,
+            "temp_180m": 4.6,
             "boundary_layer_height": 710.0,
-            "surface_lapse_rate": 2.98
+            "surface_lapse_rate": 3.03
           }
         },
         {
@@ -154482,11 +154482,11 @@
             "wind_dir_80m": 87,
             "wind_dir_120m": 89,
             "wind_dir_180m": 92,
-            "temp_80m": 5.6,
-            "temp_120m": 4.8,
-            "temp_180m": 4.2,
+            "temp_80m": 5.9,
+            "temp_120m": 5.2,
+            "temp_180m": 4.6,
             "boundary_layer_height": 505.0,
-            "surface_lapse_rate": 2.81
+            "surface_lapse_rate": 2.58
           }
         },
         {
@@ -154515,11 +154515,11 @@
             "wind_dir_80m": 84,
             "wind_dir_120m": 88,
             "wind_dir_180m": 91,
-            "temp_80m": 5.0,
-            "temp_120m": 4.3,
-            "temp_180m": 3.8,
+            "temp_80m": 5.7,
+            "temp_120m": 5.0,
+            "temp_180m": 4.7,
             "boundary_layer_height": 345.0,
-            "surface_lapse_rate": 2.53
+            "surface_lapse_rate": 2.02
           }
         },
         {
@@ -154548,11 +154548,11 @@
             "wind_dir_80m": 85,
             "wind_dir_120m": 88,
             "wind_dir_180m": 93,
-            "temp_80m": 4.6,
-            "temp_120m": 4.0,
-            "temp_180m": 3.9,
+            "temp_80m": 5.4,
+            "temp_120m": 4.8,
+            "temp_180m": 5.0,
             "boundary_layer_height": 270.0,
-            "surface_lapse_rate": 1.8
+            "surface_lapse_rate": 1.18
           }
         },
         {
@@ -154581,11 +154581,11 @@
             "wind_dir_80m": 87,
             "wind_dir_120m": 90,
             "wind_dir_180m": 96,
-            "temp_80m": 4.3,
-            "temp_120m": 3.7,
-            "temp_180m": 4.3,
+            "temp_80m": 5.0,
+            "temp_120m": 4.7,
+            "temp_180m": 5.3,
             "boundary_layer_height": 240.0,
-            "surface_lapse_rate": 0.84
+            "surface_lapse_rate": 0.28
           }
         },
         {
@@ -154614,11 +154614,11 @@
             "wind_dir_80m": 89,
             "wind_dir_120m": 95,
             "wind_dir_180m": 102,
-            "temp_80m": 4.2,
-            "temp_120m": 3.7,
-            "temp_180m": 4.6,
+            "temp_80m": 4.7,
+            "temp_120m": 4.6,
+            "temp_180m": 5.7,
             "boundary_layer_height": 240.0,
-            "surface_lapse_rate": 0.22
+            "surface_lapse_rate": -0.39
           }
         },
         {
@@ -154647,16 +154647,16 @@
             "wind_dir_80m": 92,
             "wind_dir_120m": 108,
             "wind_dir_180m": 115,
-            "temp_80m": 4.3,
-            "temp_120m": 4.0,
-            "temp_180m": 4.9,
+            "temp_80m": 4.6,
+            "temp_120m": 4.7,
+            "temp_180m": 6.1,
             "boundary_layer_height": 285.0,
-            "surface_lapse_rate": 0.11
+            "surface_lapse_rate": -0.56
           }
         },
         {
           "time": "2026-04-12T22:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -154680,16 +154680,16 @@
             "wind_dir_80m": 97,
             "wind_dir_120m": 126,
             "wind_dir_180m": 132,
-            "temp_80m": 4.5,
-            "temp_120m": 4.4,
-            "temp_180m": 5.1,
+            "temp_80m": 4.6,
+            "temp_120m": 4.8,
+            "temp_180m": 6.5,
             "boundary_layer_height": 365.0,
-            "surface_lapse_rate": 0.34
+            "surface_lapse_rate": -0.45
           }
         },
         {
           "time": "2026-04-12T23:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -154714,15 +154714,15 @@
             "wind_dir_120m": 138,
             "wind_dir_180m": 144,
             "temp_80m": 4.6,
-            "temp_120m": 4.7,
-            "temp_180m": 5.1,
+            "temp_120m": 4.9,
+            "temp_180m": 6.7,
             "boundary_layer_height": 420.0,
-            "surface_lapse_rate": 0.56
+            "surface_lapse_rate": -0.34
           }
         },
         {
           "time": "2026-04-13T00:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -154746,16 +154746,16 @@
             "wind_dir_80m": 119,
             "wind_dir_120m": 141,
             "wind_dir_180m": 147,
-            "temp_80m": 4.6,
-            "temp_120m": 4.6,
-            "temp_180m": 4.8,
+            "temp_80m": 4.5,
+            "temp_120m": 4.8,
+            "temp_180m": 6.5,
             "boundary_layer_height": 420.0,
-            "surface_lapse_rate": 0.67
+            "surface_lapse_rate": -0.28
           }
         },
         {
           "time": "2026-04-13T01:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Bøjet vind (faktor 2.0) — turbulent.",
           "data": {
@@ -154779,16 +154779,16 @@
             "wind_dir_80m": 162,
             "wind_dir_120m": 141,
             "wind_dir_180m": 148,
-            "temp_80m": 4.6,
-            "temp_120m": 4.3,
-            "temp_180m": 4.2,
+            "temp_80m": 4.3,
+            "temp_120m": 4.7,
+            "temp_180m": 6.1,
             "boundary_layer_height": 400.0,
-            "surface_lapse_rate": 0.79
+            "surface_lapse_rate": -0.28
           }
         },
         {
           "time": "2026-04-13T02:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Bøjet vind (faktor 2.2) — turbulent.",
           "data": {
@@ -154812,16 +154812,16 @@
             "wind_dir_80m": 220,
             "wind_dir_120m": 140,
             "wind_dir_180m": 147,
-            "temp_80m": 4.5,
-            "temp_120m": 4.1,
-            "temp_180m": 3.8,
+            "temp_80m": 4.3,
+            "temp_120m": 4.7,
+            "temp_180m": 5.9,
             "boundary_layer_height": 375.0,
-            "surface_lapse_rate": 0.79
+            "surface_lapse_rate": -0.39
           }
         },
         {
           "time": "2026-04-13T03:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret. Bøjet vind (faktor 2.1) — turbulent.",
           "data": {
@@ -154845,16 +154845,16 @@
             "wind_dir_80m": 240,
             "wind_dir_120m": 138,
             "wind_dir_180m": 145,
-            "temp_80m": 4.4,
-            "temp_120m": 4.0,
-            "temp_180m": 3.6,
+            "temp_80m": 4.5,
+            "temp_120m": 5.0,
+            "temp_180m": 6.0,
             "boundary_layer_height": 360.0,
-            "surface_lapse_rate": 0.62
+            "surface_lapse_rate": -0.73
           }
         },
         {
           "time": "2026-04-13T04:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -154878,16 +154878,16 @@
             "wind_dir_80m": 250,
             "wind_dir_120m": 134,
             "wind_dir_180m": 141,
-            "temp_80m": 4.4,
-            "temp_120m": 4.0,
-            "temp_180m": 3.5,
+            "temp_80m": 4.9,
+            "temp_120m": 5.4,
+            "temp_180m": 6.3,
             "boundary_layer_height": 340.0,
-            "surface_lapse_rate": 0.39
+            "surface_lapse_rate": -1.18
           }
         },
         {
           "time": "2026-04-13T05:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -154911,16 +154911,16 @@
             "wind_dir_80m": 257,
             "wind_dir_120m": 131,
             "wind_dir_180m": 139,
-            "temp_80m": 4.3,
-            "temp_120m": 3.9,
-            "temp_180m": 3.4,
+            "temp_80m": 5.2,
+            "temp_120m": 5.7,
+            "temp_180m": 6.4,
             "boundary_layer_height": 335.0,
-            "surface_lapse_rate": 0.34
+            "surface_lapse_rate": -1.35
           }
         },
         {
           "time": "2026-04-13T06:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Stabil atmosfære — meget begrænset termik. Overskyet — solinstråling blokeret.",
           "data": {
@@ -154944,16 +154944,16 @@
             "wind_dir_80m": 261,
             "wind_dir_120m": 130,
             "wind_dir_180m": 138,
-            "temp_80m": 4.2,
-            "temp_120m": 3.7,
-            "temp_180m": 3.2,
+            "temp_80m": 5.2,
+            "temp_120m": 5.6,
+            "temp_180m": 6.1,
             "boundary_layer_height": 350.0,
-            "surface_lapse_rate": 0.62
+            "surface_lapse_rate": -1.01
           }
         },
         {
           "time": "2026-04-13T07:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Risiko for udkagning pga. lav spread.",
           "data": {
@@ -154977,16 +154977,16 @@
             "wind_dir_80m": 266,
             "wind_dir_120m": 131,
             "wind_dir_180m": 138,
-            "temp_80m": 4.1,
-            "temp_120m": 3.5,
-            "temp_180m": 3.0,
+            "temp_80m": 5.1,
+            "temp_120m": 5.3,
+            "temp_180m": 5.5,
             "boundary_layer_height": 375.0,
-            "surface_lapse_rate": 1.12
+            "surface_lapse_rate": -0.28
           }
         },
         {
           "time": "2026-04-13T08:00",
-          "score": 2,
+          "score": 1,
           "label": "Ingen brugbar termik",
           "comment": "Svagt labil — begrænset termikhøjde. Overskyet — solinstråling blokeret. Bøjet vind (faktor 2.0) — turbulent.",
           "data": {
@@ -155010,11 +155010,11 @@
             "wind_dir_80m": 267,
             "wind_dir_120m": 131,
             "wind_dir_180m": 138,
-            "temp_80m": 4.1,
-            "temp_120m": 3.4,
-            "temp_180m": 2.8,
+            "temp_80m": 5.1,
+            "temp_120m": 5.1,
+            "temp_180m": 5.2,
             "boundary_layer_height": 395.0,
-            "surface_lapse_rate": 1.46
+            "surface_lapse_rate": 0.11
           }
         },
         {
@@ -155043,11 +155043,11 @@
             "wind_dir_80m": 267,
             "wind_dir_120m": 133,
             "wind_dir_180m": 142,
-            "temp_80m": 4.2,
-            "temp_120m": 3.5,
-            "temp_180m": 2.8,
+            "temp_80m": 5.2,
+            "temp_120m": 5.1,
+            "temp_180m": 5.3,
             "boundary_layer_height": 275.0,
-            "surface_lapse_rate": 1.97
+            "surface_lapse_rate": 0.56
           }
         },
         {
@@ -155076,11 +155076,11 @@
             "wind_dir_80m": 265,
             "wind_dir_120m": 132,
             "wind_dir_180m": 140,
-            "temp_80m": 4.3,
-            "temp_120m": 3.6,
-            "temp_180m": 2.8,
+            "temp_80m": 5.3,
+            "temp_120m": 5.3,
+            "temp_180m": 5.6,
             "boundary_layer_height": 480.0,
-            "surface_lapse_rate": 2.64
+            "surface_lapse_rate": 1.07
           }
         },
         {
@@ -155109,11 +155109,11 @@
             "wind_dir_80m": 263,
             "wind_dir_120m": 131,
             "wind_dir_180m": 137,
-            "temp_80m": 4.5,
-            "temp_120m": 3.8,
-            "temp_180m": 2.9,
+            "temp_80m": 5.5,
+            "temp_120m": 5.4,
+            "temp_180m": 5.9,
             "boundary_layer_height": 715.0,
-            "surface_lapse_rate": 3.37
+            "surface_lapse_rate": 1.69
           }
         },
         {
@@ -155142,11 +155142,11 @@
             "wind_dir_80m": 258,
             "wind_dir_120m": 128,
             "wind_dir_180m": 132,
-            "temp_80m": 4.7,
-            "temp_120m": 4.0,
-            "temp_180m": 3.1,
+            "temp_80m": 5.7,
+            "temp_120m": 5.5,
+            "temp_180m": 6.0,
             "boundary_layer_height": 940.0,
-            "surface_lapse_rate": 3.99
+            "surface_lapse_rate": 2.36
           }
         },
         {
@@ -155175,11 +155175,11 @@
             "wind_dir_80m": 252,
             "wind_dir_120m": 125,
             "wind_dir_180m": 128,
-            "temp_80m": 5.0,
-            "temp_120m": 4.2,
-            "temp_180m": 3.4,
+            "temp_80m": 6.0,
+            "temp_120m": 5.5,
+            "temp_180m": 6.0,
             "boundary_layer_height": 1105.0,
-            "surface_lapse_rate": 4.38
+            "surface_lapse_rate": 2.92
           }
         },
         {
@@ -155208,11 +155208,11 @@
             "wind_dir_80m": 247,
             "wind_dir_120m": 121,
             "wind_dir_180m": 123,
-            "temp_80m": 5.3,
-            "temp_120m": 4.5,
-            "temp_180m": 3.7,
+            "temp_80m": 6.2,
+            "temp_120m": 5.6,
+            "temp_180m": 6.1,
             "boundary_layer_height": 1180.0,
-            "surface_lapse_rate": 4.44
+            "surface_lapse_rate": 3.09
           }
         },
         {
@@ -155241,11 +155241,11 @@
             "wind_dir_80m": 250,
             "wind_dir_120m": 115,
             "wind_dir_180m": 116,
-            "temp_80m": 5.6,
-            "temp_120m": 4.8,
-            "temp_180m": 4.1,
+            "temp_80m": 6.3,
+            "temp_120m": 5.8,
+            "temp_180m": 6.2,
             "boundary_layer_height": 1135.0,
-            "surface_lapse_rate": 4.1
+            "surface_lapse_rate": 2.92
           }
         },
         {
@@ -155274,11 +155274,11 @@
             "wind_dir_80m": 258,
             "wind_dir_120m": 107,
             "wind_dir_180m": 109,
-            "temp_80m": 5.8,
-            "temp_120m": 5.1,
-            "temp_180m": 4.5,
+            "temp_80m": 6.4,
+            "temp_120m": 6.1,
+            "temp_180m": 6.4,
             "boundary_layer_height": 995.0,
-            "surface_lapse_rate": 3.43
+            "surface_lapse_rate": 2.36
           }
         },
         {
@@ -155307,11 +155307,11 @@
             "wind_dir_80m": 270,
             "wind_dir_120m": 101,
             "wind_dir_180m": 103,
-            "temp_80m": 6.0,
-            "temp_120m": 5.3,
-            "temp_180m": 4.8,
+            "temp_80m": 6.3,
+            "temp_120m": 6.2,
+            "temp_180m": 6.5,
             "boundary_layer_height": 805.0,
-            "surface_lapse_rate": 2.58
+            "surface_lapse_rate": 1.63
           }
         },
         {
@@ -155340,11 +155340,11 @@
             "wind_dir_80m": 297,
             "wind_dir_120m": 96,
             "wind_dir_180m": 100,
-            "temp_80m": 6.2,
-            "temp_120m": 5.5,
-            "temp_180m": 4.9,
+            "temp_80m": 6.0,
+            "temp_120m": 6.0,
+            "temp_180m": 6.5,
             "boundary_layer_height": 600.0,
-            "surface_lapse_rate": 1.85
+            "surface_lapse_rate": 0.96
           }
         },
         {
@@ -155373,11 +155373,11 @@
             "wind_dir_80m": 68,
             "wind_dir_120m": 94,
             "wind_dir_180m": 98,
-            "temp_80m": 6.4,
-            "temp_120m": 5.8,
-            "temp_180m": 4.9,
+            "temp_80m": 5.6,
+            "temp_120m": 5.7,
+            "temp_180m": 6.3,
             "boundary_layer_height": 410.0,
-            "surface_lapse_rate": 1.24
+            "surface_lapse_rate": 0.45
           }
         },
         {
@@ -155406,11 +155406,11 @@
             "wind_dir_80m": 77,
             "wind_dir_120m": 94,
             "wind_dir_180m": 99,
-            "temp_80m": 6.4,
-            "temp_120m": 5.8,
-            "temp_180m": 4.9,
+            "temp_80m": 5.3,
+            "temp_120m": 5.5,
+            "temp_180m": 6.2,
             "boundary_layer_height": 285.0,
-            "surface_lapse_rate": 0.84
+            "surface_lapse_rate": 0.11
           }
         },
         {
@@ -155439,11 +155439,11 @@
             "wind_dir_80m": 78,
             "wind_dir_120m": 96,
             "wind_dir_180m": 102,
-            "temp_80m": 6.0,
-            "temp_120m": 5.6,
-            "temp_180m": 4.8,
+            "temp_80m": 5.3,
+            "temp_120m": 5.5,
+            "temp_180m": 6.0,
             "boundary_layer_height": 215.0,
-            "surface_lapse_rate": 0.73
+            "surface_lapse_rate": 0.06
           }
         },
         {
@@ -155473,10 +155473,10 @@
             "wind_dir_120m": 101,
             "wind_dir_180m": 107,
             "temp_80m": 5.4,
-            "temp_120m": 5.2,
-            "temp_180m": 4.7,
+            "temp_120m": 5.6,
+            "temp_180m": 5.9,
             "boundary_layer_height": 175.0,
-            "surface_lapse_rate": 0.67
+            "surface_lapse_rate": 0.0
           }
         },
         {
@@ -155505,11 +155505,11 @@
             "wind_dir_80m": 79,
             "wind_dir_120m": 108,
             "wind_dir_180m": 116,
-            "temp_80m": 4.9,
-            "temp_120m": 4.8,
-            "temp_180m": 4.5,
+            "temp_80m": 5.5,
+            "temp_120m": 5.6,
+            "temp_180m": 5.7,
             "boundary_layer_height": 160.0,
-            "surface_lapse_rate": 0.79
+            "surface_lapse_rate": 0.11
           }
         }
       ]
