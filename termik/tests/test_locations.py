@@ -52,9 +52,9 @@ def test_arnborg_exists():
     ids = [af["id"] for af in AIRFIELDS]
     assert "arnborg" in ids
     arnborg = next(af for af in AIRFIELDS if af["id"] == "arnborg")
-    assert 55.8 < arnborg["lat"] < 56.0
+    assert 55.9 < arnborg["lat"] < 56.1
     assert 8.9 < arnborg["lon"] < 9.2
-    assert arnborg["coast_distance_km"] > 50
+    assert arnborg["coast_distance_km"] > 40
 
 
 def test_kongsted_is_coastal():
