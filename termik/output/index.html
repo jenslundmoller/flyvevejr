@@ -10,7 +10,10 @@
 <body>
     <div id="map"></div>
 
-    <div id="controls">
+    <div id="sidebar">
+        <div id="sidebar-toggle">&#9654;</div>
+        <div class="sidebar-content">
+        <h2>Filtrering</h2>
         <div id="day-buttons">
             <button class="day-btn active" data-day="0">I dag</button>
             <button class="day-btn" data-day="1">I morgen</button>
@@ -26,12 +29,15 @@
             <span id="time-display">14:00</span>
         </div>
         <div id="update-info"></div>
-    </div>
 
-    <div id="sidebar">
-        <div id="sidebar-toggle">&#9654;</div>
-        <h2>Top 5 pladser</h2>
-        <div id="top-list"></div>
+        <div id="favorite-section">
+            <h2>Favorit-plads</h2>
+            <select id="favorite-select">
+                <option value="">Vælg flyveplads…</option>
+            </select>
+            <div id="favorite-forecast"></div>
+        </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

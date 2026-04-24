@@ -293,39 +293,105 @@ function getWindArrow(degrees) {
     return arrows[index];
 }
 
-// === Sidebar (Top 5) ===
-function updateTopList() {
-    const airfields = forecastData.points.filter(function(p) { return p.type === 'airfield'; });
-    const scored = airfields.map(function(af) {
-        const data = getPointAtTime(af, currentDay, currentHour);
-        return {
-            id: af.id,
-            name: af.name,
-            score: data ? data.score : 0,
-            label: data ? data.label : '',
-            lat: af.lat,
-            lon: af.lon,
-        };
+// === Favorite airfield ===
+const FAVORITE_KEY = 'termik-favorite-airfield';
+
+function getDayLabel(day) {
+    if (day === 0) return 'I dag';
+    if (day === 1) return 'I morgen';
+    if (day === 2) return 'Overmorgen';
+    return '+' + day + ' dage';
+}
+
+function getDaySummary(airfield, day) {
+    let sum = 0;
+    let count = 0;
+    let goodHours = 0;
+    for (let h = 10; h <= 18; h++) {
+        const data = getPointAtTime(airfield, day, h);
+        if (!data) continue;
+        sum += data.score;
+        count += 1;
+        if (data.score >= 5) goodHours += 1;
+    }
+    if (count === 0) return null;
+    return {
+        avg: Math.round((sum / count) * 10) / 10,
+        goodHours: goodHours,
+        totalHours: count,
+    };
+}
+
+function populateFavoriteSelect() {
+    const select = document.getElementById('favorite-select');
+    const airfields = forecastData.points
+        .filter(function(p) { return p.type === 'airfield'; })
+        .slice()
+        .sort(function(a, b) { return a.name.localeCompare(b.name, 'da'); });
+
+    airfields.forEach(function(af) {
+        const opt = document.createElement('option');
+        opt.value = af.id;
+        opt.textContent = af.name;
+        select.appendChild(opt);
     });
-    scored.sort(function(a, b) { return b.score - a.score; });
-    const top5 = scored.slice(0, 5);
 
-    const listEl = document.getElementById('top-list');
-    listEl.innerHTML = top5.map(function(item, i) {
-        return '<div class="top-item" data-id="' + item.id + '">'
-            + '<span class="top-rank">' + (i + 1) + '.</span>'
-            + '<span class="top-name">' + escapeHtml(item.name) + '</span>'
-            + '<span class="top-score" style="background:' + scoreToColor(item.score) + '">' + item.score + '</span>'
+    const saved = localStorage.getItem(FAVORITE_KEY);
+    if (saved && airfields.some(function(af) { return af.id === saved; })) {
+        select.value = saved;
+    }
+
+    select.addEventListener('change', function() {
+        if (select.value) {
+            localStorage.setItem(FAVORITE_KEY, select.value);
+        } else {
+            localStorage.removeItem(FAVORITE_KEY);
+        }
+        updateFavoriteForecast();
+    });
+}
+
+function updateFavoriteForecast() {
+    const el = document.getElementById('favorite-forecast');
+    const select = document.getElementById('favorite-select');
+    const id = select.value;
+    if (!id) {
+        el.innerHTML = '';
+        return;
+    }
+
+    const airfield = forecastData.points.find(function(p) { return p.id === id; });
+    if (!airfield) {
+        el.innerHTML = '';
+        return;
+    }
+
+    let html = '<div class="fav-header">Gennemsnit kl. 10–18</div>';
+    html += '<div class="fav-list">';
+    for (let day = 0; day <= 6; day++) {
+        const sum = getDaySummary(airfield, day);
+        const score = sum ? sum.avg : 0;
+        const color = sum ? scoreToColor(score) : '#ddd';
+        const good = sum ? sum.goodHours + '/' + sum.totalHours + ' gode t.' : '—';
+        const active = day === currentDay ? ' active' : '';
+        html += '<div class="fav-row' + active + '" data-day="' + day + '">'
+            + '<span class="fav-day">' + getDayLabel(day) + '</span>'
+            + '<span class="fav-hour">' + good + '</span>'
+            + '<span class="fav-score" style="background:' + color + '">' + (sum ? sum.avg : '–') + '</span>'
             + '</div>';
-    }).join('');
+    }
+    html += '</div>';
+    el.innerHTML = html;
 
-    // Click on top-list item zooms to it and opens popup
-    listEl.querySelectorAll('.top-item').forEach(function(el) {
-        el.addEventListener('click', function() {
-            const id = el.dataset.id;
-            const entry = airfieldMarkers.find(function(m) { return m.point.id === id; });
+    el.querySelectorAll('.fav-row').forEach(function(row) {
+        row.addEventListener('click', function() {
+            const day = parseInt(row.dataset.day, 10);
+            const btn = document.querySelector('.day-btn[data-day="' + day + '"]');
+            if (btn) btn.click();
+            updateHash();
+            map.setView([airfield.lat, airfield.lon], Math.max(map.getZoom(), 9), { animate: true });
+            const entry = airfieldMarkers.find(function(m) { return m.point.id === airfield.id; });
             if (entry) {
-                map.setView([entry.point.lat, entry.point.lon], 9, { animate: true });
                 entry.marker.setPopupContent(createPopupContent(entry.point));
                 entry.marker.openPopup();
             }
@@ -363,10 +429,32 @@ function setupControls() {
         updateHash();
     });
 
-    // Sidebar toggle
+    // Sidebar toggle — desktop collapses right, mobile toggles expanded (shows favorites)
     const sidebar = document.getElementById('sidebar');
-    document.getElementById('sidebar-toggle').addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
+    const toggle = document.getElementById('sidebar-toggle');
+    const isMobile = function() { return window.matchMedia('(max-width: 768px)').matches; };
+
+    toggle.addEventListener('click', function() {
+        if (isMobile()) {
+            sidebar.classList.toggle('expanded');
+        } else {
+            sidebar.classList.toggle('collapsed');
+        }
+    });
+
+    // Mobile swipe up/down on the handle to expand/collapse favorites
+    let touchStartY = null;
+    toggle.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    toggle.addEventListener('touchend', function(e) {
+        if (touchStartY === null || !isMobile()) { touchStartY = null; return; }
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        touchStartY = null;
+        if (Math.abs(dy) > 20) {
+            if (dy < 0) sidebar.classList.add('expanded');
+            else sidebar.classList.remove('expanded');
+        }
     });
 
     // Show generated timestamp
@@ -379,7 +467,7 @@ function setupControls() {
 function updateAll() {
     updateHeatmap();
     updateMarkerColors();
-    updateTopList();
+    updateFavoriteForecast();
 }
 
 // === Loading UI helpers ===
@@ -465,6 +553,7 @@ async function init() {
     initMap();
     createAirfieldMarkers();
     setupControls();
+    populateFavoriteSelect();
     updateAll();
     updateHash();
     map.on('moveend', updateHash);
