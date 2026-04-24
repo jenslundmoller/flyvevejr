@@ -4,7 +4,7 @@ import json
 import os
 import time
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 
 from termik.config import (
     API_BASE_URL,
@@ -328,7 +328,7 @@ def process_all_points() -> dict:
               f"Output contains {len(all_results)} of {len(ALL_POINTS)} points.")
 
     return {
-        "generated": datetime.now().isoformat(),
+        "generated": datetime.now(timezone.utc).isoformat(),
         "forecast_days": FORECAST_DAYS,
         "points": all_results,
     }
