@@ -45,6 +45,17 @@ jobs:
 
       - name: Trigger deploy
         if: steps.commit.outputs.changed == 'true'
-        run: gh workflow run deploy-pages.yml
         env:
           GH_TOKEN: ${{ github.token }}
+          REF: ${{ github.ref_name }}
+        run: |
+          for attempt in 1 2 3; do
+            if gh workflow run deploy-pages.yml --ref "$REF"; then
+              echo "Deploy triggered on attempt $attempt"
+              exit 0
+            fi
+            echo "Attempt $attempt failed, retrying in $((attempt * 10))s..."
+            sleep $((attempt * 10))
+          done
+          echo "::error::Failed to trigger deploy after 3 attempts"
+          exit 1
