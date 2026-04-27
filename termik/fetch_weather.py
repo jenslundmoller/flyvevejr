@@ -302,6 +302,7 @@ def process_all_points() -> dict:
         for point, hourly_response in zip(batch_points, batch_data):
             hourly_data = hourly_response["hourly"]
             num_hours = len(hourly_data["time"])
+            is_airfield = "name" in point
 
             hours = []
             for h in range(num_hours):
@@ -309,19 +310,27 @@ def process_all_points() -> dict:
                 time_str = hourly_data["time"][h]
                 month = int(time_str[5:7])
                 hour_result = process_point_hour(point, hourly_data, h, month)
+                # Grid points only feed the heat-map: keep just time + score so
+                # the JSON payload stays small. Airfields keep the full payload
+                # for their popup display.
+                if not is_airfield:
+                    hour_result = {
+                        "time": hour_result["time"],
+                        "score": hour_result["score"],
+                    }
                 hours.append(hour_result)
 
-            all_results.append(
-                {
-                    "id": point["id"],
-                    "name": point.get("name", ""),
-                    "type": "airfield" if "name" in point else "grid",
-                    "lat": point["lat"],
-                    "lon": point["lon"],
-                    "region": point.get("region", ""),
-                    "hours": hours,
-                }
-            )
+            entry = {
+                "id": point["id"],
+                "type": "airfield" if is_airfield else "grid",
+                "lat": point["lat"],
+                "lon": point["lon"],
+                "hours": hours,
+            }
+            if is_airfield:
+                entry["name"] = point.get("name", "")
+                entry["region"] = point.get("region", "")
+            all_results.append(entry)
 
     if failed_batches:
         print(f"WARNING: {failed_batches}/{total_batches} batches failed. "
@@ -344,9 +353,9 @@ def write_output(data: dict):
     """
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    # current.json — everything
+    # current.json — everything (compact: no indent, to minimise transfer size)
     with open(os.path.join(DATA_DIR, "current.json"), "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
 
     # airfields.json — only airfield points
     airfield_ids = {a["id"] for a in AIRFIELDS}

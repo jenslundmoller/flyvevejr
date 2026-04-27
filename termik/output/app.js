@@ -6,7 +6,8 @@
 let forecastData = null;
 let currentDay = 0;
 let currentHour = 14;
-let heatLayer = null;
+let scoreLayer = null;      // Custom Leaflet layer that paints the interpolated score canvas
+let countryMask = null;     // Denmark land polygon as GeoJSON Feature (used for clipping)
 let airfieldMarkers = [];
 let map = null;
 let baseDate = null; // Date object for day 0 (parsed from generated timestamp)
@@ -44,10 +45,8 @@ const COLOR_STOPS = [
     [10, [220, 30,  30]],   // red
 ];
 
-function scoreToColor(score) {
+function scoreToRgb(score) {
     const s = Math.max(0, Math.min(10, score));
-
-    // Find bounding stops
     let lower = COLOR_STOPS[0];
     let upper = COLOR_STOPS[COLOR_STOPS.length - 1];
     for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
@@ -57,14 +56,17 @@ function scoreToColor(score) {
             break;
         }
     }
-
     const range = upper[0] - lower[0];
     const t = range === 0 ? 0 : (s - lower[0]) / range;
+    return [
+        Math.round(lower[1][0] + t * (upper[1][0] - lower[1][0])),
+        Math.round(lower[1][1] + t * (upper[1][1] - lower[1][1])),
+        Math.round(lower[1][2] + t * (upper[1][2] - lower[1][2])),
+    ];
+}
 
-    const r = Math.round(lower[1][0] + t * (upper[1][0] - lower[1][0]));
-    const g = Math.round(lower[1][1] + t * (upper[1][1] - lower[1][1]));
-    const b = Math.round(lower[1][2] + t * (upper[1][2] - lower[1][2]));
-
+function scoreToColor(score) {
+    const [r, g, b] = scoreToRgb(score);
     return `rgb(${r},${g},${b})`;
 }
 
@@ -116,37 +118,161 @@ function initMap() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
     }).addTo(map);
+
+    // Custom pane so the score-grid sits above tiles but below markers
+    map.createPane('scoreGrid');
+    map.getPane('scoreGrid').style.zIndex = 350;
+    map.getPane('scoreGrid').style.pointerEvents = 'none';
 }
 
-// === Heatmap ===
-function updateHeatmap() {
-    if (heatLayer) {
-        map.removeLayer(heatLayer);
-        heatLayer = null;
+// === Score canvas layer ===
+// Renders the score field as a single canvas with bilinear interpolation
+// between grid points (browser-native via imageSmoothingEnabled), clipped
+// to the Denmark coastline. Far cheaper than thousands of SVG polygons.
+const GRID_STEP_DEG = 0.2;
+const SCORE_BBOX = { latMin: 54.5, latMax: 57.7, lonMin: 8.0, lonMax: 15.2 };
+const SCORE_OPACITY = 0.55;
+
+// Build a small offscreen canvas: one pixel per 0.2° grid cell, filled with
+// the score's RGB. Missing cells (offshore) get the nearest existing score so
+// browser smoothing has clean values everywhere — the country-mask clip on the
+// display canvas hides anything that ends up over the sea.
+function buildScoreCanvas() {
+    if (!forecastData) return null;
+    const { latMin, latMax, lonMin, lonMax } = SCORE_BBOX;
+    const W = Math.round((lonMax - lonMin) / GRID_STEP_DEG) + 1;
+    const H = Math.round((latMax - latMin) / GRID_STEP_DEG) + 1;
+
+    const points = [];
+    for (const p of forecastData.points) {
+        if (p.type !== 'grid') continue;
+        const hd = getPointAtTime(p, currentDay, currentHour);
+        if (!hd) continue;
+        points.push({ lat: p.lat, lon: p.lon, score: hd.score });
     }
+    if (!points.length) return null;
 
-    const gridPoints = forecastData.points.filter(function(p) { return p.type === 'grid'; });
-    const heatData = [];
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const img = ctx.createImageData(W, H);
+    const alpha = Math.round(255 * SCORE_OPACITY);
 
-    for (const point of gridPoints) {
-        const hourData = getPointAtTime(point, currentDay, currentHour);
-        if (!hourData) continue;
-        heatData.push([point.lat, point.lon, scoreToHeatIntensity(hourData.score)]);
-    }
-
-    heatLayer = L.heatLayer(heatData, {
-        radius: 35,
-        blur: 25,
-        maxZoom: 10,
-        max: 1.0,
-        gradient: {
-            0.0: '#1e3c96',
-            0.3: '#6496dc',
-            0.5: '#f0dc32',
-            0.7: '#f08c1e',
-            1.0: '#dc1e1e',
+    for (let y = 0; y < H; y++) {
+        const lat = latMax - y * GRID_STEP_DEG;
+        for (let x = 0; x < W; x++) {
+            const lon = lonMin + x * GRID_STEP_DEG;
+            let bestScore = 0;
+            let bestDist = Infinity;
+            for (const p of points) {
+                const dlat = p.lat - lat;
+                const dlon = p.lon - lon;
+                const d = dlat * dlat + dlon * dlon;
+                if (d < bestDist) { bestDist = d; bestScore = p.score; }
+            }
+            const [r, g, b] = scoreToRgb(bestScore);
+            const idx = (y * W + x) * 4;
+            img.data[idx] = r;
+            img.data[idx + 1] = g;
+            img.data[idx + 2] = b;
+            img.data[idx + 3] = alpha;
         }
-    }).addTo(map);
+    }
+    ctx.putImageData(img, 0, 0);
+    return canvas;
+}
+
+const ScoreCanvasLayer = L.Layer.extend({
+    initialize: function() {
+        this._scoreCanvas = null;
+        this._mask = null; // GeoJSON Feature with MultiPolygon coordinates
+    },
+    onAdd: function(map) {
+        const canvas = L.DomUtil.create('canvas', 'leaflet-score-canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.pointerEvents = 'none';
+        const pane = map.getPane('scoreGrid');
+        pane.appendChild(canvas);
+        this._canvas = canvas;
+        map.on('moveend zoomend resize', this._render, this);
+        this._render();
+    },
+    onRemove: function(map) {
+        map.off('moveend zoomend resize', this._render, this);
+        L.DomUtil.remove(this._canvas);
+        this._canvas = null;
+    },
+    setScoreCanvas: function(canvas) {
+        this._scoreCanvas = canvas;
+        this._render();
+    },
+    setMask: function(feature) {
+        this._mask = feature;
+        this._render();
+    },
+    _buildMaskPath: function() {
+        if (!this._mask) return null;
+        const map = this._map;
+        const path = new Path2D();
+        const geom = this._mask.geometry;
+        const polys = geom.type === 'MultiPolygon' ? geom.coordinates : [geom.coordinates];
+        for (const poly of polys) {
+            for (const ring of poly) {
+                let first = true;
+                for (const coord of ring) {
+                    const pt = map.latLngToContainerPoint([coord[1], coord[0]]);
+                    if (first) { path.moveTo(pt.x, pt.y); first = false; }
+                    else path.lineTo(pt.x, pt.y);
+                }
+                path.closePath();
+            }
+        }
+        return path;
+    },
+    _render: function() {
+        const map = this._map;
+        const canvas = this._canvas;
+        if (!map || !canvas) return;
+        const size = map.getSize();
+        canvas.width = size.x;
+        canvas.height = size.y;
+        const topLeft = map.containerPointToLayerPoint([0, 0]);
+        L.DomUtil.setPosition(canvas, topLeft);
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, size.x, size.y);
+        if (!this._scoreCanvas) return;
+
+        const maskPath = this._buildMaskPath();
+        if (maskPath) {
+            ctx.save();
+            ctx.clip(maskPath);
+        }
+
+        // Extend destination by half a grid step on each side so source pixel
+        // centres land on their grid point's lat/lon (drawImage maps source
+        // EDGES to destination edges, so without this we'd be off by half a
+        // pixel — visible as a ~5 km diagonal shift once the mask hugs the
+        // coast precisely).
+        const half = GRID_STEP_DEG / 2;
+        const tl = map.latLngToContainerPoint([SCORE_BBOX.latMax + half, SCORE_BBOX.lonMin - half]);
+        const br = map.latLngToContainerPoint([SCORE_BBOX.latMin - half, SCORE_BBOX.lonMax + half]);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(this._scoreCanvas, tl.x, tl.y, br.x - tl.x, br.y - tl.y);
+
+        if (maskPath) ctx.restore();
+    },
+});
+
+function updateHeatmap() {
+    if (!scoreLayer) {
+        scoreLayer = new ScoreCanvasLayer();
+        scoreLayer.addTo(map);
+        if (countryMask) scoreLayer.setMask(countryMask);
+    }
+    scoreLayer.setScoreCanvas(buildScoreCanvas());
 }
 
 // === Airfield markers ===
@@ -500,9 +626,16 @@ async function init() {
     showLoading();
 
     try {
-        const resp = await fetch('data/current.json');
-        if (!resp.ok) throw new Error('HTTP ' + resp.status + ': ' + resp.statusText);
-        forecastData = await resp.json();
+        const [forecastResp, maskResp] = await Promise.all([
+            fetch('data/current.json'),
+            fetch('data/denmark.geojson'),
+        ]);
+        if (!forecastResp.ok) throw new Error('HTTP ' + forecastResp.status + ': ' + forecastResp.statusText);
+        forecastData = await forecastResp.json();
+        if (maskResp.ok) {
+            const maskGj = await maskResp.json();
+            countryMask = maskGj.features && maskGj.features[0];
+        }
     } catch (e) {
         showError('Kan ikke indl\u00E6se vejrdata: ' + e.message);
         return;

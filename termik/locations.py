@@ -5,7 +5,9 @@ Defines Danish glider airfields and a grid of land-based forecast points
 covering Denmark.
 """
 
+import json
 import math
+import os
 
 # ---------------------------------------------------------------------------
 # 1. AIRFIELDS
@@ -149,6 +151,62 @@ def _is_land(lat, lon):
     return False
 
 
+# Higher-fidelity Denmark land polygon, loaded from the same GeoJSON file the
+# frontend uses for clipping. Used in _build_grid() so that coastal cells whose
+# centre lies just offshore are still included whenever any sample point inside
+# the cell falls on land.
+def _load_dk_rings():
+    """Return list of outer rings as [(lat, lon), ...] from denmark.geojson."""
+    path = os.path.join(
+        os.path.dirname(__file__), "output", "data", "denmark.geojson"
+    )
+    if not os.path.exists(path):
+        return []
+    with open(path) as f:
+        gj = json.load(f)
+    rings = []
+    for feat in gj.get("features", []):
+        geom = feat.get("geometry", {})
+        if geom.get("type") == "MultiPolygon":
+            polys = geom["coordinates"]
+        elif geom.get("type") == "Polygon":
+            polys = [geom["coordinates"]]
+        else:
+            continue
+        for poly in polys:
+            outer = poly[0]
+            rings.append([(lat, lon) for lon, lat in outer])
+    return rings
+
+
+_DK_RINGS = _load_dk_rings()
+
+
+def _is_land_strict(lat, lon):
+    """Check land using the real Denmark GeoJSON outline."""
+    for ring in _DK_RINGS:
+        if _point_in_polygon(lat, lon, ring):
+            return True
+    return False
+
+
+def _cell_overlaps_land(lat, lon, step):
+    """Return True if any sample point in the lat/lon-centred cell is on land.
+
+    Samples a 5x5 grid of points across the cell so coastal cells with centre
+    just offshore are still included.
+    """
+    half = step / 2
+    n = 5
+    for i in range(n):
+        for j in range(n):
+            sample_lat = lat - half + (i + 0.5) * step / n
+            sample_lon = lon - half + (j + 0.5) * step / n
+            if _is_land_strict(sample_lat, sample_lon):
+                return True
+    return False
+
+
 # Danish coastal reference points for distance/direction calculation.
 # A selection of points along the Danish coastline.
 _COAST_POINTS = [
@@ -259,14 +317,17 @@ def _nearest_coast(lat, lon):
     return round(min_dist), direction
 
 
+GRID_STEP_DEG = 0.2
+
+
 def _build_grid():
-    """Build a 0.4 x 0.4 degree grid of land points over Denmark."""
+    """Build a GRID_STEP_DEG x GRID_STEP_DEG grid of land points over Denmark."""
     points = []
     lat = 54.5
     while lat <= 57.8:
         lon = 8.0
         while lon <= 15.2:
-            if _is_land(lat, lon):
+            if _cell_overlaps_land(lat, lon, GRID_STEP_DEG):
                 coast_km, coast_dir = _nearest_coast(lat, lon)
                 lat_str = f"{lat:.1f}".replace(".", "_")
                 lon_str = f"{lon:.1f}".replace(".", "_")
@@ -280,8 +341,8 @@ def _build_grid():
                         "coast_direction_deg": coast_dir,
                     }
                 )
-            lon += 0.4
-        lat += 0.4
+            lon += GRID_STEP_DEG
+        lat += GRID_STEP_DEG
     return points
 
 

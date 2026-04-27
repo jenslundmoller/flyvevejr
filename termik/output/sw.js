@@ -3,7 +3,7 @@
 //   - App shell (html/css/js/icons/libs): cache-first, fall back to network.
 //   - Forecast data (data/*.json): network-first, fall back to cache.
 
-const CACHE_VERSION = 'termik-v2';
+const CACHE_VERSION = 'termik-v9';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -13,9 +13,9 @@ const APP_SHELL = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/apple-touch-icon.png',
+  '/data/denmark.geojson',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-  'https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js',
 ];
 
 self.addEventListener('install', (event) => {
