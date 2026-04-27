@@ -283,6 +283,76 @@ html, body {
     text-align: center;
 }
 
+/* === About link === */
+#about-link {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+#about-link a {
+    font-size: 12px;
+    color: #6b7280;
+    text-decoration: none;
+}
+
+#about-link a:hover {
+    color: var(--pill-active);
+    text-decoration: underline;
+}
+
+/* === Om-side === */
+body.om-page {
+    overflow: auto;
+    background: #f3f4f6;
+    color: var(--text-dark);
+}
+
+.om-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    line-height: 1.6;
+}
+
+.om-back {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--pill-active);
+    text-decoration: none;
+}
+
+.om-back:hover {
+    text-decoration: underline;
+}
+
+.om-container h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    letter-spacing: -0.02em;
+}
+
+.om-container h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 28px;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.om-container p {
+    font-size: 15px;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.om-container a {
+    color: var(--pill-active);
+}
+
 /* === Popup === */
 .termik-popup .leaflet-popup-content-wrapper {
     border-radius: 14px;
