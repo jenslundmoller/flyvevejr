@@ -390,6 +390,50 @@ def test_no_dealbreaker():
     assert score == 8.0
 
 
+def test_dealbreaker_radiation_night():
+    """Radiation < 100 W/m² (night/dusk) should cap to 1."""
+    score = apply_dealbreakers(7.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                shortwave_radiation=0)
+    assert score <= 1
+
+def test_dealbreaker_radiation_twilight():
+    """Radiation < 250 W/m² (twilight/heavy overcast) should cap to 3."""
+    score = apply_dealbreakers(7.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                shortwave_radiation=200)
+    assert score <= 3
+
+def test_dealbreaker_radiation_low():
+    """Radiation < 400 W/m² (low sun / overcast) should cap to 5."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                shortwave_radiation=350)
+    assert score <= 5
+
+def test_dealbreaker_radiation_sufficient():
+    """Radiation ≥ 400 W/m² should not trigger any cap."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                shortwave_radiation=500)
+    assert score == 8.0
+
+def test_dealbreaker_radiation_none():
+    """When radiation not provided, gate should not apply."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                shortwave_radiation=None)
+    assert score == 8.0
+
+def test_dealbreaker_radiation_boundary_100():
+    """Radiation exactly 100 W/m² is at the < 100 boundary (no longer < 100)."""
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                shortwave_radiation=100)
+    assert score <= 3  # falls under the < 250 tier
+    assert score > 1   # but not under the < 100 tier
+
+
 # --- Full scenario tests ---
 
 def test_scenario_perfect_day():
@@ -428,6 +472,23 @@ def test_scenario_winter():
         cape=0, surface_pressure=1005, pressure_trend=-1.0,
         temp_850hpa_trend=0,
         coast_distance_km=40, coast_direction_deg=270, month=12,
+    )
+    assert result["score"] <= 1.0
+
+def test_scenario_evening_after_sunset():
+    """Late evening with otherwise favourable conditions: radiation gate must
+    prevent a misleading 'moderate thermals' score after sunset.
+    Mirrors the real Kongsted 2026-04-27 21:00 case.
+    """
+    result = compute_thermal_score(
+        temp_2m=8.2, dewpoint_2m=-1.1, temp_850hpa=-2.1,
+        cloud_cover=66, shortwave_radiation=0,
+        wind_speed_kt=4.5, wind_dir=358, wind_gusts_kt=12.2,
+        precipitation=0, precip_last_6h=0,
+        cape=0, surface_pressure=1021, pressure_trend=0,
+        temp_850hpa_trend=0,
+        coast_distance_km=16, coast_direction_deg=110, month=4,
+        temp_180m=7.3, wind_speed_80m_kt=9.1, wind_speed_180m_kt=15.6,
     )
     assert result["score"] <= 1.0
 

@@ -253,9 +253,20 @@ def apply_dealbreakers(
     temp: float,
     cape: float = 0,
     surface_lapse_rate: float | None = None,
+    shortwave_radiation: float | None = None,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
     max_score = 10.0
+    # Solar radiation gate: thermals require sufficient surface heating.
+    # Caps reflect that low radiation (night, twilight, heavy overcast)
+    # cannot drive convection regardless of other favourable conditions.
+    if shortwave_radiation is not None:
+        if shortwave_radiation < 100:
+            max_score = min(max_score, 1)
+        elif shortwave_radiation < 250:
+            max_score = min(max_score, 3)
+        elif shortwave_radiation < 400:
+            max_score = min(max_score, 5)
     if lapse_rate < 0.50:
         max_score = min(max_score, 1)
     elif lapse_rate < 0.65:
@@ -382,6 +393,7 @@ def compute_thermal_score(
         wind_speed_kt, wind_gusts_kt, temp_2m,
         cape=cape,
         surface_lapse_rate=surface_lapse,
+        shortwave_radiation=shortwave_radiation,
     )
 
     # Clamp and round
