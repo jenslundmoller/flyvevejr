@@ -425,8 +425,11 @@ const FAVORITE_KEY = 'termik-favorite-airfield';
 function getDayLabel(day) {
     if (day === 0) return 'I dag';
     if (day === 1) return 'I morgen';
-    if (day === 2) return 'Overmorgen';
-    return '+' + day + ' dage';
+    if (!baseDate) return '+' + day + ' dage';
+    const weekdays = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'];
+    const d = new Date(baseDate);
+    d.setDate(d.getDate() + day);
+    return weekdays[d.getDay()];
 }
 
 function getDaySummary(airfield, day) {
@@ -667,6 +670,10 @@ async function init() {
         var nextHour = now.getMinutes() > 0 ? now.getHours() + 1 : now.getHours();
         currentHour = Math.max(6, Math.min(21, nextHour));
     }
+    document.querySelectorAll('.day-btn').forEach(function(b) {
+        const d = parseInt(b.getAttribute('data-day'), 10);
+        b.textContent = getDayLabel(d);
+    });
     var btn = document.querySelector('.day-btn[data-day="' + currentDay + '"]');
     if (btn) {
         document.querySelector('.day-btn.active').classList.remove('active');
