@@ -119,7 +119,7 @@ Et 0.4° × 0.4° grid over Danmark (54.5°N-57.8°N, 8.0°E-15.2°E). Punkter i
 | Faktor | Vægt | Score 10 | Score 0 |
 |--------|------|----------|---------|
 | Lapse rate (stabilitet) | 30% | ≥1.2°C/100m (meget labil) | <0.65°C/100m (stabil) |
-| Solindstråling | 20% | Skyfrit + stærk stråling | Overskyet + ingen stråling |
+| Solindstråling | 20% | Skyfrit + stærk **direkte** stråling | Overskyet + ingen stråling |
 | Spread (dugpunktsspredning) | 15% | 8-15°C (optimal skybase) | <3°C (tåge-risiko) |
 | Vindstyrke | 15% | 5-15 kt (optimal udløsning) | >35 kt eller vindstille |
 | Temperatur | 10% | Høj overfladetemperatur | <5°C |
@@ -146,6 +146,13 @@ Et 0.4° × 0.4° grid over Danmark (54.5°N-57.8°N, 8.0°E-15.2°E). Punkter i
 | Temperatur <5°C | 3 | For koldt til konvektion |
 
 Lapse rate-dealbreakeren er den vigtigste: **uden atmosfærisk instabilitet kan der ikke være termik**, uanset hvor godt de andre faktorer ser ud. Dette fanger f.eks. "Sahara-dage" med 30°C og blå himmel men stabil luft i højden.
+
+### Solindstråling — håndtering af cirrus-skyer
+
+`score_solar` bruger to forfinelser, så cirrus straffes korrekt (jf. [Referat 2026-05-24](Referat/2026-05-24-cirrus-direct-radiation.md)):
+
+- **Vægtet skydække:** `effective_cloud = cc_low*1.0 + cc_mid*0.7 + cc_high*0.5`. Cirrus dæmper ca. halvt så meget som lav stratus per % skydække.
+- **Direkte stråling (ikke total SW):** `direct_radiation / 600 W/m²` for fuld score. Cirrus dæmper total SW kun lidt, men halverer ofte direkte stråling og fordobler diffus-andelen, det er den direkte-andel, der driver differentiel jordopvarmning og dermed termik-trigger.
 
 ### Score-labels
 
@@ -208,7 +215,7 @@ Gratis, ingen API-nøgle. Understøtter multi-location i ét kald (kommaseparere
 ### Parametre der hentes
 
 **Hourly (overflade):**
-temperature_2m, dewpoint_2m, relative_humidity_2m, wind_speed_10m, wind_direction_10m, wind_gusts_10m, cloud_cover, cloud_cover_low, cloud_cover_mid, cloud_cover_high, precipitation, shortwave_radiation, cape, surface_pressure
+temperature_2m, dewpoint_2m, relative_humidity_2m, wind_speed_10m, wind_direction_10m, wind_gusts_10m, cloud_cover, cloud_cover_low, cloud_cover_mid, cloud_cover_high, precipitation, shortwave_radiation, direct_radiation, cape, surface_pressure
 
 **Pressure levels:**
 temperature_850hPa, temperature_700hPa, wind_speed_850hPa, wind_direction_850hPa

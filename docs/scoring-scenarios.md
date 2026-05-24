@@ -66,6 +66,7 @@ Bemærk: Blue day scorer højt fordi termikkerne ER stærke — piloter skal bar
 | Efterår, svag sol | **5.9** | 0.73 | 1.12 | +0.5 | Lav solhøjde, kort vindue |
 | Våd jord fra regn | **6.6** | 0.87 | 0.84 | +0.5 | Nedbør-vægt (7%) er lav |
 | Overudvikling (CAPE 1500) | **7.0** | 1.33 | 1.69 | +0.5 | Capped af CAPE >1500 |
+| Cirrus-skjold over klar himmel | **~6** | 0.81 | — | +0.5 | 93% cirrus halverer direkte stråling, jf. Slaglille 23. maj 2026 |
 
 ### Stabil luftmasse (score 1-4)
 
@@ -106,7 +107,7 @@ Bemærk: Blue day scorer højt fordi termikkerne ER stærke — piloter skal bar
 | Faktor | Vægt | Bemærkning |
 |---|---|---|
 | Lapse rate | 30% | Primær stabilitetsmåling |
-| Sol/stråling | 20% | Opvarmningspotentiale |
+| Sol/stråling | 20% | Opvarmningspotentiale (vægtet skydække: low×1.0, mid×0.7, high×0.5; direct_radiation/600) |
 | Spread | 15% | Skybase og overudvikling |
 | Vind | 10% | Trigger-mekanisme |
 | Vindstød | 10% | Sikkerhed |
