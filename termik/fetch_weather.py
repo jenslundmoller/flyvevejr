@@ -117,7 +117,11 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     dewpoint = hourly_data["dewpoint_2m"][hour_index]
     temp_850 = hourly_data["temperature_850hPa"][hour_index]
     cloud_cover = hourly_data["cloud_cover"][hour_index]
+    cloud_cover_low = hourly_data.get("cloud_cover_low", [None] * (hour_index + 1))[hour_index]
+    cloud_cover_mid = hourly_data.get("cloud_cover_mid", [None] * (hour_index + 1))[hour_index]
+    cloud_cover_high = hourly_data.get("cloud_cover_high", [None] * (hour_index + 1))[hour_index]
     shortwave = hourly_data["shortwave_radiation"][hour_index]
+    direct_radiation = hourly_data.get("direct_radiation", [None] * (hour_index + 1))[hour_index]
     wind_speed = hourly_data["wind_speed_10m"][hour_index]
     wind_dir = hourly_data["wind_direction_10m"][hour_index]
     wind_gusts = hourly_data["wind_gusts_10m"][hour_index]
@@ -195,6 +199,8 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     wind_gusts = wind_gusts if wind_gusts is not None else wind_speed
     precipitation = precipitation if precipitation is not None else 0
     cape = cape if cape is not None else 0
+    # direct_radiation: None means parameter missing entirely (older fetches);
+    # 0 from API at night is fine and should pass through as 0.
 
     result = compute_thermal_score(
         temp_2m=temp,
@@ -218,6 +224,10 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         wind_speed_80m_kt=wind_speed_80m,
         wind_speed_180m_kt=wind_speed_180m,
         boundary_layer_height=bl_height,
+        cloud_cover_low=cloud_cover_low,
+        cloud_cover_mid=cloud_cover_mid,
+        cloud_cover_high=cloud_cover_high,
+        direct_radiation=direct_radiation,
     )
 
     # Calculate wind shear for comments

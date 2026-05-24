@@ -43,13 +43,45 @@ def score_surface_lapse_rate(surface_lapse: float) -> int:
         return 0
 
 
-def score_solar(cloud_cover: float, shortwave_radiation: float) -> float:
+def score_solar(
+    cloud_cover: float,
+    shortwave_radiation: float,
+    cloud_cover_low: float | None = None,
+    cloud_cover_mid: float | None = None,
+    cloud_cover_high: float | None = None,
+    direct_radiation: float | None = None,
+) -> float:
     """Score solar heating potential from cloud cover and radiation.
 
-    Cloud cover in %, shortwave radiation in W/m².
+    Cloud cover in %, radiation in W/m².
+
+    When layer breakdown is available, weights cirrus less than stratus
+    (low=1.0, mid=0.7, high=0.5) because cirrus attenuates less than low
+    cloud per unit cover. When direct_radiation is available, uses it
+    instead of total shortwave: cirrus boosts the diffuse fraction
+    without strongly cutting total SW, but direct radiation drives the
+    differential surface heating that triggers thermals.
     """
-    cloud_factor = (100 - cloud_cover) / 100
-    radiation_factor = min(shortwave_radiation / 800, 1.0)
+    if (
+        cloud_cover_low is not None
+        and cloud_cover_mid is not None
+        and cloud_cover_high is not None
+    ):
+        effective_cloud = min(
+            100.0,
+            cloud_cover_low * 1.0
+            + cloud_cover_mid * 0.7
+            + cloud_cover_high * 0.5,
+        )
+    else:
+        effective_cloud = cloud_cover
+    cloud_factor = max(0.0, (100 - effective_cloud) / 100)
+
+    if direct_radiation is not None:
+        # Peak direct in DK summer ~700 W/m²; 600 = near full credit.
+        radiation_factor = min(direct_radiation / 600, 1.0)
+    else:
+        radiation_factor = min(shortwave_radiation / 800, 1.0)
     return (cloud_factor * 0.4 + radiation_factor * 0.6) * 10
 
 
@@ -329,6 +361,11 @@ def compute_thermal_score(
     wind_speed_80m_kt: float | None = None,
     wind_speed_180m_kt: float | None = None,
     boundary_layer_height: float | None = None,
+    # Layered cloud + direct radiation (optional — improves cirrus handling)
+    cloud_cover_low: float | None = None,
+    cloud_cover_mid: float | None = None,
+    cloud_cover_high: float | None = None,
+    direct_radiation: float | None = None,
 ) -> dict:
     """Compute the full thermal score from weather parameters.
 
@@ -350,7 +387,14 @@ def compute_thermal_score(
     # Score each factor
     scores = {
         "lapse_rate": score_lapse_rate(lapse_rate),
-        "solar": score_solar(cloud_cover, shortwave_radiation),
+        "solar": score_solar(
+            cloud_cover,
+            shortwave_radiation,
+            cloud_cover_low=cloud_cover_low,
+            cloud_cover_mid=cloud_cover_mid,
+            cloud_cover_high=cloud_cover_high,
+            direct_radiation=direct_radiation,
+        ),
         "spread": score_spread(spread),
         "wind": score_wind(wind_speed_kt),
         "gusts": score_gusts(wind_gusts_kt, wind_speed_kt),

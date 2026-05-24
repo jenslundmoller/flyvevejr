@@ -32,6 +32,7 @@ HOURLY_PARAMS = [
     "cloud_cover_high",
     "precipitation",
     "shortwave_radiation",
+    "direct_radiation",
     "cape",
     "surface_pressure",
     "boundary_layer_height",

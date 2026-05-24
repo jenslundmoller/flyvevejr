@@ -85,6 +85,38 @@ def test_solar_partly_cloudy():
     assert 3 < score < 7
 
 
+def test_solar_cirrus_shield_penalised_when_total_cloud_low():
+    # Slaglille 2026-05-23 kl. 13: cc_total looked benign (49%) but was
+    # driven by 93% cirrus. Total SW barely fell; direct radiation
+    # dropped to ~488. Old formula gave ~7.5 (too optimistic).
+    new = score_solar(
+        49, 735,
+        cloud_cover_low=0, cloud_cover_mid=16, cloud_cover_high=93,
+        direct_radiation=488,
+    )
+    legacy = score_solar(49, 735)
+    assert new < legacy - 0.5
+
+def test_solar_thin_cirrus_only_minor_penalty():
+    # 80% cirrus alone (no low/mid), strong direct sun = still mostly OK.
+    score = score_solar(
+        80, 700,
+        cloud_cover_low=0, cloud_cover_mid=0, cloud_cover_high=80,
+        direct_radiation=550,
+    )
+    # Effective cloud = 80*0.5 = 40%, direct/600 = 0.92 → solid score.
+    assert 6 < score < 9
+
+def test_solar_thick_low_cloud_heavily_penalised():
+    # 80% low cloud (stratus): full weight, direct sun gone.
+    score = score_solar(
+        80, 250,
+        cloud_cover_low=80, cloud_cover_mid=0, cloud_cover_high=0,
+        direct_radiation=80,
+    )
+    assert score < 2
+
+
 # --- Spread (15% weight) ---
 # Spread = temp - dewpoint. Determines cloud base height and overdev risk.
 # Optimal 8-15°C. Too low = fog/overdev. Too high = dry thermal only.
