@@ -2,9 +2,12 @@
 
 ## Oversigt
 
-Automatisk termik-vurdering for danske svæveflyvere. Systemet henter vejrdata fra Open-Meteo API, beregner en termik-score (0-10) for 79 punkter over hele Danmark, og viser resultatet som et interaktivt heatmap-kort på **https://flyvevejr.dk**.
+Automatisk termik-vurdering for danske svæveflyvere. Systemet henter vejrdata fra Open-Meteo API, beregner for 262 punkter over hele Danmark:
 
-Data opdateres automatisk hver 3. time via GitHub Actions.
+1. **Termik-score (0-10)** — samlet vurdering af flyveforhold
+2. **Termik-tophøjde (m)** — maks. brugbar termikhøjde via parcel-teori (jf. [Referat 2026-05-28](Referat/2026-05-28-termik-top.md))
+
+Resultaterne vises som to skifteligbare interaktive kortlag på **https://flyvevejr.dk**. Data opdateres automatisk hver 3. time via GitHub Actions.
 
 ---
 
@@ -88,7 +91,7 @@ Open-Meteo API (gratis, ingen nøgle)
 
 ## Geografi
 
-### Svæveflyvepladser (28 stk)
+### Svæveflyvepladser (30 stk)
 
 Baseret på listen fra [Svæveflyveklubber i Danmark (Wikipedia)](https://da.wikipedia.org/wiki/Sv%C3%A6veflyveklubber_i_Danmark).
 
