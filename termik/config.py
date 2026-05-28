@@ -36,9 +36,23 @@ HOURLY_PARAMS = [
     "cape",
     "surface_pressure",
     "boundary_layer_height",
-    # Pressure levels
+    # Pressure levels — temperatures
+    "temperature_950hPa",
+    "temperature_925hPa",
+    "temperature_900hPa",
     "temperature_850hPa",
+    "temperature_800hPa",
     "temperature_700hPa",
+    "temperature_600hPa",
+    # Pressure levels — geopotential heights for parcel-theory thermal-top
+    "geopotential_height_950hPa",
+    "geopotential_height_925hPa",
+    "geopotential_height_900hPa",
+    "geopotential_height_850hPa",
+    "geopotential_height_800hPa",
+    "geopotential_height_700hPa",
+    "geopotential_height_600hPa",
+    # Pressure level winds (existing — used for shear/seabreeze diagnostics)
     "wind_speed_850hPa",
     "wind_direction_850hPa",
 ]

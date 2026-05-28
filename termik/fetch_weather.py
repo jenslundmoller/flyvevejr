@@ -14,7 +14,7 @@ from termik.config import (
     HOURLY_PARAMS,
     DATA_DIR,
 )
-from termik.scoring import compute_thermal_score
+from termik.scoring import compute_thermal_score, compute_thermal_top, THERMAL_TOP_LEVELS_HPA
 from termik.comments import generate_comment
 from termik.locations import ALL_POINTS, AIRFIELDS
 
@@ -146,6 +146,19 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     # Boundary layer height
     bl_height = hourly_data.get("boundary_layer_height", [None] * (hour_index + 1))[hour_index]
 
+    # Pressure-level temperatures and geopotential heights for thermal-top parcel theory
+    level_temps_c = {
+        p: hourly_data.get(f"temperature_{p}hPa", [None] * (hour_index + 1))[hour_index]
+        for p in THERMAL_TOP_LEVELS_HPA
+    }
+    level_heights_m = {
+        p: hourly_data.get(f"geopotential_height_{p}hPa", [None] * (hour_index + 1))[hour_index]
+        for p in THERMAL_TOP_LEVELS_HPA
+    }
+    # Default 0m surface elevation is fine for flat Denmark (highest airfield
+    # ~76m, lowest ~0m). The Hcrit margin (200-500m) dwarfs the error.
+    surface_elevation_m = point.get("elevation_m", 0)
+
     # Check for critical None values
     critical = [temp, dewpoint, temp_850, cloud_cover, wind_speed, wind_dir, pressure]
     if any(v is None for v in critical):
@@ -180,6 +193,10 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
                 "temp_180m": temp_180m,
                 "boundary_layer_height": bl_height,
                 "surface_lapse_rate": None,
+                "thermal_top_m": None,
+                "ti_zero_m": None,
+                "lcl_m": None,
+                "thermal_top_limited_by": "no_data",
             },
         }
 
@@ -228,6 +245,16 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         cloud_cover_mid=cloud_cover_mid,
         cloud_cover_high=cloud_cover_high,
         direct_radiation=direct_radiation,
+    )
+
+    thermal_top = compute_thermal_top(
+        surface_temp_c=temp,
+        surface_dewpoint_c=dewpoint,
+        surface_pressure_hpa=pressure,
+        surface_elevation_m=surface_elevation_m,
+        level_temps_c=level_temps_c,
+        level_heights_m=level_heights_m,
+        shortwave_radiation=shortwave,
     )
 
     # Calculate wind shear for comments
@@ -282,6 +309,10 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             "temp_180m": temp_180m,
             "boundary_layer_height": bl_height,
             "surface_lapse_rate": result.get("surface_lapse_rate"),
+            "thermal_top_m": thermal_top["thermal_top_m"],
+            "ti_zero_m": thermal_top["ti_zero_m"],
+            "lcl_m": thermal_top["lcl_m"],
+            "thermal_top_limited_by": thermal_top["limited_by"],
         },
     }
 
@@ -327,6 +358,7 @@ def process_all_points() -> dict:
                     hour_result = {
                         "time": hour_result["time"],
                         "score": hour_result["score"],
+                        "thermal_top_m": hour_result["data"].get("thermal_top_m"),
                     }
                 hours.append(hour_result)
 

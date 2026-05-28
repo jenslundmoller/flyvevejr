@@ -104,11 +104,11 @@ Baseret på listen fra [Svæveflyveklubber i Danmark (Wikipedia)](https://da.wik
 
 **Bornholm:** Rønne
 
-### Grid-punkter (51 stk)
+### Grid-punkter (232 stk)
 
-Et 0.4° × 0.4° grid over Danmark (54.5°N-57.8°N, 8.0°E-15.2°E). Punkter i havet er filtreret fra med en polygon-baseret landmassedetektering for Jylland, Fyn, Sjælland, Lolland-Falster og Bornholm.
+Et 0.2° × 0.2° grid over Danmark (54.5°N-57.8°N, 8.0°E-15.2°E). Punkter i havet er filtreret fra med en polygon-baseret landmassedetektering for Jylland, Fyn, Sjælland, Lolland-Falster og Bornholm.
 
-**Total: 79 punkter** med vejrdata for hver time i 3 dage = 5.688 datapunkter per opdatering.
+**Total: 262 punkter** (232 grid + 30 svæveflyvepladser) med vejrdata for hver time i 7 dage.
 
 ---
 
@@ -215,10 +215,19 @@ Gratis, ingen API-nøgle. Understøtter multi-location i ét kald (kommaseparere
 ### Parametre der hentes
 
 **Hourly (overflade):**
-temperature_2m, dewpoint_2m, relative_humidity_2m, wind_speed_10m, wind_direction_10m, wind_gusts_10m, cloud_cover, cloud_cover_low, cloud_cover_mid, cloud_cover_high, precipitation, shortwave_radiation, direct_radiation, cape, surface_pressure
+temperature_2m, dewpoint_2m, relative_humidity_2m, wind_speed_10m, wind_direction_10m, wind_gusts_10m, cloud_cover, cloud_cover_low, cloud_cover_mid, cloud_cover_high, precipitation, shortwave_radiation, direct_radiation, cape, surface_pressure, boundary_layer_height
 
-**Pressure levels:**
-temperature_850hPa, temperature_700hPa, wind_speed_850hPa, wind_direction_850hPa
+**Højdelag (80/120/180 m):**
+wind_speed/direction_80m/120m/180m, temperature_80m/120m/180m
+
+**Pressure levels — temperaturer:**
+temperature_950hPa, temperature_925hPa, temperature_900hPa, temperature_850hPa, temperature_800hPa, temperature_700hPa, temperature_600hPa
+
+**Pressure levels — geopotential heights (til parcel-teori for termik-tophøjde):**
+geopotential_height_950hPa til geopotential_height_600hPa
+
+**Pressure levels — vind:**
+wind_speed_850hPa, wind_direction_850hPa
 
 ### Afledte beregninger
 
@@ -230,6 +239,7 @@ temperature_850hPa, temperature_700hPa, wind_speed_850hPa, wind_direction_850hPa
 | Lapse rate | (temperature_2m - temperature_850hPa) / 15 |
 | Tryktendens | Delta surface_pressure over 3 timer |
 | Nedbør seneste 6t | Sum af precipitation for foregående 6 timer |
+| Termik-tophøjde | TI=0 via tør-adiabatisk parcel-løft på multilevel-sondering (DALR = 9.8 K/km), cap'd med LCL (Bolton 1980 eq. 22), minus Hcrit-margin (200-500 m, lineært skaleret med shortwave_radiation). Se Referat 2026-05-28. |
 
 ---
 
@@ -291,13 +301,18 @@ Mørkeblå (0) → Lyseblå (3) → Gul (5) → Orange (7) → Rød (10)
 
 ### Kontroller
 
-- **Dagvælger**: 3 knapper (I dag / I morgen / Overmorgen)
+- **Dagvælger**: 7 knapper (I dag, I morgen, Overmorgen, +3 til +6 dage)
 - **Timeslider**: Kl. 06-21, opdaterer heatmap og markører i realtid
-- **Sidepanel**: Top 5 bedste pladser for valgt tidspunkt
+- **Favorit-plads**: vælg én flyveplads og se hele dagens forløb i sidepanelet
+- **Kortlag**: vælg mellem to lag — Flyveforhold (score-heatmap) eller Termik-tophøjde (diskrete celler med tal per celle ved zoom ≥ 9). Valget huskes i localStorage.
+
+### Kortlag — termik-tophøjde
+
+Diskret-farvet lag baseret på `compute_thermal_top()`-resultatet per grid-celle. Distinkt viridis-lignende palet (lilla → orange) for at undgå forveksling med score-laget. Værdier <500 m vises lilla, ~1500 m grøn (god dansk dag), 2500 m+ orange-rød (sjælden i DK).
 
 ### Popup ved klik på svæveflyveplads
 
-Viser: score med farvede prikker, label, kommentar, temperatur, spread, skybase, vind (retning + styrke), lapse rate, CAPE, skydække, fugtighed, samt et mini-søjlediagram med dagsforløbet.
+Viser: score med farvede prikker, label, kommentar, temperatur, spread, skybase, vind (retning + styrke), lapse rate, termik-tophøjde, blandingslag, CAPE, skydække, fugtighed, samt et mini-søjlediagram med dagsforløbet.
 
 ### Responsivt
 
@@ -333,14 +348,15 @@ Cloudflare-proxy er slået fra for at undgå konflikt med GitHub Pages' eget SSL
 
 ## Test
 
-78 automatiserede tests fordelt på 4 moduler:
+174 automatiserede tests fordelt på 5 moduler:
 
 | Modul | Tests | Dækker |
 |-------|-------|--------|
 | test_locations.py | 8 | Datastruktur, koordinatvalidering, grid-dækning |
-| test_scoring.py | 50 | Alle score-funktioner, dealbreakers, modifikatorer, 5 fuld-scenario tests |
-| test_comments.py | 10 | Kommentargenerering for alle vejrsituationer |
-| test_fetch_weather.py | 10 | URL-bygning, response-parsing, trendberegninger |
+| test_scoring.py | 111 | Score-funktioner, dealbreakers, modifikatorer, scenario-tests, parcel-teori for termik-tophøjde |
+| test_scenarios_multilevel.py | 24 | Multilevel-data scenarier (vindshear, BL-mixing) |
+| test_comments.py | 17 | Kommentargenerering for alle vejrsituationer |
+| test_fetch_weather.py | 14 | URL-bygning, response-parsing, trendberegninger, thermal_top-integration |
 
 Kør alle tests:
 ```bash

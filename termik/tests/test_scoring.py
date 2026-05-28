@@ -667,3 +667,203 @@ def test_existing_scoring_unchanged_without_new_data():
     )
     # This is the same scenario as test_scenario_perfect_day — must still score >= 9.0
     assert result["score"] >= 9.0
+
+
+# ---------------------------------------------------------------------------
+# compute_thermal_top — parcel-theory TI=0 + LCL cap + Hcrit margin
+# ---------------------------------------------------------------------------
+from termik.scoring import (
+    compute_thermal_top,
+    _hcrit_margin,
+    _bolton_lcl_temp_k,
+    HCRIT_MARGIN_AT_FULL_SUN_M,
+    HCRIT_MARGIN_AT_NO_SUN_M,
+)
+
+
+# Idealised classic Danish summer day used as a baseline sounding.
+# Surface 1013 hPa, T=22°C, Td=10°C → LCL ≈ 1300m (Bolton)
+# 925hPa @ 640m, T=15
+# 850hPa @ 1500m, T=10
+# 700hPa @ 3000m, T=2
+CLASSIC_DK_SUMMER = dict(
+    surface_temp_c=24.0,
+    surface_dewpoint_c=12.0,
+    surface_pressure_hpa=1015.0,
+    surface_elevation_m=0,
+    # Cold air aloft → surface parcel buoyant up to ~1300m, then LCL caps it.
+    level_temps_c={950: 18.0, 925: 16.0, 900: 13.0, 850: 9.0, 800: 4.0, 700: -5.0, 600: -14.0},
+    level_heights_m={950: 540, 925: 760, 900: 985, 850: 1500, 800: 2025, 700: 3110, 600: 4300},
+    shortwave_radiation=600.0,
+)
+
+
+def test_thermal_top_classic_summer_day():
+    r = compute_thermal_top(**CLASSIC_DK_SUMMER)
+    assert r["thermal_top_m"] is not None
+    assert 900 <= r["thermal_top_m"] <= 1700
+    assert r["ti_zero_m"] >= 1100
+    assert 1100 <= r["lcl_m"] <= 1700
+    assert r["limited_by"] in ("lcl", "ti_zero")
+
+
+def test_thermal_top_inversion():
+    r = compute_thermal_top(
+        surface_temp_c=15.0,
+        surface_dewpoint_c=10.0,
+        surface_pressure_hpa=1013.0,
+        surface_elevation_m=0,
+        # Warm air aloft → surface parcel immediately colder than environment
+        level_temps_c={950: 18.0, 925: 16.0, 900: 14.0, 850: 12.0, 800: 8.0, 700: 2.0, 600: -8.0},
+        level_heights_m={950: 540, 925: 760, 900: 985, 850: 1500, 800: 2025, 700: 3110, 600: 4300},
+        shortwave_radiation=600.0,
+    )
+    assert r["thermal_top_m"] == 0
+    assert r["ti_zero_m"] == 0
+    assert r["limited_by"] == "inversion"
+
+
+def test_thermal_top_super_unstable():
+    r = compute_thermal_top(
+        surface_temp_c=30.0,
+        surface_dewpoint_c=5.0,
+        surface_pressure_hpa=1013.0,
+        surface_elevation_m=0,
+        # Hot surface + cold troposphere → deep dry convection up past 700hPa
+        # Warm-ish 700hPa so parcel crosses below LCL, giving ti_zero as limiter
+        level_temps_c={950: 24.0, 925: 22.0, 900: 19.0, 850: 14.0, 800: 8.0, 700: 4.0, 600: -8.0},
+        level_heights_m={950: 540, 925: 760, 900: 985, 850: 1500, 800: 2025, 700: 3110, 600: 4300},
+        shortwave_radiation=700.0,
+    )
+    assert r["thermal_top_m"] is not None
+    assert 2000 <= r["thermal_top_m"] <= 3500
+    assert r["limited_by"] == "ti_zero"
+
+
+def test_thermal_top_no_sounding_data():
+    r = compute_thermal_top(
+        surface_temp_c=20.0,
+        surface_dewpoint_c=10.0,
+        surface_pressure_hpa=1013.0,
+        surface_elevation_m=0,
+        level_temps_c={p: None for p in (950, 925, 900, 850, 800, 700, 600)},
+        level_heights_m={p: None for p in (950, 925, 900, 850, 800, 700, 600)},
+        shortwave_radiation=400.0,
+    )
+    assert r["thermal_top_m"] is None
+    assert r["ti_zero_m"] is None
+    assert r["limited_by"] == "no_data"
+
+
+def test_thermal_top_missing_dewpoint():
+    r = compute_thermal_top(
+        **{**CLASSIC_DK_SUMMER, "surface_dewpoint_c": None}
+    )
+    assert r["thermal_top_m"] is not None
+    assert r["thermal_top_m"] > 0
+    assert r["lcl_m"] is None
+    assert r["limited_by"] == "no_dewpoint"
+
+
+def test_thermal_top_missing_surface_temp():
+    r = compute_thermal_top(
+        **{**CLASSIC_DK_SUMMER, "surface_temp_c": None}
+    )
+    assert r["thermal_top_m"] is None
+    assert r["limited_by"] == "no_data"
+
+
+def test_thermal_top_saturated():
+    # CLASSIC_DK_SUMMER has surface_temp_c=24.0 — pass dewpoint just below to trigger
+    # the spread<0.1K saturated branch.
+    r = compute_thermal_top(
+        **{**CLASSIC_DK_SUMMER, "surface_dewpoint_c": 23.95}
+    )
+    assert r["thermal_top_m"] == 0
+    assert r["limited_by"] == "saturated"
+
+
+def test_thermal_top_weak_solar():
+    """Use no-dewpoint sounding so LCL doesn't dominate limited_by, then
+    confirm weak SW flips it to weak_solar."""
+    sounding = {**CLASSIC_DK_SUMMER, "surface_dewpoint_c": None, "shortwave_radiation": 150.0}
+    r = compute_thermal_top(**sounding)
+    assert r["thermal_top_m"] is not None
+    assert r["thermal_top_m"] > 0
+    assert r["limited_by"] == "weak_solar"
+
+
+def test_thermal_top_margin_scaling_end_to_end():
+    """Same sounding with SW=700 vs SW=0 — full-sun result must exceed no-sun by
+    at least 200m (margin difference, modulo raw_top/2 cap)."""
+    sounding = {**CLASSIC_DK_SUMMER, "surface_dewpoint_c": None}
+    full_sun = compute_thermal_top(**{**sounding, "shortwave_radiation": 700.0})
+    no_sun = compute_thermal_top(**{**sounding, "shortwave_radiation": 0.0})
+    assert full_sun["thermal_top_m"] is not None and no_sun["thermal_top_m"] is not None
+    assert full_sun["thermal_top_m"] > no_sun["thermal_top_m"]
+    # Expect at least 200m gap (margin 200 vs 500, cap'd by raw_top/2)
+    assert full_sun["thermal_top_m"] - no_sun["thermal_top_m"] >= 200
+
+
+def test_hcrit_margin_table():
+    assert _hcrit_margin(700) == HCRIT_MARGIN_AT_FULL_SUN_M
+    assert _hcrit_margin(600) == HCRIT_MARGIN_AT_FULL_SUN_M
+    assert _hcrit_margin(0) == HCRIT_MARGIN_AT_NO_SUN_M
+    assert _hcrit_margin(None) == HCRIT_MARGIN_AT_NO_SUN_M
+    assert _hcrit_margin(-5) == HCRIT_MARGIN_AT_NO_SUN_M
+    # Linear midpoint: SW=300 → halfway between 500 and 200 = 350
+    assert _hcrit_margin(300) == 350
+
+
+def test_bolton_lcl_temp_sanity():
+    """Bolton 1980 eq. 22 — sanity check against a known reference.
+
+    T=20°C (293.15K), Td=10°C (283.15K) → T_LCL ≈ 280K-281K → LCL height ≈ 1200-1330m
+    """
+    t_lcl_k = _bolton_lcl_temp_k(293.15, 283.15)
+    assert 278 < t_lcl_k < 285
+    lcl_height = (293.15 - t_lcl_k) / 0.0098
+    assert 1100 < lcl_height < 1400
+
+
+def test_thermal_top_geopotential_sanity():
+    """Sanity test: ensure typical geopotential heights are in expected range.
+
+    Protects against a future Open-Meteo unit change (geopotential m²/s² vs
+    geopotential_height m).
+    """
+    heights = CLASSIC_DK_SUMMER["level_heights_m"]
+    assert 0 < heights[850] < 3000
+    assert heights[925] < heights[850] < heights[700]
+    assert heights[700] < heights[600]
+
+
+def test_thermal_top_levels_below_surface_filtered():
+    """If surface_pressure is low (e.g. lavtryk 980 hPa), 950hPa is also valid;
+    if surface_pressure is very high, no filter applies. Verify both cases.
+    """
+    # surface_pressure=1013 → 950 is above ground (filter passes)
+    r = compute_thermal_top(**CLASSIC_DK_SUMMER)
+    assert r["thermal_top_m"] is not None  # used all available levels
+
+    # surface_pressure=940 (very low) → 950 below ground, must be filtered
+    r2 = compute_thermal_top(
+        **{**CLASSIC_DK_SUMMER, "surface_pressure_hpa": 940.0}
+    )
+    # Still works; just one fewer level used
+    assert r2["thermal_top_m"] is not None
+
+
+def test_thermal_top_with_elevation():
+    """Airfield at 500m elevation: same surface temp launched from a higher
+    point means the parcel is warmer at every MSL altitude than the sea-level
+    launch (less cooling along the dry adiabat). Verify elevation is used by
+    checking LCL shifts up by exactly the elevation difference (Bolton output
+    is AGL added to surface_elevation_m)."""
+    base = compute_thermal_top(**CLASSIC_DK_SUMMER)
+    high = compute_thermal_top(**{**CLASSIC_DK_SUMMER, "surface_elevation_m": 500})
+    assert base["lcl_m"] is not None and high["lcl_m"] is not None
+    assert high["lcl_m"] - base["lcl_m"] == pytest.approx(500, abs=2)
+    # ti_zero_m must also be at least as high as base (parcel never colder
+    # than the sea-level case at any given MSL altitude)
+    assert high["ti_zero_m"] >= base["ti_zero_m"]

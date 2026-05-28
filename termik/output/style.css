@@ -208,6 +208,65 @@ html, body {
     border-top: 1px solid #e5e7eb;
 }
 
+/* === Layer (kortlag) section === */
+#layer-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.layer-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.layer-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dark);
+    cursor: pointer;
+}
+
+.layer-option input[type="radio"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+#layer-legend {
+    margin-top: 4px;
+}
+
+.legend-bar {
+    height: 10px;
+    border-radius: 3px;
+}
+
+.legend-thermal {
+    background: linear-gradient(to right, #2d1b4e, #5e3a8c, #2a7b9b, #7fb73e, #f0b73e, #e85a1a);
+}
+
+.legend-score {
+    /* Stops match COLOR_STOPS in app.js (0, 3, 5, 7, 10 — non-equidistant) */
+    background: linear-gradient(to right,
+        rgb(30,60,150) 0%,
+        rgb(100,150,220) 30%,
+        rgb(240,220,50) 50%,
+        rgb(240,140,30) 70%,
+        rgb(220,30,30) 100%);
+}
+
+.legend-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted, #6b7280);
+    margin-top: 3px;
+}
+
 #favorite-select {
     width: 100%;
     padding: 8px 10px;
@@ -608,6 +667,15 @@ body.om-page {
     }
 
     #sidebar.expanded #favorite-section {
+        display: block;
+    }
+
+    /* Same pattern for the layer (kortlag) section */
+    #layer-section {
+        display: none;
+    }
+
+    #sidebar.expanded #layer-section {
         display: block;
     }
 

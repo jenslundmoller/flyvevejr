@@ -4,7 +4,180 @@ Computes a thermal soaring score (0-10) from weather parameters,
 designed for Danish glider pilots.
 """
 
+import math
+
 from termik.config import WEIGHTS, SCORE_LABELS, SEA_TEMP_BY_MONTH
+
+
+THERMAL_TOP_LEVELS_HPA = (950, 925, 900, 850, 800, 700, 600)
+DALR_K_PER_M = 0.0098
+MAX_THERMAL_TOP_M = 4000
+HCRIT_MARGIN_AT_FULL_SUN_M = 200
+HCRIT_MARGIN_AT_NO_SUN_M = 500
+HCRIT_FULL_SUN_W_M2 = 600
+WEAK_SOLAR_THRESHOLD_W_M2 = 250
+MARGIN_COLLAPSE_THRESHOLD_AGL_M = 50
+
+
+def _hcrit_margin(shortwave_radiation: float | None) -> int:
+    """Linear margin between 200 m (full sun) and 500 m (no sun).
+
+    None or non-positive SW returns the conservative 500 m default.
+    """
+    if shortwave_radiation is None or shortwave_radiation <= 0:
+        return HCRIT_MARGIN_AT_NO_SUN_M
+    if shortwave_radiation >= HCRIT_FULL_SUN_W_M2:
+        return HCRIT_MARGIN_AT_FULL_SUN_M
+    t = shortwave_radiation / HCRIT_FULL_SUN_W_M2
+    return round(
+        HCRIT_MARGIN_AT_NO_SUN_M
+        + t * (HCRIT_MARGIN_AT_FULL_SUN_M - HCRIT_MARGIN_AT_NO_SUN_M)
+    )
+
+
+def _bolton_lcl_temp_k(t_k: float, td_k: float) -> float:
+    """Bolton 1980 eq. 22 — LCL temperature in Kelvin."""
+    return 56.0 + 1.0 / (1.0 / (td_k - 56.0) + math.log(t_k / td_k) / 800.0)
+
+
+def compute_thermal_top(
+    surface_temp_c: float | None,
+    surface_dewpoint_c: float | None,
+    surface_pressure_hpa: float | None,
+    surface_elevation_m: float,
+    level_temps_c: dict,
+    level_heights_m: dict,
+    shortwave_radiation: float | None = None,
+) -> dict:
+    """Estimate maximum usable thermal height via dry-adiabatic parcel theory.
+
+    Lifts a surface parcel along the dry adiabat (9.8 K/km) until it reaches
+    the environment temperature (TI=0 height), then caps with the LCL and
+    subtracts an SW-scaled Hcrit margin (200-500 m) to give the height
+    glider pilots can realistically thermal to.
+
+    Returns dict with keys:
+        thermal_top_m: int | None  — Hcrit-corrected MSL height (m), None on missing data
+        ti_zero_m:    int | None   — TI=0 MSL height (m), None on missing data
+        lcl_m:        int | None   — LCL MSL height (m), None if dewpoint missing
+        limited_by:   str          — one of "lcl", "ti_zero", "cap", "inversion",
+                                     "weak_solar", "saturated", "no_data",
+                                     "no_dewpoint", "margin_collapse"
+
+    Temporal interpretation: the value applies to the specific hour evaluated.
+    Early morning and late afternoon naturally give low values; the user reads
+    the time slider to find daily peaks (typically 13-15 local).
+    """
+    if surface_temp_c is None or surface_pressure_hpa is None:
+        return {
+            "thermal_top_m": None,
+            "ti_zero_m": None,
+            "lcl_m": None,
+            "limited_by": "no_data",
+        }
+
+    if surface_dewpoint_c is None:
+        lcl_m = None
+    else:
+        t_k = surface_temp_c + 273.15
+        td_k = surface_dewpoint_c + 273.15
+        if td_k >= t_k - 0.1:
+            return {
+                "thermal_top_m": 0,
+                "ti_zero_m": 0,
+                "lcl_m": round(surface_elevation_m),
+                "limited_by": "saturated",
+            }
+        t_lcl_k = _bolton_lcl_temp_k(t_k, td_k)
+        lcl_m = surface_elevation_m + (t_k - t_lcl_k) / DALR_K_PER_M
+
+    env = [(surface_elevation_m, surface_temp_c)]
+    for p in THERMAL_TOP_LEVELS_HPA:
+        t = level_temps_c.get(p)
+        h = level_heights_m.get(p)
+        if t is None or h is None:
+            continue
+        if p >= surface_pressure_hpa:
+            continue
+        if h <= surface_elevation_m + 10:
+            continue
+        env.append((h, t))
+    env.sort(key=lambda x: x[0])
+
+    if len(env) < 2:
+        return {
+            "thermal_top_m": None,
+            "ti_zero_m": None,
+            "lcl_m": round(lcl_m) if lcl_m is not None else None,
+            "limited_by": "no_data",
+        }
+
+    # Check for surface inversion: at env[1] (first level above surface) the
+    # parcel must be at least as warm as the environment for thermals to rise.
+    # Equality (parcel == env) is neutral, not an inversion — let it flow into
+    # the crossing loop so ti_zero_m lands at that height.
+    _, t_env_1 = env[1]
+    h_1 = env[1][0]
+    t_parcel_1 = surface_temp_c - DALR_K_PER_M * (h_1 - surface_elevation_m)
+    if t_parcel_1 - t_env_1 < 0:
+        return {
+            "thermal_top_m": 0,
+            "ti_zero_m": 0,
+            "lcl_m": round(lcl_m) if lcl_m is not None else None,
+            "limited_by": "inversion",
+        }
+
+    ti_zero_m = None
+    for i in range(1, len(env)):
+        h_prev, t_env_prev = env[i - 1]
+        h_curr, t_env_curr = env[i]
+        t_parcel_prev = surface_temp_c - DALR_K_PER_M * (h_prev - surface_elevation_m)
+        t_parcel_curr = surface_temp_c - DALR_K_PER_M * (h_curr - surface_elevation_m)
+        d_prev = t_parcel_prev - t_env_prev
+        d_curr = t_parcel_curr - t_env_curr
+        # Crossing: parcel was warmer (or equal at surface) and is now colder
+        if d_prev >= 0 and d_curr <= 0:
+            denom = d_prev - d_curr
+            if denom <= 0:
+                continue
+            frac = d_prev / denom
+            ti_zero_m = h_prev + frac * (h_curr - h_prev)
+            break
+
+    limited_by = "ti_zero"
+    if ti_zero_m is None:
+        ti_zero_m = min(surface_elevation_m + MAX_THERMAL_TOP_M, env[-1][0])
+        limited_by = "cap"
+
+    raw_top = ti_zero_m
+    if lcl_m is not None and lcl_m < ti_zero_m:
+        raw_top = lcl_m
+        limited_by = "lcl"
+    elif lcl_m is None:
+        limited_by = "no_dewpoint"
+
+    margin = _hcrit_margin(shortwave_radiation)
+    raw_top_agl = raw_top - surface_elevation_m
+    if raw_top_agl > 0:
+        margin = min(margin, raw_top_agl / 2)
+    thermal_top_m = max(0, raw_top - margin)
+
+    if raw_top_agl > 0 and thermal_top_m <= surface_elevation_m + MARGIN_COLLAPSE_THRESHOLD_AGL_M:
+        limited_by = "margin_collapse"
+    elif (
+        shortwave_radiation is not None
+        and shortwave_radiation < WEAK_SOLAR_THRESHOLD_W_M2
+        and thermal_top_m > surface_elevation_m
+        and limited_by not in ("inversion", "saturated", "margin_collapse")
+    ):
+        limited_by = "weak_solar"
+
+    return {
+        "thermal_top_m": round(thermal_top_m),
+        "ti_zero_m": round(ti_zero_m),
+        "lcl_m": round(lcl_m) if lcl_m is not None else None,
+        "limited_by": limited_by,
+    }
 
 
 def score_lapse_rate(lapse_rate: float) -> int:

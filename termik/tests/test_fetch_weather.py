@@ -151,3 +151,94 @@ def test_process_point_hour_passes_multilevel_data():
     assert d["surface_lapse_rate"] is not None
     # Score should be computed (not 0 / "Data mangler")
     assert result["score"] > 0
+    # Thermal-top fields should be present (may be None if no pressure-level sounding)
+    assert "thermal_top_m" in d
+    assert "ti_zero_m" in d
+    assert "lcl_m" in d
+    assert "thermal_top_limited_by" in d
+
+
+def test_process_point_hour_thermal_top_with_full_sounding():
+    """When pressure-level temperatures and geopotential heights are supplied,
+    thermal_top_m must be a positive number for a clearly unstable sounding."""
+    from termik.fetch_weather import process_point_hour
+
+    point = {
+        "id": "test", "lat": 55.5, "lon": 9.5,
+        "coast_distance_km": 50, "coast_direction_deg": 270,
+    }
+    hourly_data = {
+        "time": ["2026-06-15T13:00"],
+        "temperature_2m": [24.0],
+        "dewpoint_2m": [12.0],
+        "relative_humidity_2m": [45],
+        "temperature_850hPa": [9.0],
+        "temperature_700hPa": [-5.0],
+        "wind_speed_10m": [10.0],
+        "wind_direction_10m": [270.0],
+        "wind_gusts_10m": [15.0],
+        "cloud_cover": [30.0],
+        "precipitation": [0.0],
+        "shortwave_radiation": [700.0],
+        "cape": [300.0],
+        "surface_pressure": [1015.0],
+        # Full pressure-level sounding
+        "temperature_950hPa": [18.0],
+        "temperature_925hPa": [16.0],
+        "temperature_900hPa": [13.0],
+        "temperature_800hPa": [4.0],
+        "temperature_600hPa": [-14.0],
+        "geopotential_height_950hPa": [540.0],
+        "geopotential_height_925hPa": [760.0],
+        "geopotential_height_900hPa": [985.0],
+        "geopotential_height_850hPa": [1500.0],
+        "geopotential_height_800hPa": [2025.0],
+        "geopotential_height_700hPa": [3110.0],
+        "geopotential_height_600hPa": [4300.0],
+        "wind_speed_850hPa": [20.0],
+        "wind_direction_850hPa": [290.0],
+    }
+
+    result = process_point_hour(point, hourly_data, 0, 6)
+
+    d = result["data"]
+    assert d["thermal_top_m"] is not None
+    assert d["thermal_top_m"] > 0
+    assert d["ti_zero_m"] is not None
+    assert d["lcl_m"] is not None
+    assert d["thermal_top_limited_by"] in ("lcl", "ti_zero", "cap")
+
+
+def test_process_point_hour_early_return_has_thermal_top_none():
+    """When critical data is missing, the early-return dict still carries
+    thermal_top fields (as None / 'no_data') for schema consistency."""
+    from termik.fetch_weather import process_point_hour
+
+    point = {
+        "id": "test", "lat": 55.5, "lon": 9.5,
+        "coast_distance_km": 50, "coast_direction_deg": 270,
+    }
+    hourly_data = {
+        "time": ["2026-06-15T13:00"],
+        "temperature_2m": [None],   # critical missing
+        "dewpoint_2m": [12.0],
+        "temperature_850hPa": [9.0],
+        "cloud_cover": [30.0],
+        "wind_speed_10m": [10.0],
+        "wind_direction_10m": [270.0],
+        "wind_gusts_10m": [15.0],
+        "precipitation": [0.0],
+        "shortwave_radiation": [700.0],
+        "cape": [None],
+        "surface_pressure": [1015.0],
+        "relative_humidity_2m": [45],
+    }
+
+    result = process_point_hour(point, hourly_data, 0, 6)
+    assert result["score"] == 0
+    assert result["label"] == "Data mangler"
+    d = result["data"]
+    assert d["thermal_top_m"] is None
+    assert d["ti_zero_m"] is None
+    assert d["lcl_m"] is None
+    assert d["thermal_top_limited_by"] == "no_data"

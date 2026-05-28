@@ -11,6 +11,8 @@ let countryMask = null;     // Denmark land polygon as GeoJSON Feature (used for
 let airfieldMarkers = [];
 let map = null;
 let baseDate = null; // Date object for day 0 (parsed from generated timestamp)
+let activeLayer = 'score';  // 'score' | 'thermal-top'
+const LAYER_KEY = 'termik-active-layer';
 
 // === URL hash parameters ===
 function parseHash() {
@@ -72,6 +74,38 @@ function scoreToColor(score) {
 
 function scoreToHeatIntensity(score) {
     return Math.max(0, Math.min(1, score / 10));
+}
+
+// Distinct viridis-like palette for thermal-top altitudes (meters MSL).
+// Chosen to be perceptually different from the score palette so the two
+// layers are immediately distinguishable in screenshots and on shared links.
+const THERMAL_TOP_STOPS = [
+    [0,    [45,  27,  78]],   // dark purple — no thermal
+    [500,  [94,  58,  140]],  // purple-blue — very weak
+    [1000, [42,  123, 155]],  // blue-teal — typical DK day
+    [1500, [127, 183, 62]],   // green-yellow — good soaring
+    [2000, [240, 183, 62]],   // yellow-orange — strong
+    [2500, [232, 90,  26]],   // orange-red — extreme
+];
+
+function thermalTopToRgb(m) {
+    if (m == null) return [200, 200, 200]; // unknown — neutral grey
+    if (m <= THERMAL_TOP_STOPS[0][0]) return THERMAL_TOP_STOPS[0][1];
+    const last = THERMAL_TOP_STOPS[THERMAL_TOP_STOPS.length - 1];
+    if (m >= last[0]) return last[1];
+    for (let i = 1; i < THERMAL_TOP_STOPS.length; i++) {
+        if (m <= THERMAL_TOP_STOPS[i][0]) {
+            const a = THERMAL_TOP_STOPS[i - 1];
+            const b = THERMAL_TOP_STOPS[i];
+            const t = (m - a[0]) / (b[0] - a[0]);
+            return [
+                Math.round(a[1][0] + t * (b[1][0] - a[1][0])),
+                Math.round(a[1][1] + t * (b[1][1] - a[1][1])),
+                Math.round(a[1][2] + t * (b[1][2] - a[1][2])),
+            ];
+        }
+    }
+    return last[1];
 }
 
 // === Data access ===
@@ -186,7 +220,9 @@ function buildScoreCanvas() {
 const ScoreCanvasLayer = L.Layer.extend({
     initialize: function() {
         this._scoreCanvas = null;
-        this._mask = null; // GeoJSON Feature with MultiPolygon coordinates
+        this._mask = null;     // GeoJSON Feature with MultiPolygon coordinates
+        this._smoothing = true; // false → discrete cells (used by thermal-top layer)
+        this._labels = null;   // [{lat, lon, text}] — rendered above the canvas when set
     },
     onAdd: function(map) {
         const canvas = L.DomUtil.create('canvas', 'leaflet-score-canvas');
@@ -203,8 +239,10 @@ const ScoreCanvasLayer = L.Layer.extend({
         L.DomUtil.remove(this._canvas);
         this._canvas = null;
     },
-    setScoreCanvas: function(canvas) {
+    setScoreCanvas: function(canvas, smoothing, labels) {
         this._scoreCanvas = canvas;
+        this._smoothing = smoothing !== false;  // default true
+        this._labels = labels || null;
         this._render();
     },
     setMask: function(feature) {
@@ -258,13 +296,99 @@ const ScoreCanvasLayer = L.Layer.extend({
         const half = GRID_STEP_DEG / 2;
         const tl = map.latLngToContainerPoint([SCORE_BBOX.latMax + half, SCORE_BBOX.lonMin - half]);
         const br = map.latLngToContainerPoint([SCORE_BBOX.latMin - half, SCORE_BBOX.lonMax + half]);
-        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingEnabled = this._smoothing;
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(this._scoreCanvas, tl.x, tl.y, br.x - tl.x, br.y - tl.y);
 
         if (maskPath) ctx.restore();
+
+        // Labels render OUTSIDE the coastal clip so they aren't cut at the edge.
+        if (this._labels && this._labels.length) {
+            this._drawLabels(ctx);
+        }
+    },
+    _drawLabels: function(ctx) {
+        const map = this._map;
+        const cellPx = this._estimateCellPx();
+        if (cellPx < 48) return; // too cramped — labels overlap below zoom 9
+        const maskPath = this._buildMaskPath();
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+        ctx.fillStyle = '#222';
+        for (const l of this._labels) {
+            const pt = map.latLngToContainerPoint([l.lat, l.lon]);
+            // Skip labels for grid points that fall outside the country
+            // (otherwise "1300m" floats over Kattegat etc.)
+            if (maskPath && !ctx.isPointInPath(maskPath, pt.x, pt.y)) continue;
+            ctx.strokeText(l.text, pt.x, pt.y);
+            ctx.fillText(l.text, pt.x, pt.y);
+        }
+    },
+    _estimateCellPx: function() {
+        const map = this._map;
+        const a = map.latLngToContainerPoint([56, 10]);
+        const b = map.latLngToContainerPoint([56, 10 + GRID_STEP_DEG]);
+        return Math.abs(b.x - a.x);
     },
 });
+
+function buildThermalTopCanvas() {
+    if (!forecastData) return null;
+    const { latMin, latMax, lonMin, lonMax } = SCORE_BBOX;
+    const W = Math.round((lonMax - lonMin) / GRID_STEP_DEG) + 1;
+    const H = Math.round((latMax - latMin) / GRID_STEP_DEG) + 1;
+
+    const points = [];
+    for (const p of forecastData.points) {
+        if (p.type !== 'grid') continue;
+        const hd = getPointAtTime(p, currentDay, currentHour);
+        if (!hd) continue;
+        const m = hd.thermal_top_m; // may be null on older data
+        points.push({ lat: p.lat, lon: p.lon, m: m });
+    }
+    if (!points.length) return null;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const img = ctx.createImageData(W, H);
+    const alpha = Math.round(255 * SCORE_OPACITY);
+
+    for (let y = 0; y < H; y++) {
+        const lat = latMax - y * GRID_STEP_DEG;
+        for (let x = 0; x < W; x++) {
+            const lon = lonMin + x * GRID_STEP_DEG;
+            let bestM = null;
+            let bestDist = Infinity;
+            for (const p of points) {
+                const dlat = p.lat - lat;
+                const dlon = p.lon - lon;
+                const d = dlat * dlat + dlon * dlon;
+                if (d < bestDist) { bestDist = d; bestM = p.m; }
+            }
+            const [r, g, b] = thermalTopToRgb(bestM);
+            const idx = (y * W + x) * 4;
+            img.data[idx] = r;
+            img.data[idx + 1] = g;
+            img.data[idx + 2] = b;
+            img.data[idx + 3] = alpha;
+        }
+    }
+    ctx.putImageData(img, 0, 0);
+
+    // Build labels for each grid point that has a value
+    const labels = [];
+    for (const p of points) {
+        if (p.m == null) continue;
+        const rounded = Math.round(p.m / 100) * 100;
+        labels.push({ lat: p.lat, lon: p.lon, text: rounded + 'm' });
+    }
+    return { canvas: canvas, labels: labels };
+}
 
 function updateHeatmap() {
     if (!scoreLayer) {
@@ -272,7 +396,48 @@ function updateHeatmap() {
         scoreLayer.addTo(map);
         if (countryMask) scoreLayer.setMask(countryMask);
     }
-    scoreLayer.setScoreCanvas(buildScoreCanvas());
+    if (activeLayer === 'thermal-top') {
+        const built = buildThermalTopCanvas();
+        if (built) {
+            scoreLayer.setScoreCanvas(built.canvas, false, built.labels);
+        } else {
+            scoreLayer.setScoreCanvas(null, false, null);
+        }
+        updateLegend('thermal-top');
+    } else {
+        scoreLayer.setScoreCanvas(buildScoreCanvas(), true, null);
+        updateLegend('score');
+    }
+}
+
+function updateLegend(layer) {
+    const el = document.getElementById('layer-legend');
+    if (!el) return;
+    if (layer === 'thermal-top') {
+        el.innerHTML =
+            '<div class="legend-bar legend-thermal"></div>' +
+            '<div class="legend-labels"><span>0m</span><span>1500m</span><span>2500m+</span></div>';
+    } else {
+        el.innerHTML =
+            '<div class="legend-bar legend-score"></div>' +
+            '<div class="legend-labels"><span>0</span><span>5</span><span>10</span></div>';
+    }
+}
+
+function setupLayerControls() {
+    let stored = null;
+    try { stored = localStorage.getItem(LAYER_KEY); } catch (e) { /* private mode */ }
+    if (stored === 'score' || stored === 'thermal-top') activeLayer = stored;
+    const radios = document.querySelectorAll('input[name="map-layer"]');
+    for (const r of radios) {
+        r.checked = (r.value === activeLayer);
+        r.addEventListener('change', function() {
+            if (!this.checked) return;
+            activeLayer = this.value;
+            try { localStorage.setItem(LAYER_KEY, activeLayer); } catch (e) { /* private */ }
+            updateHeatmap();
+        });
+    }
 }
 
 // === Airfield markers ===
@@ -352,8 +517,11 @@ function createPopupContent(airfield) {
         + (d.surface_lapse_rate != null
             ? popupItem('Overfladelag', d.surface_lapse_rate + '\u00B0C/100m', 'Lapse rate 2m\u2192180m. Over 0.98 = termik starter. Under 0.5 = ingen initiering.')
             : '')
+        + (d.thermal_top_m != null
+            ? popupItem('Termik-toph\u00F8jde', d.thermal_top_m + 'm', 'Beregnet maks. brugbar termikh\u00F8jde (parcel-teori: TI=0 cap\'d med LCL, minus Hcrit-margin)')
+            : '')
         + (d.boundary_layer_height != null
-            ? popupItem('Blandingslag', Math.round(d.boundary_layer_height) + 'm', 'H\u00F8jde p\u00E5 det konvektive blandingslag \u2014 estimat for maksimal termikh\u00F8jde')
+            ? popupItem('Blandingslag', Math.round(d.boundary_layer_height) + 'm', 'Modellens r\u00E5e blandingslag (sammenlign med Termik-top)')
             : '')
         +   popupItem('CAPE', d.cape + ' J/kg', 'Convective Available Potential Energy. H\u00F8j v\u00E6rdi = risiko for byger/overudvikling.')
         +   popupItem('Skyd\u00E6kke', d.cloud_cover + '%', 'Samlet skyd\u00E6kke. Over 87% blokerer solinstr\u00E5ling og dr\u00E6ber termik.')
@@ -694,6 +862,7 @@ async function init() {
     createAirfieldMarkers();
     setupControls();
     populateFavoriteSelect();
+    setupLayerControls();
     updateAll();
     updateHash();
     map.on('moveend', updateHash);
