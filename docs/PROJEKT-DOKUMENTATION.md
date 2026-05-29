@@ -308,10 +308,31 @@ Mørkeblå (0) → Lyseblå (3) → Gul (5) → Orange (7) → Rød (10)
 - **Timeslider**: Kl. 06-21, opdaterer heatmap og markører i realtid
 - **Favorit-plads**: vælg én flyveplads og se hele dagens forløb i sidepanelet
 - **Kortlag**: vælg mellem to lag — Flyveforhold (score-heatmap) eller Termik-tophøjde (diskrete celler med tal per celle ved zoom ≥ 9). Valget huskes i localStorage.
+- **Vejr-widget**: lille kort i kortets venstre top (under zoom-knapperne) der viser vejret lige nu for favorit-pladsen. Se eget afsnit nedenfor.
 
 ### Kortlag — termik-tophøjde
 
 Diskret-farvet lag baseret på `compute_thermal_top()`-resultatet per grid-celle. Distinkt viridis-lignende palet (lilla → orange) for at undgå forveksling med score-laget. Værdier <500 m vises lilla, ~1500 m grøn (god dansk dag), 2500 m+ orange-rød (sjælden i DK).
+
+### Vejr-widget — vejret lige nu på favorit-pladsen
+
+Et lille kort placeret som et Leaflet-kontrol i `topleft`, så det stables under
+zoom-knapperne. Viser de aktuelle forhold for den valgte favorit-plads (jf.
+[Referat 2026-05-29](Referat/2026-05-29-vejr-widget.md)).
+
+- **Datakilde**: ingen ny API-kald. Widgeten læser den aktuelle lokale time for
+  favorit-pladsen direkte fra `current.json` via `getPointAtTime(plads, 0, time)`.
+  Data fornyes som hidtil hver 3. time via GitHub Actions, så "caching" sker
+  gratis på data-laget. Opdateres ved page-load, ved favorit-skift, og hvert
+  minut (følger uret uden reload).
+- **Indhold**: stort temperaturtal + pladsnavn, dynamisk vejr-ikon (inline-SVG
+  valgt ud fra `cloud_cover` + `precipitation`: klart / sol+sky / overskyet /
+  regn), og en farvet bund-bjælke med termik-label farvet via `scoreToColor`.
+- **Detalje-række** (folder ud ved hover på desktop): luftfugtighed, vind (kt +
+  retningspil), Real Feel (Australian Apparent Temperature beregnet fra temp,
+  fugtighed og vind), og lufttryk (hPa).
+- **Synlighed**: skjult når ingen favorit-plads er valgt, og skjult helt på
+  mobil (`<768px`) via media query.
 
 ### Popup ved klik på svæveflyveplads
 
