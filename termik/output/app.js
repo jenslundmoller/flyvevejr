@@ -645,6 +645,7 @@ function populateFavoriteSelect() {
             localStorage.removeItem(FAVORITE_KEY);
         }
         updateFavoriteForecast();
+        updateWeatherWidget();
     });
 }
 
@@ -694,6 +695,125 @@ function updateFavoriteForecast() {
             }
         });
     });
+}
+
+// === Weather widget (current conditions for favorite airfield) ===
+
+// Apparent temperature (Australian AT model) from temp (°C), RH (%), wind (kt)
+function apparentTemp(tempC, rh, windKt) {
+    const ws = (windKt || 0) * 0.514444; // kt -> m/s
+    const e = (rh / 100) * 6.105 * Math.exp((17.27 * tempC) / (237.7 + tempC));
+    return tempC + 0.33 * e - 0.70 * ws - 4.0;
+}
+
+// Pick a readable text colour (dark/light) against a score-coloured background
+function textColorForScore(score) {
+    const [r, g, b] = scoreToRgb(score);
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    return lum > 150 ? '#222' : '#fff';
+}
+
+// Inline SVG weather icon chosen from cloud cover (%) and precipitation (mm)
+function weatherIconSvg(cloud, precip) {
+    if (precip != null && precip > 0.1) {
+        return '<svg viewBox="0 0 64 64" width="54" height="54" aria-hidden="true">'
+            + '<path d="M18 42 a12 12 0 0 1 12-12 a14 14 0 0 1 14 13 a9 9 0 0 1 -1 17 H18 a10 10 0 0 1 0-18 Z" fill="#aeb8c2" stroke="#8c97a3" stroke-width="1.5"/>'
+            + '<g stroke="#4a90d9" stroke-width="3" stroke-linecap="round">'
+            + '<line x1="24" y1="56" x2="21" y2="62"/><line x1="34" y1="56" x2="31" y2="62"/><line x1="44" y1="56" x2="41" y2="62"/></g></svg>';
+    }
+    if (cloud != null && cloud >= 80) {
+        return '<svg viewBox="0 0 64 64" width="54" height="54" aria-hidden="true">'
+            + '<path d="M16 46 a13 13 0 0 1 13-13 a15 15 0 0 1 15 14 a9 9 0 0 1 -1 18 H16 a10 10 0 0 1 0-19 Z" fill="#b8c2cc" stroke="#9aa6b2" stroke-width="1.5"/></svg>';
+    }
+    if (cloud != null && cloud >= 30) {
+        return '<svg viewBox="0 0 64 64" width="54" height="54" aria-hidden="true">'
+            + '<circle cx="24" cy="22" r="10" fill="#f6c343"/>'
+            + '<g stroke="#f6c343" stroke-width="3" stroke-linecap="round">'
+            + '<line x1="24" y1="3" x2="24" y2="9"/><line x1="5" y1="22" x2="11" y2="22"/>'
+            + '<line x1="10" y1="8" x2="14" y2="12"/><line x1="38" y1="8" x2="34" y2="12"/></g>'
+            + '<path d="M22 46 a11 11 0 0 1 11-11 a13 13 0 0 1 13 12 a8 8 0 0 1 -1 16 H22 a9 9 0 0 1 0-17 Z" fill="#e2e8ee" stroke="#c2ccd6" stroke-width="1.5"/></svg>';
+    }
+    return '<svg viewBox="0 0 64 64" width="54" height="54" aria-hidden="true">'
+        + '<circle cx="32" cy="32" r="13" fill="#f6c343"/>'
+        + '<g stroke="#f6c343" stroke-width="3.5" stroke-linecap="round">'
+        + '<line x1="32" y1="5" x2="32" y2="14"/><line x1="32" y1="50" x2="32" y2="59"/>'
+        + '<line x1="5" y1="32" x2="14" y2="32"/><line x1="50" y1="32" x2="59" y2="32"/>'
+        + '<line x1="13" y1="13" x2="19" y2="19"/><line x1="45" y1="45" x2="51" y2="51"/>'
+        + '<line x1="13" y1="51" x2="19" y2="45"/><line x1="45" y1="19" x2="51" y2="13"/></g></svg>';
+}
+
+// Today's day-offset and the actual current hour (0-23, unclamped)
+function getNowDayHour() {
+    const now = new Date();
+    const todayStr = now.getFullYear() + '-'
+        + String(now.getMonth() + 1).padStart(2, '0') + '-'
+        + String(now.getDate()).padStart(2, '0');
+    let dayDiff = Math.round((new Date(todayStr) - new Date(getTargetDateStr(0))) / 86400000);
+    if (dayDiff < 0) dayDiff = 0;
+    if (dayDiff > 6) dayDiff = 6;
+    return { day: dayDiff, hour: now.getHours() };
+}
+
+function addWeatherControl() {
+    const WeatherControl = L.Control.extend({
+        onAdd: function () {
+            const div = L.DomUtil.create('div', 'ww-wrap ww-hidden');
+            div.id = 'weather-widget';
+            L.DomEvent.disableClickPropagation(div);
+            L.DomEvent.disableScrollPropagation(div);
+            return div;
+        },
+        onRemove: function () {},
+    });
+    new WeatherControl({ position: 'topleft' }).addTo(map);
+}
+
+function updateWeatherWidget() {
+    const el = document.getElementById('weather-widget');
+    if (!el || !forecastData) return;
+
+    let favId = null;
+    try { favId = localStorage.getItem(FAVORITE_KEY); } catch (e) { /* private mode */ }
+    if (!favId) { el.classList.add('ww-hidden'); return; }
+
+    const af = forecastData.points.find(function (p) {
+        return p.id === favId && p.type === 'airfield';
+    });
+    if (!af) { el.classList.add('ww-hidden'); return; }
+
+    const nowdh = getNowDayHour();
+    let hd = getPointAtTime(af, nowdh.day, nowdh.hour);
+    // Fall back to the nearest available hour today if the exact hour is missing
+    for (let off = 1; off <= 6 && !hd; off++) {
+        hd = getPointAtTime(af, nowdh.day, nowdh.hour - off)
+            || getPointAtTime(af, nowdh.day, nowdh.hour + off);
+    }
+    if (!hd) { el.classList.add('ww-hidden'); return; }
+
+    const d = hd.data;
+    const barColor = scoreToColor(hd.score);
+    const barText = textColorForScore(hd.score);
+    const feel = Math.round(apparentTemp(d.temp, d.relative_humidity, d.wind_speed_kt));
+    const windArrow = getWindArrow(d.wind_dir);
+
+    el.innerHTML =
+        '<div class="ww-main">'
+        +   '<div class="ww-icon">' + weatherIconSvg(d.cloud_cover, d.precipitation) + '</div>'
+        +   '<div>'
+        +     '<div class="ww-temp">' + Math.round(d.temp) + '°</div>'
+        +     '<div class="ww-place">' + escapeHtml(af.name) + '</div>'
+        +   '</div>'
+        + '</div>'
+        + '<div class="ww-details">'
+        +   '<div class="ww-stat"><span>Luftfugtighed</span><b>' + Math.round(d.relative_humidity) + '%</b></div>'
+        +   '<div class="ww-stat"><span>Vind</span><b>' + windArrow + ' ' + Math.round(d.wind_speed_kt) + ' kt</b></div>'
+        +   '<div class="ww-stat"><span>Føles som</span><b>' + feel + '°</b></div>'
+        +   '<div class="ww-stat"><span>Tryk</span><b>' + Math.round(d.pressure) + ' hPa</b></div>'
+        + '</div>'
+        + '<div class="ww-bar" style="background:' + barColor + ';color:' + barText + '">'
+        +   escapeHtml(hd.label) + '</div>';
+
+    el.classList.remove('ww-hidden');
 }
 
 // === Controls ===
@@ -859,11 +979,15 @@ async function init() {
 
     hideLoading();
     initMap();
+    addWeatherControl();
     createAirfieldMarkers();
     setupControls();
     populateFavoriteSelect();
     setupLayerControls();
     updateAll();
+    updateWeatherWidget();
+    // Refresh the "now" widget every minute so it follows the clock without a reload
+    setInterval(updateWeatherWidget, 60000);
     updateHash();
     map.on('moveend', updateHash);
 }

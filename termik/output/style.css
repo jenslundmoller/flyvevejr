@@ -712,3 +712,93 @@ body.om-page {
         min-width: 240px;
     }
 }
+
+/* === Weather widget (current conditions for favorite airfield) === */
+.ww-wrap {
+    width: 218px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: whitesmoke;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    color: #222;
+    font-size: 14px;
+    line-height: 1.2;
+    cursor: default;
+}
+
+.ww-wrap.ww-hidden {
+    display: none;
+}
+
+.ww-main {
+    display: grid;
+    grid-template-columns: 58px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    transition: background 0.3s ease;
+}
+
+.ww-wrap:hover .ww-main {
+    background: #ffe87c;
+}
+
+.ww-icon {
+    width: 54px;
+    height: 54px;
+    display: flex;
+}
+
+.ww-temp {
+    font-size: 1.7em;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.ww-place {
+    font-size: 0.74em;
+    color: #555;
+    margin-top: 3px;
+}
+
+.ww-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+    background: #fff;
+    max-height: 0;
+    opacity: 0;
+    padding: 0 16px;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.35s ease;
+}
+
+.ww-wrap:hover .ww-details {
+    max-height: 150px;
+    opacity: 1;
+    padding: 10px 16px;
+}
+
+.ww-stat span {
+    display: block;
+    font-size: 0.7em;
+    color: #6b7280;
+}
+
+.ww-stat b {
+    font-size: 0.92em;
+    font-weight: 600;
+}
+
+.ww-bar {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.85em;
+    padding: 6px 8px;
+}
+
+@media (max-width: 768px) {
+    .ww-wrap {
+        display: none !important;
+    }
+}
