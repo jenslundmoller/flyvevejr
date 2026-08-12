@@ -552,13 +552,26 @@ _RINGSTED_2026_08_08 = {
 def test_radiation_gate_on_the_calibration_day(hour, expected_cap):
     """The published cap for the evening the memory was calibrated against.
 
-    This is what bounds the two constants from both sides.  19:00 pins
-    RADIATION_MEMORY_FACTOR from below (it must reach 400 off a 657 W/m² peak,
-    so >= 0.609) and 20:00 pins it from above (it must not reach 400 off a
-    523 W/m² peak, so < 0.765).  Without the second, widening the factor would
-    silently free hours the plan requires to stay clamped.  20:00 also pins
-    RADIATION_MEMORY_FLOOR from above (<= 139, or the hour drops to cap 3) and
-    21:00 pins it from below (> 30, or the memory revives it to cap 5).
+    What this test contributes is the upper bound on
+    RADIATION_MEMORY_FACTOR and both bounds on RADIATION_MEMORY_FLOOR.
+    20:00 must not reach 400 off a 523 W/m² peak, so the factor stays under
+    0.765; without that, widening it would silently free hours the plan
+    requires to stay clamped.  20:00 also pins the floor from above (<= 139,
+    or the hour drops to cap 3) and 21:00 pins it from below (> 30, or the
+    memory revives it to cap 5).
+
+    The factor's lower bound is not this test's.  At 0.609 the 19:00 case here
+    still passes, since 0.609 x 657 = 400.1.  The bound comes from the three
+    tests built on a 640 W/m² peak, which need 400/640 = 0.625:
+    test_effective_radiation_remembers_recent_peak,
+    test_dealbreaker_gate_uses_effective_radiation and
+    test_process_point_hour_radiation_gate_skips_missing_trailing_hours.
+    Re-tuning below 0.625 fails there, not here.
+
+    The interval those bounds leave open is equivalent on this day only.  Its
+    width is an artifact of one afternoon's radiation curve, not a physically
+    justified tolerance: on a day with a different peak shape 0.65 and 0.70
+    diverge.  A green suite at some other value is not evidence for it.
 
     Scored with an incoming 10.0 and everything else neutral, so the returned
     value is the gate's cap and nothing else.
