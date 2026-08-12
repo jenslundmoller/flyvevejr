@@ -511,14 +511,14 @@ def test_dealbreaker_gate_still_kills_a_genuinely_dark_hour():
     )
     assert score <= 1
 
-@pytest.mark.parametrize("radiation, expected_cap", [
+@pytest.mark.parametrize("radiation, expected_score", [
     (0, 1), (50, 1), (99.9, 1),
     (100, 3), (150, 3), (249.9, 3),
     (250, 5), (350, 5), (399.9, 5),
     (400, 8.0), (500, 8.0), (900, 8.0),
 ])
 def test_dealbreaker_gate_without_trailing_caps_on_instantaneous_radiation(
-    radiation, expected_cap
+    radiation, expected_score
 ):
     """Pins every cap tier for the no-trailing case, boundaries included.
 
@@ -528,7 +528,7 @@ def test_dealbreaker_gate_without_trailing_caps_on_instantaneous_radiation(
     score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
                                 precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
                                 shortwave_radiation=radiation)
-    assert score == expected_cap
+    assert score == expected_score
 
 
 # --- Full scenario tests ---
