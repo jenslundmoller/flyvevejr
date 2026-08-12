@@ -51,12 +51,39 @@ Næsten identiske. Den tungest vægtede variabel (0.30) adskilte ikke en dag med
 
 ### Acceptkriterier for hele planen
 
-Disse to sager er sandheden vi kalibrerer mod. Begge skal holde til sidst:
+Disse sager er sandheden vi kalibrerer mod. Alle tre skal holde til sidst:
 
 1. **Ringsted 2026-08-08 kl. 18:00 og 19:00** skal score over 6.5 (var 5.0). Piloten fløj god termik til 19.
 2. **Ringsted 2026-08-09 kl. 10:00 til 14:00** skal blive på 3.0 eller derunder (var 2.0 i morgen-run, 6.2 i hindcast). Det var umuligt at finde noget.
+3. **Ringsted 2026-08-09 kl. 18:00** skal ned på 5.0 eller derunder (var 7.4, "God termik"). Tilføjet efter Task 2. Det var dagens værste forudsigelse, og hverken Task 3 eller Task 5 rører den: himlen var klaret op (total 15, cirrus 0) og strålingen var 429 W/m², over gate-tærsklen. Kun grænselagshøjden skiller timen (780 m mod lørdagens 1250 m). Det er hele grunden til at Task 6 findes.
 
-Kriterium 2 er den farlige: WP3 gør cirrus-cap'en mildere, og hvis den bliver for mild, ryger søndag op i det grønne igen.
+Kriterium 2 er den farlige: Task 5 gør cirrus-cap'en mildere, og hvis den bliver for mild, ryger søndag op i det grønne igen. Kriterium 3 trækker den anden vej og må ikke løses ved at trække lørdag ned med sig, så kriterium 1 er samtidig værn mod overfitting.
+
+### Målt sandhed fra Task 2
+
+Fuld tabel for begge dage ligger i `docs/Referat/2026-08-12-straale-gate.md`. Det der styrer resten af planen:
+
+**Kalibrér altid mod forecast-endpointet, aldrig mod `archive-api`.** ERA5 dækker ikke dagene endnu, så arkivet falder stille tilbage på `ecmwf_ifs`, en anden model end den `best_match`-blanding produktionen kører på. De er uenige med op til 253 W/m². Afgjort på beviser: produktionen udgav præcis 5.0, 5.0, 3.0 kl. 18/19/20, forecast-værdierne (398, 274, 139) reproducerer det, arkivets (298, 186, 92) ville give 5, 3, 1. Kalibrering mod arkivet ville have tvunget `RADIATION_MEMORY_FACTOR` op på 0.83.
+
+**Lørdag 2026-08-08, stråling:** peak er 736 kl. 13 (planens antagelse om ~640 var forkert, men med et 3-timers vindue er peaken ikke det bindende). SW kl. 16 til 20: 657, 523, 398, 274, 139.
+
+**Søndag 2026-08-09, skylag kl. 10 til 14:** total 74/79/55/64/75, lav **0/0/0/0/0**, mellem 0/0/0/0/0, høj **99/81/59/84/100**. Lavt skydække var 0 hele dagen. Præmissen for Task 5 er bekræftet.
+
+**Grænselagshøjde skiller dagene langt bedre end lapse rate:**
+
+| kl | lør | søn | forhold |
+|---|---|---|---|
+| 09 | 1085 | 315 | 3.4 |
+| 10 | 1155 | 410 | 2.8 |
+| 11 | 1270 | 1210 | 1.05 |
+| 13 | 1600 | 1295 | 1.24 |
+| 17 | 1685 | 980 | 1.7 |
+| 18 | 1250 | 780 | 1.6 |
+| 19 | 1000 | 355 | 2.8 |
+
+Forbeholdet er kl. 11 til 13, hvor dagene er næsten ens. Grænselagshøjden kan altså ikke bære kriterium 2 alene, kun kriterium 3.
+
+**`cloud_cover` modsiger sine egne lag i `best_match`.** Søndag kl. 10: total 74 med høj 99. Lørdag kl. 13: total 67 med lav 95. Begge fysisk umulige, så total og lag kommer fra forskellige modeller i blandingen. Beslutning: **caps holder op med at læse totalfeltet og udleder skydække fra lagene**, som er indbyrdes konsistente og er det cirrus-researchen bygger på. Det ændrer adfærd på alle dage, ikke kun de to, så sæsonkørslen i Task 4 er værnet mod regressioner.
 
 ---
 
@@ -252,10 +279,15 @@ Efter `WEIGHTS`:
 RADIATION_GATE = [(400, 5), (250, 3), (100, 1)]
 
 # Hvor meget af de seneste timers højeste stråling der stadig tæller.
-# 0.65 er valgt så en august-eftermiddag med peak ~640 W/m² holder sig
-# over 400-tærsklen til omkring kl. 19. Kalibreres i Task 4.
+# 0.65 er målt mod 2026-08-08: den bindende time er kl. 19, hvor de
+# foregående tre timers maksimum er 657 W/m². Mindste brugbare faktor er
+# 400/657 = 0.609, så 0.65 klarer kriterium 1 med cirka 7 % margin.
 RADIATION_MEMORY_FACTOR = 0.65
 RADIATION_MEMORY_HOURS = 3
+
+# Hukommelsen må ikke redde en time hvis egen stråling er under bunden.
+# Uden dette løftes kl. 21 med 30 W/m² fra cap 1 til cap 5, efter solnedgang.
+RADIATION_MEMORY_FLOOR = 100
 ```
 
 **Step 4: Implementer `effective_radiation` i `termik/scoring.py`**
@@ -272,10 +304,24 @@ def effective_radiation(current: float, trailing: list[float] | None = None) -> 
     timers højeste stråling, aldrig mindre end den aktuelle.
 
     trailing er de foregående RADIATION_MEMORY_HOURS timers stråling.
+
+    Hukommelsen gælder kun mens der stadig er lys nok til at der er noget
+    at huske: under RADIATION_MEMORY_FLOOR er solen reelt væk, og en høj
+    eftermiddagspeak må ikke kunne løfte en time efter solnedgang.
     """
-    if not trailing:
+    if not trailing or current < RADIATION_MEMORY_FLOOR:
         return current
     return max(current, RADIATION_MEMORY_FACTOR * max(trailing))
+```
+
+Tre tests mere, ud over de tre nedenfor, til gulvet:
+
+```python
+def test_effective_radiation_no_memory_after_sunset():
+    # 2026-08-08 kl. 21: 30 W/m², men kl. 18 var der 398.
+    # Uden gulv ville hukommelsen løfte cap 1 til cap 5 efter solnedgang.
+    eff = effective_radiation(current=30.0, trailing=[523.0, 398.0, 274.0])
+    assert eff == 30.0
 ```
 
 Husk `from termik.config import RADIATION_GATE, RADIATION_MEMORY_FACTOR` i importblokken (`scoring.py:9`).
@@ -524,8 +570,16 @@ Forventet: FAIL på uventede keyword-argumenter.
 # gav ubrugelig termik selvom lapse rate og vind så fine ud. Maj-referatets
 # research: cirrostratus med optisk dybde > 1.5 er ødelæggende, mens tynd
 # cirrus er ubetydelig. Den lineære 0.5-vægt fanger ikke den øvre ende.
+#
+# Testes mod de seneste timers HØJESTE cirrus, ikke mod øjebliksværdien.
+# Målt 2026-08-09 kl. 10 til 14: 99, 81, 59, 84, 100. En øjeblikstest ved
+# 85 fanger kun kl. 10 og 14 og dumper kriterium 2. Et skjold der har stået
+# siden kl. 06 har allerede lukket jorden ned, uanset et enkelt hul kl. 12,
+# så trailing-maksimum giver 99, 99, 99, 99, 100 og fanger hele blokken.
+# Lørdag rammes ikke: cirrus toppede på 57 kl. 07 og lå så på 0 til 23.
 CIRRUS_SHIELD_THRESHOLD = 85
 CIRRUS_SHIELD_MAX_SCORE = 3
+CIRRUS_SHIELD_MEMORY_HOURS = 3
 ```
 
 **Step 9: Ret `apply_dealbreakers`**
@@ -538,11 +592,15 @@ Tilføj `cloud_cover_low`, `cloud_cover_mid`, `cloud_cover_high` som keyword-par
     )
     if eff_cloud >= 87:
         max_score = min(max_score, 2)
-    if cloud_cover_high is not None and cloud_cover_high >= CIRRUS_SHIELD_THRESHOLD:
+    shield = max([cloud_cover_high] + (trailing_cirrus or [])) \
+        if cloud_cover_high is not None else None
+    if shield is not None and shield >= CIRRUS_SHIELD_THRESHOLD:
         max_score = min(max_score, CIRRUS_SHIELD_MAX_SCORE)
 ```
 
-Opdater kaldestedet (`scoring.py:608-614`) så lagene sendes med. De findes allerede i `compute_thermal_score`s signatur fra maj-fixet.
+Opdater kaldestedet (`scoring.py:608-614`) så lagene sendes med. De findes allerede i `compute_thermal_score`s signatur fra maj-fixet. `trailing_cirrus` føres igennem fra `process_point_hour` på samme måde som `trailing_radiation` i Task 3, med `CIRRUS_SHIELD_MEMORY_HOURS` som vindue.
+
+**Bemærk hvad der ikke længere sker:** efter denne ændring læser caps ikke `cloud_cover`-totalen når lagene findes. Det er bevidst, jf. beslutningen i "Målt sandhed fra Task 2": totalen modsiger sine egne lag i `best_match`. `effective_cloud_cover` falder kun tilbage på totalen når lagene mangler helt (ældre fetches). Konsekvensen er at den gamle `cloud_cover >= 87`-cap, der tilfældigvis fangede søndag rigtigt i morgen-runnet, ikke længere fyrer på de data: søndagens totaler var 55 til 79. Det er cirrus-skjoldet der skal fange dagen nu, og kriterium 2 er testen på om det virker.
 
 **Step 10: Kør hele suiten**
 
@@ -567,16 +625,81 @@ git commit -m "scoring: caps bruger cirrus-vægtet skydække plus cirrus-skjold-
 
 ---
 
-## Task 6: Regressionstests, referat og deploy
+## Task 6: Grænselagshøjde som scoringsinput
+
+Tilføjet efter Task 2. Søndagens værste time, kl. 18 med 7.4, røres ikke af hverken Task 3 eller Task 5: himlen var klaret op og strålingen lå over gate-tærsklen. Grænselagshøjden er det eneste felt der skiller timen, 780 m mod lørdagens 1250 m ved samme klokkeslæt. Feltet hentes allerede (`config.py:38`), persisteres allerede og vises allerede i popup'en, men bruges kun i `comments.py:106` og aldrig i scoringen.
+
+**Files:**
+- Modify: `termik/config.py`
+- Modify: `termik/scoring.py` (ny score-funktion plus vægt, eller cap, se trin 1)
+- Test: `termik/tests/test_scoring.py`
+
+**Step 1: Beslut mekanisme før du skriver kode**
+
+To muligheder, og valget skal træffes på data, ikke på smag:
+
+- **Som cap:** lav grænselagshøjde begrænser scoren, i stil med de øvrige dealbreakers.
+- **Som vægtet delscore:** grænselagshøjde bliver en faktor i `WEIGHTS` på linje med lapse rate og solar.
+
+Kør begge mod referencedagene før du vælger. Afgørende forbehold fra Task 2: grænselagshøjden skiller **ikke** dagene kl. 11 til 13 (1270 mod 1210), så den kan ikke bære kriterium 2 og må ikke sættes så aggressivt at den prøver. Den skal ramme kriterium 3 uden at røre kriterium 1, hvor lørdag kl. 18 og 19 har 1250 og 1000 m.
+
+En vægtet delscore ændrer alle scores på alle dage og kræver rekalibrering af hele fordelingen. En cap rammer kun de timer der falder under tærsklen. Start med at afprøve cap'en, den er billigere at verificere, og gå kun til delscoren hvis cap'en ikke kan skille timerne.
+
+**Step 2: Skriv de fejlende tests**
+
+Mindst disse tre, med de faktiske målte værdier:
+
+```python
+def test_shallow_boundary_layer_caps_score():
+    # 2026-08-09 kl. 18: himlen klaret op, stråling 429, men
+    # grænselaget kun 780 m. Systemet gav 7.4, virkeligheden var ingenting.
+    ...  # forvent <= 5.0
+
+def test_deep_boundary_layer_does_not_cap():
+    # 2026-08-08 kl. 18: 1250 m, piloten fløj god termik.
+    ...  # forvent > 6.5
+
+def test_boundary_layer_does_not_separate_midday_reference_hours():
+    # Kl. 11-13 er dagene næsten ens (1270 mod 1210). Mekanismen må
+    # ikke lade som om den kan skille dem: begge skal falde på samme
+    # side af tærsklen, så kriterium 2 løses af cirrus-skjoldet.
+    ...
+```
+
+Den tredje test er den vigtigste. Den forhindrer at nogen sætter tærsklen et sted der tilfældigvis får kriterium 2 til at bestå af den forkerte grund.
+
+**Step 3 til 6:** Kør, implementér, kør, commit. Følg samme TDD-rytme som Task 3.
+
+**Step 7: Replay alle tre kriterier**
+
+```bash
+python3 -m termik.tools.replay_day ringsted 2026-08-08
+python3 -m termik.tools.replay_day ringsted 2026-08-09
+```
+
+Alle tre acceptkriterier skal holde samtidig. Kør også sæsonanalysen igen: en ny cap på et felt der aldrig har været brugt i scoringen kan flytte mange timer, og den slags skal ses før det deployes.
+
+**Step 8: Commit**
+
+```bash
+git add termik/scoring.py termik/config.py termik/tests/test_scoring.py
+git commit -m "scoring: brug grænselagshøjde til at fange lave blandingslag"
+```
+
+---
+
+## Task 7: Regressionstests, referat og deploy
 
 **Files:**
 - Create: `termik/tests/test_reference_days.py`
 - Create: `docs/Referat/2026-08-12-straale-gate.md` (udvid den fra Task 2)
 - Modify: `docs/PROJEKT-DOKUMENTATION.md`
 
-**Step 1: Lås de to sager fast som regressionstests**
+**Step 1: Lås de tre sager fast som regressionstests**
 
-Skriv `test_reference_days.py` med de faktiske timedata fra Task 2 hårdkodet ind, så testene kører uden netværk. To tests: lørdag 18 og 19 over 6.5, søndag 10 til 14 på 3.0 eller derunder. Det er de eneste to sager vi har pilot-verificeret, og de skal ikke kunne knække stille.
+Skriv `test_reference_days.py` med de faktiske timedata fra Task 2 hårdkodet ind, så testene kører uden netværk. Tre tests: lørdag 18 og 19 over 6.5, søndag 10 til 14 på 3.0 eller derunder, søndag 18 på 5.0 eller derunder. Det er de eneste sager vi har pilot-verificeret, og de skal ikke kunne knække stille.
+
+Hårdkod fra **forecast-endpointet**, ikke arkivet, jf. modelfundet i Task 2.
 
 **Step 2: Kør dem**
 
@@ -589,9 +712,12 @@ Udvid `docs/Referat/2026-08-12-straale-gate.md` efter mønstret i `2026-05-24-ci
 
 Åbne emner der skal med:
 
-- **Vindretning og luftmasse er stadig ikke scoret.** `wind_dir` bruges kun til søbrise. Pilotens tommelfingerregel, højtryk nordvest for Danmark giver god termik, er ikke kodet. `calculate_modifiers` (`scoring.py:428-448`) har `pressure_trend` og `temp_850hpa_trend` som svage proxyer, ±0.5 på en 0-10 skala.
-- **Lapse rate skelnede ikke 8. fra 9. august.** Den tungest vægtede variabel adskilte ikke de to dage. Det er den næste rigtige undersøgelse.
+- **Vindretning og luftmasse er stadig ikke scoret.** `wind_dir` bruges kun til søbrise. Pilotens tommelfingerregel, højtryk nordvest for Danmark giver god termik, er ikke kodet. `calculate_modifiers` (`scoring.py:428-448`) har `pressure_trend` og `temp_850hpa_trend` som svage proxyer, ±0.5 på en 0-10 skala. Task 2 bekræftede mønsteret i data: lørdag W 273 til 236 grader med 1018 til 1019 hPa fladt, søndag S 150 til 179 grader med trykfald 1014.9 til 1007.1.
+- **Lapse rate skelnede ikke 8. fra 9. august.** Den tungest vægtede variabel (0.30) adskilte ikke de to dage. Task 6 tager grænselagshøjden, som skiller dem klart uden for kl. 11 til 13, men lapse rate-vægten er stadig ikke efterprøvet.
+- **Strålingsfeltet reagerer knap på modellens egen cirrus.** Søndag kl. 13 gav 690 W/m² mod lørdagens 736, direkte-andel 68 mod 73 %, og ophobet morgenstråling kl. 06 til 10 var 833 mod 843. Reelt ens, på en dag hvor himlen var lukket. Kun `cloud_cover_high` vidste besked. Samme svaghed som maj-referatet flaggede.
+- **`cloud_cover`-totalen modsiger sine egne lag** i `best_match`. Caps læser den ikke længere efter Task 5, men `score_solar` gør stadig som fallback, og feltet vises i UI.
 - **Begrænsende faktor vises stadig ikke i UI.** Samme åbne punkt som i maj-referatet. Med Task 1 på plads er data der nu.
+- **Kalibreringsgrundlaget er n=2.** Kriterium 1 klarer sig med cirka 7 % margin (mindste brugbare `RADIATION_MEMORY_FACTOR` er 0.609 mod valgte 0.65) og afhænger af at hukommelsen når præcis tre timer tilbage. Flere pilot-verificerede dage ville være det billigste næste skridt.
 
 **Step 4: Kør hele suiten en sidste gang**
 
@@ -620,21 +746,27 @@ Verificér at `termik/output/data/current.json` nu indeholder `shortwave_radiati
 ## Rækkefølge og afhængigheder
 
 ```
-Task 1 (persister felter)
+Task 1 (persister felter)  ✅ e606849
    │
-   ├─→ Task 2 (hent referencedage)  ← låser op for al kalibrering
+   ├─→ Task 2 (hent referencedage)  ✅ 0d04f77  ← præmis bekræftet
    │        │
    │        ├─→ Task 3 (gate med hukommelse) ─→ Task 4 (kalibrer)
    │        │                                        │
-   │        └─→ Task 5 (cirrus i caps) ──────────────┤
+   │        ├─→ Task 5 (cirrus i caps) ──────────────┤
+   │        │                                        │
+   │        └─→ Task 6 (grænselagshøjde) ────────────┤
    │                                                 │
-   └─────────────────────────────────────────────────┴─→ Task 6 (regression + deploy)
+   └─────────────────────────────────────────────────┴─→ Task 7 (regression + deploy)
 ```
 
-Task 2 er den kritiske: hvis søndagens skydække viser sig at være lavt og ikke cirrus, falder præmissen for Task 5, og planen skal revideres før der skrives mere kode.
+Task 2 var den kritiske og er passeret: søndagens lave skydække var 0 hele dagen, cirrus 99/81/59/84/100 kl. 10 til 14. Præmissen for Task 5 holder.
+
+Task 6 er tilføjet efter Task 2 og kan køre uafhængigt af Task 3 og 5, men skal kalibreres sammen med dem i Task 7, fordi tre samtidige scoringsændringer kan flytte de samme timer.
 
 ## Risici
 
-- **Kriterie 2 er skrøbeligt.** Task 5 gør cirrus-cap'en mildere for tynd cirrus. Bliver `CIRRUS_SHIELD_THRESHOLD` sat for højt, ryger søndag op i det grønne igen. Replay efter hver ændring, ikke kun til sidst.
-- **To pilot-observationer er et tyndt datagrundlag.** Vi kalibrerer på n=2. Sæsonanalysen i Task 4 Step 5 er modvægten: den viser om ændringen flytter hele fordelingen fornuftigt eller kun de to dage.
-- **Payload vokser.** Anslået +550 KB på 6 MB. Tåleligt, men hold øje. Grid-punkter skal blive ved med at være strippede.
+- **Kriterie 2 er skrøbeligt, og mere end først antaget.** Task 5 fjerner den gamle totalbaserede cap, som tilfældigvis fangede søndag i morgen-runnet. Efter Task 5 er cirrus-skjoldet det eneste der holder søndag nede, og det virker kun med trailing-maksimum. Replay efter hver ændring, ikke kun til sidst.
+- **Kriterie 1 og 3 trækker mod hinanden.** Kriterie 3 skal trække søndag kl. 18 ned med grænselagshøjde, kriterie 1 skal holde lørdag kl. 18 og 19 oppe. Timerne ligger tæt: 780 mod 1250 m. Sættes tærsklen for højt, ryger lørdag med.
+- **Tre scoringsændringer på én gang.** Task 3, 5 og 6 rører alle det samme resultat. Sæsonanalysen skal køres efter hver af dem, ikke kun til sidst, ellers kan man ikke se hvilken ændring der flyttede hvad.
+- **To pilot-observationer er et tyndt datagrundlag.** Vi kalibrerer på n=2, og kriterium 1 klarer sig med cirka 7 % margin. Sæsonanalysen i Task 4 Step 5 er modvægten: den viser om ændringen flytter hele fordelingen fornuftigt eller kun de to dage.
+- **Payload vokser.** Målt +600 KB på 5.99 MB. Tåleligt over ledningen (filen gzipper 12:1), men det lander på hver 3-timers commit. `.git` er allerede 674 MB over 946 data-commits. Separat problem, ikke skabt af denne plan, men den accelererer det.
