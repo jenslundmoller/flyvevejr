@@ -13,6 +13,7 @@ from termik.config import (
     TIMEZONE,
     HOURLY_PARAMS,
     DATA_DIR,
+    RADIATION_MEMORY_HOURS,
 )
 from termik.scoring import compute_thermal_score, compute_thermal_top, THERMAL_TOP_LEVELS_HPA
 from termik.comments import generate_comment
@@ -219,6 +220,15 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     temp_850_trend = calculate_temp_850_trend(
         hourly_data["temperature_850hPa"], hour_index
     )
+    # The preceding hours' radiation, for the gate's heat memory. Hours the API
+    # left empty are dropped rather than counted as zero: a missing reading is
+    # not evidence of darkness. A short window at the start of the series is
+    # fine: an early-morning hour has nothing to remember anyway.
+    trailing_start = max(0, hour_index - RADIATION_MEMORY_HOURS)
+    trailing_radiation = [
+        v for v in hourly_data["shortwave_radiation"][trailing_start:hour_index]
+        if v is not None
+    ]
 
     # Safe fallbacks for non-critical None values
     shortwave = shortwave if shortwave is not None else 0
@@ -254,6 +264,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         cloud_cover_mid=cloud_cover_mid,
         cloud_cover_high=cloud_cover_high,
         direct_radiation=direct_radiation,
+        trailing_radiation=trailing_radiation,
     )
 
     thermal_top = compute_thermal_top(

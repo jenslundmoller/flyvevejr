@@ -491,6 +491,46 @@ def test_dealbreaker_radiation_boundary_100():
     assert score > 1   # but not under the < 100 tier
 
 
+def test_dealbreaker_gate_uses_effective_radiation():
+    # God aften: alt andet tillader 8+, øjebliksstråling er 220 men
+    # peak for en time siden var 640. Må ikke klemmes til 5.
+    score = apply_dealbreakers(
+        8.2, lapse_rate=1.05, cloud_cover=35, precipitation=0,
+        wind_kt=8.0, wind_gusts_kt=16.0, temp=21.5,
+        shortwave_radiation=220.0,
+        trailing_radiation=[640.0, 480.0, 330.0],
+    )
+    assert score > 6.5
+
+def test_dealbreaker_gate_still_kills_a_genuinely_dark_hour():
+    score = apply_dealbreakers(
+        8.2, lapse_rate=1.05, cloud_cover=35, precipitation=0,
+        wind_kt=8.0, wind_gusts_kt=16.0, temp=21.5,
+        shortwave_radiation=60.0,
+        trailing_radiation=[90.0, 80.0, 70.0],
+    )
+    assert score <= 1
+
+@pytest.mark.parametrize("radiation, expected_cap", [
+    (0, 1), (50, 1), (99.9, 1),
+    (100, 3), (150, 3), (249.9, 3),
+    (250, 5), (350, 5), (399.9, 5),
+    (400, 8.0), (500, 8.0), (900, 8.0),
+])
+def test_dealbreaker_gate_without_trailing_caps_on_instantaneous_radiation(
+    radiation, expected_cap
+):
+    """Pins every cap tier for the no-trailing case, boundaries included.
+
+    The memory must not change what an hour scores when no trailing series is
+    supplied: an hour below several thresholds still gets the lowest cap.
+    """
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                shortwave_radiation=radiation)
+    assert score == expected_cap
+
+
 # --- Full scenario tests ---
 
 def test_scenario_perfect_day():

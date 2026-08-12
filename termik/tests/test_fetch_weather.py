@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+import pytest
+
 from termik.config import HOURLY_PARAMS
 from termik.fetch_weather import (
     build_api_url,
@@ -71,10 +73,23 @@ def _minimal_hourly_data(hours: int = 4, **overrides) -> dict:
     An unknown override key raises, so a typo cannot quietly yield a fixture
     where the value under test was never applied and the assertion passes
     against the neutral default instead.
+
+    An override of the wrong length raises too.  Callers that slice a window
+    out of a series (trailing radiation, precipitation totals) would otherwise
+    get a silently truncated window (Python slices do not raise on short
+    lists) and assert against the wrong values while staying green.
     """
     unknown = set(overrides) - set(HOURLY_PARAMS) - {"time"}
     if unknown:
         raise TypeError(f"unknown hourly_data key(s): {', '.join(sorted(unknown))}")
+    wrong_length = {
+        f"{k}={len(v)}" for k, v in overrides.items() if len(v) != hours
+    }
+    if wrong_length:
+        raise ValueError(
+            f"override(s) not of length hours={hours}: "
+            f"{', '.join(sorted(wrong_length))}"
+        )
     data = {
         "time": [
             (_HOURLY_START + timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M")
@@ -93,6 +108,16 @@ def _test_point(**overrides) -> dict:
              "coast_distance_km": 40, "coast_direction_deg": 90}
     point.update(overrides)
     return point
+
+
+def test_minimal_hourly_data_rejects_bad_overrides():
+    """The fixture guards every other test in this file: a typo'd key or a
+    short list must raise rather than yield a fixture the test never used."""
+    with pytest.raises(TypeError):
+        _minimal_hourly_data(shortwave_radiaton=[700.0] * 4)   # typo
+    with pytest.raises(ValueError):
+        _minimal_hourly_data(hours=6, shortwave_radiation=[700.0, 650.0])
+    assert len(_minimal_hourly_data(hours=6)["shortwave_radiation"]) == 6
 
 
 def test_build_api_url_single():
@@ -379,3 +404,42 @@ def test_process_point_hour_persists_shortwave_after_fallback():
 
     result = process_point_hour(_test_point(), hourly_data, 3, month=8)
     assert result["data"]["shortwave_radiation"] == 0
+
+
+# A declining afternoon, the shape of a real August day.  The neutral fixture
+# holds direct_radiation fixed, so shortwave only reaches the score through the
+# radiation gate, so whatever these hours score is the gate's doing.
+_DECLINING_AFTERNOON = [700.0, 720.0, 650.0, 400.0, 180.0, 60.0]
+
+
+def test_process_point_hour_radiation_gate_remembers_recent_peak():
+    """The hour after the peak keeps its score: 180 W/m² alone would cap at 3,
+    but 0.65 × 720 W/m² from the preceding hours clears the 400 threshold."""
+    hourly_data = _minimal_hourly_data(
+        hours=6, shortwave_radiation=_DECLINING_AFTERNOON
+    )
+
+    result = process_point_hour(_test_point(), hourly_data, 4, month=8)
+    assert result["data"]["shortwave_radiation"] == 180.0
+    assert result["score"] > 6
+
+
+def test_process_point_hour_radiation_gate_forgets_after_sunset():
+    """One hour later the sun is gone (60 W/m², below the memory floor), and
+    the afternoon peak must not keep the score alive."""
+    hourly_data = _minimal_hourly_data(
+        hours=6, shortwave_radiation=_DECLINING_AFTERNOON
+    )
+
+    result = process_point_hour(_test_point(), hourly_data, 5, month=8)
+    assert result["score"] <= 1
+
+
+def test_process_point_hour_radiation_gate_skips_missing_trailing_hours():
+    """A None inside the trailing window is skipped, not fatal: the remaining
+    hours still carry the memory."""
+    series = [700.0, None, 650.0, 400.0, 180.0, 60.0]
+    hourly_data = _minimal_hourly_data(hours=6, shortwave_radiation=series)
+
+    result = process_point_hour(_test_point(), hourly_data, 4, month=8)
+    assert result["score"] > 6

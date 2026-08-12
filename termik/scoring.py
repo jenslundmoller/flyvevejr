@@ -487,19 +487,20 @@ def apply_dealbreakers(
     cape: float = 0,
     surface_lapse_rate: float | None = None,
     shortwave_radiation: float | None = None,
+    trailing_radiation: list[float] | None = None,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
     max_score = 10.0
     # Solar radiation gate: thermals require sufficient surface heating.
     # Caps reflect that low radiation (night, twilight, heavy overcast)
     # cannot drive convection regardless of other favourable conditions.
+    # Tested against the effective radiation, so a late hour keeps credit for
+    # the heat the boundary layer is still holding on to.
     if shortwave_radiation is not None:
-        if shortwave_radiation < 100:
-            max_score = min(max_score, 1)
-        elif shortwave_radiation < 250:
-            max_score = min(max_score, 3)
-        elif shortwave_radiation < 400:
-            max_score = min(max_score, 5)
+        eff = effective_radiation(shortwave_radiation, trailing_radiation)
+        for threshold, cap in RADIATION_GATE:
+            if eff < threshold:
+                max_score = min(max_score, cap)
     if lapse_rate < 0.50:
         max_score = min(max_score, 1)
     elif lapse_rate < 0.65:
@@ -567,6 +568,8 @@ def compute_thermal_score(
     cloud_cover_mid: float | None = None,
     cloud_cover_high: float | None = None,
     direct_radiation: float | None = None,
+    # The preceding hours' shortwave radiation, for the gate's heat memory
+    trailing_radiation: list[float] | None = None,
 ) -> dict:
     """Compute the full thermal score from weather parameters.
 
@@ -639,6 +642,7 @@ def compute_thermal_score(
         cape=cape,
         surface_lapse_rate=surface_lapse,
         shortwave_radiation=shortwave_radiation,
+        trailing_radiation=trailing_radiation,
     )
 
     # Clamp and round
