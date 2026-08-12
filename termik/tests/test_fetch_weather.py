@@ -1,10 +1,98 @@
+from datetime import datetime, timedelta
+
+from termik.config import HOURLY_PARAMS
 from termik.fetch_weather import (
     build_api_url,
     parse_api_response,
     calculate_precip_last_6h,
     calculate_pressure_trend,
     calculate_temp_850_trend,
+    process_point_hour,
 )
+
+
+# Neutral values for a calm, mildly unstable summer hour: one entry per key in
+# HOURLY_PARAMS, so _minimal_hourly_data() always yields a complete API payload.
+_NEUTRAL_HOURLY_VALUES = {
+    "temperature_2m": 22.0,
+    "dewpoint_2m": 8.0,
+    "relative_humidity_2m": 40,
+    "wind_speed_10m": 10.0,
+    "wind_direction_10m": 270.0,
+    "wind_gusts_10m": 15.0,
+    "wind_speed_80m": 13.0,
+    "wind_direction_80m": 275.0,
+    "wind_speed_120m": 14.0,
+    "wind_direction_120m": 278.0,
+    "wind_speed_180m": 14.5,
+    "wind_direction_180m": 280.0,
+    "temperature_80m": 20.5,
+    "temperature_120m": 19.8,
+    "temperature_180m": 19.0,
+    "cloud_cover": 30.0,
+    "cloud_cover_low": 10.0,
+    "cloud_cover_mid": 20.0,
+    "cloud_cover_high": 5.0,
+    "precipitation": 0.0,
+    "shortwave_radiation": 700.0,
+    "direct_radiation": 500.0,
+    "cape": 300.0,
+    "surface_pressure": 1015.0,
+    "boundary_layer_height": 1200.0,
+    "temperature_950hPa": 18.0,
+    "temperature_925hPa": 16.0,
+    "temperature_900hPa": 13.0,
+    "temperature_850hPa": 9.0,
+    "temperature_800hPa": 4.0,
+    "temperature_700hPa": -5.0,
+    "temperature_600hPa": -14.0,
+    "geopotential_height_950hPa": 540.0,
+    "geopotential_height_925hPa": 760.0,
+    "geopotential_height_900hPa": 985.0,
+    "geopotential_height_850hPa": 1500.0,
+    "geopotential_height_800hPa": 2025.0,
+    "geopotential_height_700hPa": 3110.0,
+    "geopotential_height_600hPa": 4300.0,
+    "wind_speed_850hPa": 20.0,
+    "wind_direction_850hPa": 290.0,
+}
+
+
+_HOURLY_START = datetime(2026, 8, 15, 10, 0)
+
+
+def _minimal_hourly_data(hours: int = 4, **overrides) -> dict:
+    """Build an hourly_data dict with every HOURLY_PARAMS key populated.
+
+    Each key gets a flat list of `hours` neutral values, so a test only has to
+    state the fields it actually cares about.  Keyword arguments replace whole
+    lists, e.g. _minimal_hourly_data(cloud_cover_high=[85] * 4).
+
+    An unknown override key raises, so a typo cannot quietly yield a fixture
+    where the value under test was never applied and the assertion passes
+    against the neutral default instead.
+    """
+    unknown = set(overrides) - set(HOURLY_PARAMS) - {"time"}
+    if unknown:
+        raise TypeError(f"unknown hourly_data key(s): {', '.join(sorted(unknown))}")
+    data = {
+        "time": [
+            (_HOURLY_START + timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M")
+            for h in range(hours)
+        ]
+    }
+    for key in HOURLY_PARAMS:
+        data[key] = [_NEUTRAL_HOURLY_VALUES[key]] * hours
+    data.update(overrides)
+    return data
+
+
+def _test_point(**overrides) -> dict:
+    """An airfield-shaped point; override whichever field a test cares about."""
+    point = {"id": "test", "name": "Test", "lat": 55.9, "lon": 9.1,
+             "coast_distance_km": 40, "coast_direction_deg": 90}
+    point.update(overrides)
+    return point
 
 
 def test_build_api_url_single():
@@ -100,8 +188,6 @@ def test_build_api_url_includes_altitude_params():
 
 def test_process_point_hour_passes_multilevel_data():
     """process_point_hour extracts multi-level data and includes in output."""
-    from termik.fetch_weather import process_point_hour
-
     point = {
         "id": "test", "lat": 55.5, "lon": 9.5,
         "coast_distance_km": 50, "coast_direction_deg": 270,
@@ -161,8 +247,6 @@ def test_process_point_hour_passes_multilevel_data():
 def test_process_point_hour_thermal_top_with_full_sounding():
     """When pressure-level temperatures and geopotential heights are supplied,
     thermal_top_m must be a positive number for a clearly unstable sounding."""
-    from termik.fetch_weather import process_point_hour
-
     point = {
         "id": "test", "lat": 55.5, "lon": 9.5,
         "coast_distance_km": 50, "coast_direction_deg": 270,
@@ -212,29 +296,17 @@ def test_process_point_hour_thermal_top_with_full_sounding():
 def test_process_point_hour_early_return_has_thermal_top_none():
     """When critical data is missing, the early-return dict still carries
     thermal_top fields (as None / 'no_data') for schema consistency."""
-    from termik.fetch_weather import process_point_hour
+    hourly_data = _minimal_hourly_data(
+        temperature_2m=[None] * 4,   # critical missing
+        cape=[None] * 4,
+        shortwave_radiation=[700.0] * 4,
+        direct_radiation=[380.0] * 4,
+        cloud_cover_low=[5] * 4,
+        cloud_cover_mid=[10] * 4,
+        cloud_cover_high=[85] * 4,
+    )
 
-    point = {
-        "id": "test", "lat": 55.5, "lon": 9.5,
-        "coast_distance_km": 50, "coast_direction_deg": 270,
-    }
-    hourly_data = {
-        "time": ["2026-06-15T13:00"],
-        "temperature_2m": [None],   # critical missing
-        "dewpoint_2m": [12.0],
-        "temperature_850hPa": [9.0],
-        "cloud_cover": [30.0],
-        "wind_speed_10m": [10.0],
-        "wind_direction_10m": [270.0],
-        "wind_gusts_10m": [15.0],
-        "precipitation": [0.0],
-        "shortwave_radiation": [700.0],
-        "cape": [None],
-        "surface_pressure": [1015.0],
-        "relative_humidity_2m": [45],
-    }
-
-    result = process_point_hour(point, hourly_data, 0, 6)
+    result = process_point_hour(_test_point(), hourly_data, 3, month=8)
     assert result["score"] == 0
     assert result["label"] == "Data mangler"
     d = result["data"]
@@ -242,3 +314,68 @@ def test_process_point_hour_early_return_has_thermal_top_none():
     assert d["ti_zero_m"] is None
     assert d["lcl_m"] is None
     assert d["thermal_top_limited_by"] == "no_data"
+    # The audit fields carry the real observations through, so a no-data hour
+    # still records what the API did supply.
+    assert d["shortwave_radiation"] == 700.0
+    assert d["direct_radiation"] == 380.0
+    assert d["cloud_cover_low"] == 5
+    assert d["cloud_cover_mid"] == 10
+    assert d["cloud_cover_high"] == 85
+
+
+def test_process_point_hour_no_data_hour_keeps_shortwave_none():
+    """The fallback to 0 belongs to the scored path only.
+
+    Scoring never runs on the early return, so a missing shortwave must stay
+    None there rather than be recorded as a real zero-radiation reading.  Only
+    observable when shortwave AND a critical field are both missing.
+    """
+    hourly_data = _minimal_hourly_data(
+        temperature_2m=[None] * 4,       # forces the early return
+        shortwave_radiation=[None] * 4,
+    )
+
+    result = process_point_hour(_test_point(), hourly_data, 3, month=8)
+    assert result["label"] == "Data mangler"
+    assert result["data"]["shortwave_radiation"] is None
+
+
+def test_process_point_hour_data_schema_identical_on_both_paths():
+    """The no-data early return must expose the same `data` keys as a scored
+    hour, so a consumer never has to branch on whether the hour had data."""
+    point = _test_point()
+    scored = process_point_hour(point, _minimal_hourly_data(), 3, month=8)
+    no_data = process_point_hour(
+        point, _minimal_hourly_data(temperature_2m=[None] * 4), 3, month=8
+    )
+
+    assert scored["label"] != "Data mangler"
+    assert no_data["label"] == "Data mangler"
+    assert scored["data"].keys() == no_data["data"].keys()
+
+
+def test_process_point_hour_persists_radiation_and_cloud_layers():
+    """Audit fields: without them the gate and cirrus caps cannot be verified."""
+    hourly_data = _minimal_hourly_data(
+        shortwave_radiation=[520.0] * 4,
+        direct_radiation=[380.0] * 4,
+        cloud_cover=[60] * 4,
+        cloud_cover_low=[5] * 4,
+        cloud_cover_mid=[10] * 4,
+        cloud_cover_high=[85] * 4,
+    )
+    result = process_point_hour(_test_point(), hourly_data, 3, month=8)
+    d = result["data"]
+    assert d["shortwave_radiation"] == 520.0
+    assert d["direct_radiation"] == 380.0
+    assert d["cloud_cover_low"] == 5
+    assert d["cloud_cover_mid"] == 10
+    assert d["cloud_cover_high"] == 85
+
+
+def test_process_point_hour_persists_shortwave_after_fallback():
+    """A None shortwave is stored as the 0 the scoring actually used."""
+    hourly_data = _minimal_hourly_data(shortwave_radiation=[None] * 4)
+
+    result = process_point_hour(_test_point(), hourly_data, 3, month=8)
+    assert result["data"]["shortwave_radiation"] == 0

@@ -174,6 +174,15 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
                 "skybase_m": None,
                 "skybase_ft": None,
                 "cloud_cover": cloud_cover,
+                # Same audit fields as the scored path below, kept in sync so
+                # consumers can read them without branching. Raw values here:
+                # scoring never ran, so no fallback was applied and None
+                # honestly means "the API gave us nothing".
+                "cloud_cover_low": cloud_cover_low,
+                "cloud_cover_mid": cloud_cover_mid,
+                "cloud_cover_high": cloud_cover_high,
+                "shortwave_radiation": shortwave,
+                "direct_radiation": direct_radiation,
                 "wind_speed_kt": wind_speed,
                 "wind_dir": wind_dir,
                 "wind_gusts_kt": wind_gusts,
@@ -290,6 +299,14 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             "skybase_m": result["skybase_m"],
             "skybase_ft": result["skybase_ft"],
             "cloud_cover": cloud_cover,
+            # Audit trail: the radiation and cloud-layer values the scoring
+            # actually used, so a score can be re-derived after the fact.
+            # shortwave is the post-fallback value (None becomes 0 above).
+            "cloud_cover_low": cloud_cover_low,
+            "cloud_cover_mid": cloud_cover_mid,
+            "cloud_cover_high": cloud_cover_high,
+            "shortwave_radiation": shortwave,
+            "direct_radiation": direct_radiation,
             "wind_speed_kt": wind_speed,
             "wind_dir": wind_dir,
             "wind_gusts_kt": wind_gusts,
