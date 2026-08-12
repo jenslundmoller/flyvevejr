@@ -90,17 +90,32 @@ DEALBREAKERS = {
 # Radiation gate: (threshold W/m², max score below that threshold).
 # Tested against the effective radiation, not the instantaneous value,
 # see scoring.effective_radiation.
+# Both columns must decrease together. The gate applies every tier whose
+# threshold the radiation is below and keeps the strictest cap, so the list
+# order does not matter, but a non-monotone tier like (300, 8) would never
+# bind: anything below 300 is also below 400, whose cap of 5 already wins.
 RADIATION_GATE = [(400, 5), (250, 3), (100, 1)]
 
 # How much of the highest radiation of the recent hours still counts.
 # 0.65 is calibrated against 2026-08-08: the binding hour is 19:00, where the
 # maximum over the preceding three hours is 657 W/m². The smallest usable
 # factor is 400/657 = 0.609, so 0.65 clears the threshold by about 7 %.
+# The two constants below are NOT independent knobs. During a monotone
+# afternoon decline the maximum over the window is always its oldest hour, so
+# the memory is really "factor x the radiation at t minus HOURS", and 0.65 is
+# fitted to a 3-hour lag specifically. Widening the window to 4 hours has
+# roughly the effect of raising the factor to 0.80: changing
+# RADIATION_MEMORY_HOURS invalidates the calibration of
+# RADIATION_MEMORY_FACTOR, and both must be re-fitted together.
 RADIATION_MEMORY_FACTOR = 0.65
 RADIATION_MEMORY_HOURS = 3
 
 # The memory must not rescue an hour whose own radiation is below the floor.
 # Without it, 21:00 with 30 W/m² is lifted from cap 1 to cap 5, after sunset.
+# Deliberately equal to the lowest RADIATION_GATE threshold: the memory can
+# lift an hour out of cap 3, but never out of cap 1. An hour dark enough for
+# the bottom tier is too dark for the memory to have anything to say. Keep the
+# two in step if either moves.
 RADIATION_MEMORY_FLOOR = 100
 
 # Sea surface temperature estimate by month (1-12)

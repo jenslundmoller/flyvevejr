@@ -532,6 +532,47 @@ def test_dealbreaker_gate_without_trailing_caps_on_instantaneous_radiation(
     assert score == expected_score
 
 
+# Ringsted (55.4517, 11.6425) on 2026-08-08, shortwave_radiation in W/m² per
+# local hour, from the Open-Meteo forecast endpoint: the best_match blend
+# production scores against.  Not the archive endpoint, which falls back to a
+# different model for days ERA5 does not cover yet and disagrees by up to
+# 253 W/m².  These are the numbers RADIATION_MEMORY_FACTOR was calibrated on.
+_RINGSTED_2026_08_08 = {
+    13: 736.0, 14: 726.0, 15: 708.0, 16: 657.0, 17: 523.0,
+    18: 398.0, 19: 274.0, 20: 139.0, 21: 30.0,
+}
+
+
+@pytest.mark.parametrize("hour, expected_cap", [
+    (18, 10.0),  # freed:   0.65 x 708 = 460, clears 400
+    (19, 10.0),  # freed:   0.65 x 657 = 427, the hour the factor is fitted to
+    (20, 5.0),   # clamped: 0.65 x 523 = 340, below 400 but above 250
+    (21, 1.0),   # dead:    30 W/m² is under the floor, no memory applies
+])
+def test_radiation_gate_on_the_calibration_day(hour, expected_cap):
+    """The published cap for the evening the memory was calibrated against.
+
+    This is what bounds the two constants from both sides.  19:00 pins
+    RADIATION_MEMORY_FACTOR from below (it must reach 400 off a 657 W/m² peak,
+    so >= 0.609) and 20:00 pins it from above (it must not reach 400 off a
+    523 W/m² peak, so < 0.765).  Without the second, widening the factor would
+    silently free hours the plan requires to stay clamped.  20:00 also pins
+    RADIATION_MEMORY_FLOOR from above (<= 139, or the hour drops to cap 3) and
+    21:00 pins it from below (> 30, or the memory revives it to cap 5).
+
+    Scored with an incoming 10.0 and everything else neutral, so the returned
+    value is the gate's cap and nothing else.
+    """
+    trailing = [_RINGSTED_2026_08_08[h] for h in range(hour - 3, hour)]
+    cap = apply_dealbreakers(
+        10.0, lapse_rate=1.0, cloud_cover=30, precipitation=0,
+        wind_kt=10, wind_gusts_kt=15, temp=15,
+        shortwave_radiation=_RINGSTED_2026_08_08[hour],
+        trailing_radiation=trailing,
+    )
+    assert cap == expected_cap
+
+
 # --- Full scenario tests ---
 
 def test_scenario_perfect_day():
