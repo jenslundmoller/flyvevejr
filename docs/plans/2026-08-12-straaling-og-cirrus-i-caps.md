@@ -627,6 +627,37 @@ git commit -m "scoring: caps bruger cirrus-vægtet skydække plus cirrus-skjold-
 
 ## Task 6: Grænselagshøjde som scoringsinput
 
+> **Rykket frem foran Task 4 efter code review af Task 3.** Se "C1" nedenfor: hukommelsen i Task 3 kan ikke skelne solnedgang fra et skydække der trækker ind, og grænselagshøjden er den fysisk rigtige måde at lukke det hul. Task 6 skal derfor både løse kriterium 3 og levere værnet til Task 3, før der kalibreres i Task 4.
+
+### C1: hukommelsen kan ikke se forskel på solnedgang og en front
+
+`effective_radiation` ser kun på størrelsen af strålingen, aldrig på **hvorfor** den er faldet. Et mellemhøjt skydække der trækker ind midt på eftermiddagen giver præcis samme signatur som solnedgang, og får samme redning. Målt ende til ende gennem `compute_thermal_score` på en ellers god augustdag (23 °C, lapse 1.0, dække 85 % hvoraf 75 % mellemhøjt, direkte 60 W/m², SW knust fra 720 til 150):
+
+| | score |
+|---|---|
+| uden hukommelse (før Task 3) | 3.0, "Svag termik" |
+| med hukommelse (efter Task 3) | **8.8, "God termik"** |
+
+Det er nøjagtig den fejltype hele planen findes for at rette, nået ad en ny vej.
+
+**Task 5 lukker det ikke.** Det var den oprindelige antagelse i reviewet, men regnestykket holder ikke: med lav 10, mellem 75, høj 0 giver `effective_cloud_cover` 62.5, altså under 87-cap'en, og cirrus-skjoldet kræver høj ≥ 85. Ingen af Task 5's to mekanismer fyrer på et mellemhøjt frontdække.
+
+**Grænselagshøjden gør.** De målte tal fra Task 2 skiller sagerne rent:
+
+| | lør 08-08 | søn 08-09 |
+|---|---|---|
+| 17:00 | 1685 | 980 |
+| 18:00 | 1250 | 780 |
+| 19:00 | **1000** | 355 |
+| 20:00 | **225** | 165 |
+| 21:00 | 90 | 110 |
+
+Et værn på grænselagshøjden tillader hukommelsen kl. 18 og 19 lørdag (1250 og 1000 m, hvor piloten fløj), og blokerer den kl. 20 (225 m). Det rammer samtidig den uverificerede kl. 20-løftning som spec-reviewet fandt, og det svarer præcis til pilotens ord: godt til kl. 19. En front der trækker ind kollapser grænselaget, en solnedgang gør det først senere.
+
+**Krav til denne task, ud over kriterium 3:** `effective_radiation` skal have et grænselags-værn, så hukommelsen kun gælder mens blandingslaget stadig er dybt. Kalibrér tærsklen mod tabellen ovenfor, og verificér mod frontscenariet: den samme case skal falde tilbage til omkring 3.0, ikke 8.8.
+
+### Baggrund
+
 Tilføjet efter Task 2. Søndagens værste time, kl. 18 med 7.4, røres ikke af hverken Task 3 eller Task 5: himlen var klaret op og strålingen lå over gate-tærsklen. Grænselagshøjden er det eneste felt der skiller timen, 780 m mod lørdagens 1250 m ved samme klokkeslæt. Feltet hentes allerede (`config.py:38`), persisteres allerede og vises allerede i popup'en, men bruges kun i `comments.py:106` og aldrig i scoringen.
 
 **Files:**
@@ -761,7 +792,9 @@ Task 1 (persister felter)  ✅ e606849
 
 Task 2 var den kritiske og er passeret: søndagens lave skydække var 0 hele dagen, cirrus 99/81/59/84/100 kl. 10 til 14. Præmissen for Task 5 holder.
 
-Task 6 er tilføjet efter Task 2 og kan køre uafhængigt af Task 3 og 5, men skal kalibreres sammen med dem i Task 7, fordi tre samtidige scoringsændringer kan flytte de samme timer.
+Task 6 er tilføjet efter Task 2 og **rykket frem foran Task 4** efter code review af Task 3: den skal levere grænselags-værnet der lukker C1, før der kalibreres. Rækkefølgen er nu Task 3, Task 6, Task 4, Task 5, Task 7.
+
+**Denne branch må ikke merges til `main` før C1 er lukket.** `update-forecast.yml` kører på cron fra `main`, så et merge er ude hos piloterne inden for 3 timer. Task 3 alene indfører en ny "god score på en døende dag"-vej, hvilket er værre end den fejl den retter. Deploy sker først i Task 7, som planlagt.
 
 ## Risici
 
