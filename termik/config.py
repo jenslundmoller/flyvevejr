@@ -87,6 +87,22 @@ DEALBREAKERS = {
     "temp_cold": {"threshold": 5, "max_score": 3},
 }
 
+# Stråle-gate: (tærskel W/m², max score under tærsklen).
+# Testes mod effektiv stråling, ikke øjebliksstråling, se
+# scoring.effective_radiation.
+RADIATION_GATE = [(400, 5), (250, 3), (100, 1)]
+
+# Hvor meget af de seneste timers højeste stråling der stadig tæller.
+# 0.65 er målt mod 2026-08-08: den bindende time er kl. 19, hvor de
+# foregående tre timers maksimum er 657 W/m². Mindste brugbare faktor er
+# 400/657 = 0.609, så 0.65 klarer kriterium 1 med cirka 7 % margin.
+RADIATION_MEMORY_FACTOR = 0.65
+RADIATION_MEMORY_HOURS = 3
+
+# Hukommelsen må ikke redde en time hvis egen stråling er under bunden.
+# Uden dette løftes kl. 21 med 30 W/m² fra cap 1 til cap 5, efter solnedgang.
+RADIATION_MEMORY_FLOOR = 100
+
 # Sea surface temperature estimate by month (1-12)
 # Based on average Danish waters temperature
 SEA_TEMP_BY_MONTH = {

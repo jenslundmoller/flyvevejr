@@ -6,7 +6,14 @@ designed for Danish glider pilots.
 
 import math
 
-from termik.config import WEIGHTS, SCORE_LABELS, SEA_TEMP_BY_MONTH
+from termik.config import (
+    WEIGHTS,
+    SCORE_LABELS,
+    SEA_TEMP_BY_MONTH,
+    RADIATION_GATE,
+    RADIATION_MEMORY_FACTOR,
+    RADIATION_MEMORY_FLOOR,
+)
 
 
 THERMAL_TOP_LEVELS_HPA = (950, 925, 900, 850, 800, 700, 600)
@@ -446,6 +453,27 @@ def calculate_modifiers(
     if temp_850hpa_trend < -1.0:
         mod += 0.5  # Cold air advection = destabilisation
     return mod
+
+
+def effective_radiation(current: float, trailing: list[float] | None = None) -> float:
+    """Radiation corrected for the boundary layer's heat memory.
+
+    Convection does not die at the same moment the radiation does: the
+    boundary layer is already mixed and keeps thermals going for an hour or
+    two after peak heating. We therefore credit a fraction of the highest
+    radiation of the last few hours, never less than the current value.
+
+    trailing is the preceding config.RADIATION_MEMORY_HOURS hours of
+    radiation.
+
+    The memory only applies while there is still enough light for there to be
+    anything to remember: below RADIATION_MEMORY_FLOOR the sun is effectively
+    gone, and a high afternoon peak must not be able to lift an hour after
+    sunset.
+    """
+    if not trailing or current < RADIATION_MEMORY_FLOOR:
+        return current
+    return max(current, RADIATION_MEMORY_FACTOR * max(trailing))
 
 
 def apply_dealbreakers(

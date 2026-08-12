@@ -12,6 +12,7 @@ from termik.scoring import (
     calculate_modifiers,
     calculate_wind_shear_modifier,
     calculate_bl_mixing_modifier,
+    effective_radiation,
     apply_dealbreakers,
     compute_thermal_score,
     get_score_label,
@@ -420,6 +421,30 @@ def test_no_dealbreaker():
     score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
                                 precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15)
     assert score == 8.0
+
+
+# --- Effective radiation (boundary-layer heat memory) ---
+
+def test_effective_radiation_remembers_recent_peak():
+    # Kl. 19 i august: SW er faldet til 220, men kl. 16 var den 640.
+    # Grænselaget er stadig blandet, termikken lever.
+    eff = effective_radiation(current=220.0, trailing=[640.0, 480.0, 330.0])
+    assert eff > 400
+
+def test_effective_radiation_no_credit_on_a_dead_day():
+    # Overskyet hele dagen: intet at huske.
+    eff = effective_radiation(current=180.0, trailing=[260.0, 240.0, 210.0])
+    assert eff < 250
+
+def test_effective_radiation_never_below_current():
+    eff = effective_radiation(current=700.0, trailing=[100.0, 120.0, 140.0])
+    assert eff == 700.0
+
+def test_effective_radiation_no_memory_after_sunset():
+    # 2026-08-08 kl. 21: 30 W/m², men kl. 18 var der 398.
+    # Uden gulv ville hukommelsen løfte cap 1 til cap 5 efter solnedgang.
+    eff = effective_radiation(current=30.0, trailing=[523.0, 398.0, 274.0])
+    assert eff == 30.0
 
 
 def test_dealbreaker_radiation_night():
