@@ -9,6 +9,7 @@ from termik.fetch_weather import (
     calculate_precip_last_6h,
     calculate_pressure_trend,
     calculate_temp_850_trend,
+    calculate_trailing_radiation,
     process_point_hour,
 )
 
@@ -197,6 +198,36 @@ def test_calculate_temp_850_trend_start():
     temps = [5.0, 4.5]
     trend = calculate_temp_850_trend(temps, 0)
     assert trend == 0
+
+
+def test_calculate_trailing_radiation():
+    """Exactly the RADIATION_MEMORY_HOURS hours before hour_index.
+
+    Asserted by value, not by length alone: a wider or narrower window, or one
+    that reaches into the current hour, changes how much heat the gate
+    remembers and must not pass silently.
+    """
+    radiation = [700.0, 720.0, 650.0, 400.0, 180.0, 60.0]
+    assert calculate_trailing_radiation(radiation, 4) == [720.0, 650.0, 400.0]
+    assert calculate_trailing_radiation(radiation, 5) == [650.0, 400.0, 180.0]
+
+
+def test_calculate_trailing_radiation_start():
+    """Near the start of the series the window is short, never wrapped.
+
+    A bare hour_index - RADIATION_MEMORY_HOURS is negative here, and a
+    negative slice start would silently read from the end of the day.
+    """
+    radiation = [700.0, 720.0, 650.0, 400.0, 180.0, 60.0]
+    assert calculate_trailing_radiation(radiation, 0) == []
+    assert calculate_trailing_radiation(radiation, 1) == [700.0]
+    assert calculate_trailing_radiation(radiation, 2) == [700.0, 720.0]
+
+
+def test_calculate_trailing_radiation_skips_missing_hours():
+    """An hour the API left empty is dropped, not counted as darkness."""
+    radiation = [700.0, None, 650.0, 400.0, 180.0, 60.0]
+    assert calculate_trailing_radiation(radiation, 4) == [650.0, 400.0]
 
 
 def test_build_api_url_includes_altitude_params():

@@ -107,6 +107,19 @@ def calculate_temp_850_trend(temps: list, hour_index: int) -> float:
     return current - previous
 
 
+def calculate_trailing_radiation(radiation_values: list, hour_index: int) -> list:
+    """Return the RADIATION_MEMORY_HOURS hours of radiation before hour_index.
+
+    Feeds the radiation gate's heat memory (scoring.effective_radiation).
+    Hours the API left empty are dropped rather than counted as zero: a
+    missing reading is not evidence of darkness. The window is short near the
+    start of the series, which is fine, an early-morning hour has nothing to
+    remember anyway.
+    """
+    start = max(0, hour_index - RADIATION_MEMORY_HOURS)
+    return [v for v in radiation_values[start:hour_index] if v is not None]
+
+
 def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: int) -> dict:
     """Process one hour of forecast data for one point.
 
@@ -220,15 +233,9 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     temp_850_trend = calculate_temp_850_trend(
         hourly_data["temperature_850hPa"], hour_index
     )
-    # The preceding hours' radiation, for the gate's heat memory. Hours the API
-    # left empty are dropped rather than counted as zero: a missing reading is
-    # not evidence of darkness. A short window at the start of the series is
-    # fine: an early-morning hour has nothing to remember anyway.
-    trailing_start = max(0, hour_index - RADIATION_MEMORY_HOURS)
-    trailing_radiation = [
-        v for v in hourly_data["shortwave_radiation"][trailing_start:hour_index]
-        if v is not None
-    ]
+    trailing_radiation = calculate_trailing_radiation(
+        hourly_data["shortwave_radiation"], hour_index
+    )
 
     # Safe fallbacks for non-critical None values
     shortwave = shortwave if shortwave is not None else 0

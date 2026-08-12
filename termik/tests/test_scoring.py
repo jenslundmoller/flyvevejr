@@ -426,13 +426,13 @@ def test_no_dealbreaker():
 # --- Effective radiation (boundary-layer heat memory) ---
 
 def test_effective_radiation_remembers_recent_peak():
-    # Kl. 19 i august: SW er faldet til 220, men kl. 16 var den 640.
-    # Grænselaget er stadig blandet, termikken lever.
+    # 19:00 in August: radiation has fallen to 220, but at 16:00 it was 640.
+    # The boundary layer is still mixed, the thermals are alive.
     eff = effective_radiation(current=220.0, trailing=[640.0, 480.0, 330.0])
     assert eff > 400
 
 def test_effective_radiation_no_credit_on_a_dead_day():
-    # Overskyet hele dagen: intet at huske.
+    # Overcast all day: nothing to remember.
     eff = effective_radiation(current=180.0, trailing=[260.0, 240.0, 210.0])
     assert eff < 250
 
@@ -441,9 +441,10 @@ def test_effective_radiation_never_below_current():
     assert eff == 700.0
 
 def test_effective_radiation_no_memory_after_sunset():
-    # 2026-08-08 kl. 21: 30 W/m², men kl. 18 var der 398.
-    # Uden gulv ville hukommelsen løfte cap 1 til cap 5 efter solnedgang.
-    eff = effective_radiation(current=30.0, trailing=[523.0, 398.0, 274.0])
+    # 2026-08-08 at 21:00: 30 W/m², with 398/274/139 over the preceding hours.
+    # Without the floor the memory would lift the cap from 1 to 5 (0.65 x 398
+    # = 259, which clears the 250 threshold) an hour after sunset.
+    eff = effective_radiation(current=30.0, trailing=[398.0, 274.0, 139.0])
     assert eff == 30.0
 
 
@@ -492,8 +493,8 @@ def test_dealbreaker_radiation_boundary_100():
 
 
 def test_dealbreaker_gate_uses_effective_radiation():
-    # God aften: alt andet tillader 8+, øjebliksstråling er 220 men
-    # peak for en time siden var 640. Må ikke klemmes til 5.
+    # A good evening: everything else allows 8+, instantaneous radiation is
+    # 220 but the peak an hour ago was 640. Must not be clamped to 5.
     score = apply_dealbreakers(
         8.2, lapse_rate=1.05, cloud_cover=35, precipitation=0,
         wind_kt=8.0, wind_gusts_kt=16.0, temp=21.5,

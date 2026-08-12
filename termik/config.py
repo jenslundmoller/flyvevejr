@@ -87,20 +87,20 @@ DEALBREAKERS = {
     "temp_cold": {"threshold": 5, "max_score": 3},
 }
 
-# Stråle-gate: (tærskel W/m², max score under tærsklen).
-# Testes mod effektiv stråling, ikke øjebliksstråling, se
-# scoring.effective_radiation.
+# Radiation gate: (threshold W/m², max score below that threshold).
+# Tested against the effective radiation, not the instantaneous value,
+# see scoring.effective_radiation.
 RADIATION_GATE = [(400, 5), (250, 3), (100, 1)]
 
-# Hvor meget af de seneste timers højeste stråling der stadig tæller.
-# 0.65 er målt mod 2026-08-08: den bindende time er kl. 19, hvor de
-# foregående tre timers maksimum er 657 W/m². Mindste brugbare faktor er
-# 400/657 = 0.609, så 0.65 klarer kriterium 1 med cirka 7 % margin.
+# How much of the highest radiation of the recent hours still counts.
+# 0.65 is calibrated against 2026-08-08: the binding hour is 19:00, where the
+# maximum over the preceding three hours is 657 W/m². The smallest usable
+# factor is 400/657 = 0.609, so 0.65 clears the threshold by about 7 %.
 RADIATION_MEMORY_FACTOR = 0.65
 RADIATION_MEMORY_HOURS = 3
 
-# Hukommelsen må ikke redde en time hvis egen stråling er under bunden.
-# Uden dette løftes kl. 21 med 30 W/m² fra cap 1 til cap 5, efter solnedgang.
+# The memory must not rescue an hour whose own radiation is below the floor.
+# Without it, 21:00 with 30 W/m² is lifted from cap 1 to cap 5, after sunset.
 RADIATION_MEMORY_FLOOR = 100
 
 # Sea surface temperature estimate by month (1-12)
