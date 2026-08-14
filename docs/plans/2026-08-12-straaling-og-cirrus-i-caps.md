@@ -600,6 +600,15 @@ Tilføj `cloud_cover_low`, `cloud_cover_mid`, `cloud_cover_high` som keyword-par
 
 Opdater kaldestedet (`scoring.py:608-614`) så lagene sendes med. De findes allerede i `compute_thermal_score`s signatur fra maj-fixet. `trailing_cirrus` føres igennem fra `process_point_hour` på samme måde som `trailing_radiation` i Task 3, med `CIRRUS_SHIELD_MEMORY_HOURS` som vindue.
 
+**ADVARSEL, fundet i code review af Task 3: cap-ombytningen åbner et nyt hul.** Den rå `cloud_cover >= 87`-cap er i dag det eneste der fanger et tykt mellemhøjt dække. Måler man et altostratus-dække med rå dækning 90, alt sammen mellemhøjt:
+
+| | score |
+|---|---|
+| i dag (rå 90 rammer cap'en) | 2.0, "Ingen brugbar termik" |
+| efter Task 5 (effektiv 63, cap'en rammer ikke) | **8.9, "God termik"** |
+
+Cirrus-skjoldet redder det ikke, det kræver høj ≥ 85. Det er samme fejltype som C1, ad en anden vej. **Task 5 må ikke shippe cap-ombytningen uden en mellemhøj pendant til cirrus-skjoldet.** Kalibrér den mod casen ovenfor, og husk at Task 6's frontscenarie-test ved rå dækning 90 er tænkt som netop denne interaktionstest.
+
 **Bemærk hvad der ikke længere sker:** efter denne ændring læser caps ikke `cloud_cover`-totalen når lagene findes. Det er bevidst, jf. beslutningen i "Målt sandhed fra Task 2": totalen modsiger sine egne lag i `best_match`. `effective_cloud_cover` falder kun tilbage på totalen når lagene mangler helt (ældre fetches). Konsekvensen er at den gamle `cloud_cover >= 87`-cap, der tilfældigvis fangede søndag rigtigt i morgen-runnet, ikke længere fyrer på de data: søndagens totaler var 55 til 79. Det er cirrus-skjoldet der skal fange dagen nu, og kriterium 2 er testen på om det virker.
 
 **Step 10: Kør hele suiten**
@@ -642,7 +651,22 @@ Det er nøjagtig den fejltype hele planen findes for at rette, nået ad en ny ve
 
 **Task 5 lukker det ikke.** Det var den oprindelige antagelse i reviewet, men regnestykket holder ikke: med lav 10, mellem 75, høj 0 giver `effective_cloud_cover` 62.5, altså under 87-cap'en, og cirrus-skjoldet kræver høj ≥ 85. Ingen af Task 5's to mekanismer fyrer på et mellemhøjt frontdække.
 
-**Grænselagshøjden gør.** De målte tal fra Task 2 skiller sagerne rent:
+**Frontcasens input, rettet.** Den første måling brugte `temp_180m=19.5`, hvilket giver en overadiabatisk overflade-lapse på 1.97 og er fysisk uforeneligt med 150 W/m². Genkørt over realistiske værdier holder fundet: scoren bliver på 8.8 helt ned til en overflade-lapse på 0.56, som er rimelig for et dække der lige er trukket ind. Brug 0.84 eller 0.56 som reference, ikke 1.97.
+
+**Grænselagshøjden lukker det ikke alene.** Tre indvendinger fra code review, hvoraf den første er strukturel:
+
+1. **Residuallaget.** En profilbaseret grænselagsdiagnose måler det *velblandede* lag, ikke det *aktivt konvekterende*. Når overfladefluxen skæres væk, forsvinder blandingslaget ikke, det bliver et residuallag med stort set uændret profil, og diagnosen rapporterer videre den gamle dybde. Den kan altså ikke skelne "konvekterer i 1200 m" fra "kører på frihjul i 1200 m", præcis den skelnen strålingshukommelsen allerede fejler på. Værnet ville arve den fejl det skulle krydstjekke.
+2. **Solnedgangskollapset drives af en mekanisme dagdækket undertrykker.** Kollapset fra 1000 til 225 m skyldes radiativ afkøling, overfladeinversion og et Ri-spring. Et dække midt på dagen gør det modsatte: det reducerer langbølget tab, så ingen inversion dannes og dybden holder sig høj. Signalet er altså stærkest hvor hukommelsen i forvejen var sikker.
+3. **Post-frontal koldluftadvektion med stratocumulus**, som er almindelig i Danmark: overfladefluxen forbliver positiv, blandingslaget er dybt, og strålingen er alligevel knust.
+
+**Overflade-lapse kan ikke kalibreres.** Det var det foreslåede alternativ, og fysisk er det det rigtigere signal, fordi det følger fluxen og ikke den ophobede profil. Men `temperature_180m` er `None` for **alle 360 historiske timer** i API-svaret, så `surface_lapse_rate` kan ikke beregnes for nogen af referencedagene. Feltet findes kun for forecast-timer. Det udelukker både kalibrering og offline regressionstests for de to dage, og derfor er det fravalgt.
+
+### Beslutning: to værn med hver sit job
+
+- **Skydække-delta lukker C1.** Faldt strålingen fordi skyer trak ind, eller fordi solen gik ned? Lørdag aften faldt skydækket (57, 61, 48, 32, 31, 26), et dække der trækker ind får det til at stige. Data findes historisk, så det kan kalibreres. Hukommelsen blokeres når skydækket er steget væsentligt hen over vinduet.
+- **Grænselagshøjde løser kriterium 3.** Søndag kl. 18 med 780 m mod lørdagens 1250 m ved samme klokkeslæt. Det er det den blev godkendt til, og her er signalet gyldigt.
+
+Hver mekanisme bruges kun hvor dens signal faktisk holder. De målte tal fra Task 2:
 
 | | lør 08-08 | søn 08-09 |
 |---|---|---|
@@ -652,9 +676,16 @@ Det er nøjagtig den fejltype hele planen findes for at rette, nået ad en ny ve
 | 20:00 | **225** | 165 |
 | 21:00 | 90 | 110 |
 
-Et værn på grænselagshøjden tillader hukommelsen kl. 18 og 19 lørdag (1250 og 1000 m, hvor piloten fløj), og blokerer den kl. 20 (225 m). Det rammer samtidig den uverificerede kl. 20-løftning som spec-reviewet fandt, og det svarer præcis til pilotens ord: godt til kl. 19. En front der trækker ind kollapser grænselaget, en solnedgang gør det først senere.
+Grænselagshøjden skiller kriterium 3 rent: søndag kl. 18 har 780 m mod lørdagens 1250 m. Den rammer også kl. 20 lørdag (225 m), hvilket dækker den uverificerede kl. 20-løftning spec-reviewet fandt, og svarer til pilotens ord: godt til kl. 19.
 
-**Krav til denne task, ud over kriterium 3:** `effective_radiation` skal have et grænselags-værn, så hukommelsen kun gælder mens blandingslaget stadig er dybt. Kalibrér tærsklen mod tabellen ovenfor, og verificér mod frontscenariet: den samme case skal falde tilbage til omkring 3.0, ikke 8.8.
+**Krav til denne task:**
+
+1. **Skydække-delta-værn på `effective_radiation`**, så hukommelsen kun gælder når strålingsfaldet ikke skyldes tilkommende skyer. Kalibrér mod lørdag aften, hvor skydækket faldt og hukommelsen skal virke.
+2. **Grænselagshøjde til kriterium 3**, kalibreret mod tabellen ovenfor.
+3. **Acceptteste frontscenariet i to varianter**, begge skal falde tilbage til omkring 3.0 og ikke 8.8:
+   - mellemhøjt dække ved overflade-lapse 0.84
+   - samme dække ved rå dækning 90, som fanger interaktionen med Task 5 nedenfor
+4. **Verificér før du bygger:** grænselagshøjden under et dække midt på dagen, ikke kun ved solnedgang. Tallene 1250/1000/225 sampler kun solnedgangsmekanismen. Findes der en overskyet eftermiddagstime i Task 2-data, så tjek den, i stedet for at bygge på antagelsen om at dybden kollapser.
 
 ### Baggrund
 
