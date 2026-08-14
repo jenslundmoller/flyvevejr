@@ -461,6 +461,58 @@ git add termik/tools/ termik/config.py
 git commit -m "tools: replay og sæsonanalyse til gate-kalibrering"
 ```
 
+### Resultat af Task 4 (kørt 2026-08-14)
+
+`replay_day.py` er bygget og committet (7e4373d). Målt mod begge referencedage:
+
+| kriterium | mål | målt | status |
+|---|---|---|---|
+| 1, lør 18:00 | > 6.5 | 6.7 | ✅ |
+| 1, lør 19:00 | > 6.5 | **5.9** | ❌ |
+| 2, søn 10:00-14:00 | ≤ 3.0 | 5, 6.3, 6.2, 6.2, 5.2 | ❌ afventer Task 5 |
+| 3, søn 18:00 | ≤ 5.0 | 5.0 | ✅ |
+
+**Kriterium 1 kan ikke nås med Step 4's tilladte knapper.** Probe af hvad der binder:
+
+```
+lør 18:00  score=6.7  cap-loft=10.0   ingen cap binder
+lør 19:00  score=5.9  cap-loft=10.0   ingen cap binder
+lør 20:00  score=5    cap-loft=5      grænselagsgaten (225 m)
+søn 18:00  score=5    cap-loft=5      grænselagsgaten (780 m)
+```
+
+Hukommelsen fra Task 3 har allerede gjort hele sit arbejde kl. 19: effektiv
+stråling er 427, over gate-tærsklen på 400, så gaten er helt slukket. 5.9 er
+den vægtede sum selv. `RADIATION_MEMORY_FACTOR` og `RADIATION_GATE` flytter
+kun cap'en, og der er ingen cap tilbage at flytte. At løfte kl. 19 kræver at
+`score_solar` bruger effektiv stråling i stedet for øjebliksstråling, eller at
+vægtene ændres, og begge dele rører hver eneste time på hver eneste dag.
+
+Bemærk at kriterium 1's *formål* holder: det er værn mod at trække lørdag ned,
+og intet trækker lørdag aften ned. Det fejler på et niveau, ikke på en
+regression. **Beslutning: udskudt til efter Task 5**, så der kun kalibreres én
+gang.
+
+Sætningen i Step 4 om at "kriterie 2 revurderes til sidst i Task 6" er
+forældet efter omrokeringen: Task 6 er kørt, og kriterium 2 hører nu til
+Task 5.
+
+**Step 5 kan ikke køres som skrevet før deploy.** `gate_season.py` udleder fra
+udgivet `current.json`-historik, som er produceret af den gamle kode og ikke
+indeholder `shortwave_radiation` (Task 1 tilføjede feltet, men det er ikke
+deployet). En uændret genkørsel ville give præcis samme baseline. I stedet er
+grænselagsgaten målt ved at gen-score det cachede datasæt på 30 pladser x 11
+dage med gaten tændt og slukket:
+
+- 5280 timer scoret, **175 flyttet (3,3 %)**
+- **65 timer (1,2 %) trukket ud af det grønne**, heraf 55 med 400+ W/m² sol
+- Koncentreret kl. 11 til 19, top på 13 % af timerne kl. 13, største fald 3,6
+
+De 25 % i `config.py`-kommentaren overvurderede altså udslaget: de fleste lave
+middagstimer lå i forvejen på 5 eller derunder af andre grunde. De solrige
+tilfælde er overvejende kystnære (frederikssund, sæby, gørløse, tønder,
+skrydstrup), hvilket ligner søbrise-dæmpede blandingslag.
+
 ---
 
 ## Task 5: Lad caps se cirrus som `score_solar` gør
