@@ -13,6 +13,8 @@ from termik.config import (
     RADIATION_GATE,
     RADIATION_MEMORY_FACTOR,
     RADIATION_MEMORY_FLOOR,
+    CLOUD_ARRIVAL_COVER,
+    CLOUD_ARRIVAL_RISE,
 )
 
 
@@ -455,7 +457,41 @@ def calculate_modifiers(
     return mod
 
 
-def effective_radiation(current: float, trailing: list[float] | None = None) -> float:
+def cloud_deck_arrived(
+    cloud_cover: float | None, trailing_cloud_cover: list[float] | None
+) -> bool:
+    """True when cloud has moved in across the trailing window.
+
+    Answers the question the heat memory cannot answer on its own: did the
+    radiation fall because the sun went down, or because a deck arrived? A
+    deck is a sky that is substantially covered now and was materially
+    clearer during the window, so both conditions must hold. A covered sky
+    that never changed did not cut anything, and a large rise that leaves the
+    sky mostly open cannot be what crushed the radiation.
+
+    The comparison is against the clearest hour of the window, which is the
+    hour whose stored heat the memory is crediting. Comparing against the
+    most recent hour, or against the window's mean, would let a deck that
+    thickened over several hours pass as ordinary cloud churn.
+
+    Missing cloud data is not evidence of a clear sky: without it the
+    question cannot be answered and the answer is False, which leaves the
+    memory exactly as Task 3 left it.
+    """
+    if cloud_cover is None or not trailing_cloud_cover:
+        return False
+    return (
+        cloud_cover >= CLOUD_ARRIVAL_COVER
+        and cloud_cover - min(trailing_cloud_cover) >= CLOUD_ARRIVAL_RISE
+    )
+
+
+def effective_radiation(
+    current: float,
+    trailing: list[float] | None = None,
+    cloud_cover: float | None = None,
+    trailing_cloud_cover: list[float] | None = None,
+) -> float:
     """Radiation corrected for the boundary layer's heat memory.
 
     Convection does not die at the same moment the radiation does: the
@@ -464,14 +500,21 @@ def effective_radiation(current: float, trailing: list[float] | None = None) -> 
     radiation of the last few hours, never less than the current value.
 
     trailing is the preceding config.RADIATION_MEMORY_HOURS hours of
-    radiation.
+    radiation, and trailing_cloud_cover the same hours of cloud cover.
 
     The memory only applies while there is still enough light for there to be
     anything to remember: below RADIATION_MEMORY_FLOOR the sun is effectively
     gone, and a high afternoon peak must not be able to lift an hour after
     sunset.
+
+    It also only applies when the radiation fell for a reason that leaves
+    heat behind. Sunset does; a deck arriving does not, because it cut the
+    surface flux that was building the heat in the first place. See
+    cloud_deck_arrived.
     """
     if not trailing or current < RADIATION_MEMORY_FLOOR:
+        return current
+    if cloud_deck_arrived(cloud_cover, trailing_cloud_cover):
         return current
     return max(current, RADIATION_MEMORY_FACTOR * max(trailing))
 
@@ -488,6 +531,7 @@ def apply_dealbreakers(
     surface_lapse_rate: float | None = None,
     shortwave_radiation: float | None = None,
     trailing_radiation: list[float] | None = None,
+    trailing_cloud_cover: list[float] | None = None,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
     max_score = 10.0
@@ -495,9 +539,15 @@ def apply_dealbreakers(
     # Caps reflect that low radiation (night, twilight, heavy overcast)
     # cannot drive convection regardless of other favourable conditions.
     # Tested against the effective radiation, so a late hour keeps credit for
-    # the heat the boundary layer is still holding on to.
+    # the heat the boundary layer is still holding on to, unless the cloud
+    # series says the heating was cut short by an arriving deck.
     if shortwave_radiation is not None:
-        eff = effective_radiation(shortwave_radiation, trailing_radiation)
+        eff = effective_radiation(
+            shortwave_radiation,
+            trailing_radiation,
+            cloud_cover=cloud_cover,
+            trailing_cloud_cover=trailing_cloud_cover,
+        )
         for threshold, cap in RADIATION_GATE:
             if eff < threshold:
                 max_score = min(max_score, cap)
@@ -568,8 +618,11 @@ def compute_thermal_score(
     cloud_cover_mid: float | None = None,
     cloud_cover_high: float | None = None,
     direct_radiation: float | None = None,
-    # The preceding hours' shortwave radiation, for the gate's heat memory
+    # The preceding hours' shortwave radiation, for the gate's heat memory,
+    # and the same hours' cloud cover, which says whether a fall in that
+    # radiation was the sun going down or a deck arriving
     trailing_radiation: list[float] | None = None,
+    trailing_cloud_cover: list[float] | None = None,
 ) -> dict:
     """Compute the full thermal score from weather parameters.
 
@@ -643,6 +696,7 @@ def compute_thermal_score(
         surface_lapse_rate=surface_lapse,
         shortwave_radiation=shortwave_radiation,
         trailing_radiation=trailing_radiation,
+        trailing_cloud_cover=trailing_cloud_cover,
     )
 
     # Clamp and round

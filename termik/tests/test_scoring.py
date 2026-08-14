@@ -448,6 +448,98 @@ def test_effective_radiation_no_memory_after_sunset():
     assert eff == 30.0
 
 
+# --- Cloud-arrival guard on the heat memory ---
+
+def test_effective_radiation_blocked_by_an_arriving_deck():
+    """A deck arriving mid-afternoon has the same signature as sunset.
+
+    Radiation crushed from 720 to 150 W/m² while the sky went from nearly
+    clear to 85 % covered.  The flux was cut, not the sun angle, so there is
+    no stored heat left to credit and the hour must keep its own 150.
+    """
+    eff = effective_radiation(
+        current=150.0,
+        trailing=[720.0, 700.0, 640.0],
+        cloud_cover=85,
+        trailing_cloud_cover=[10, 15, 40],
+    )
+    assert eff == 150.0
+
+def test_effective_radiation_survives_a_clearing_evening():
+    """2026-08-08 at 19:00, the hour the memory was calibrated against.
+
+    Cover across the window was 61, 48, 32 and is now 31: the sky cleared
+    while the radiation fell, so the fall is the sun going down.  The guard
+    must stay out of the way, or Task 3 is undone.
+    """
+    eff = effective_radiation(
+        current=274.0,
+        trailing=[657.0, 523.0, 398.0],
+        cloud_cover=31,
+        trailing_cloud_cover=[61, 48, 32],
+    )
+    assert eff > 400
+
+def test_effective_radiation_ignores_a_rise_in_thin_cloud():
+    """Tønder, 2026-08-08 at 20:00: cover rose from 2 % to 34 %.
+
+    Radiation fell to under a third of the window's peak, but a third of the
+    sky covered cannot be what crushed it.  That hour is sunset with a few
+    clouds in it, and a guard keyed on the rise alone would wrongly kill the
+    memory on every such evening.
+    """
+    eff = effective_radiation(
+        current=168.0,
+        trailing=[569.0, 480.0, 300.0],
+        cloud_cover=34,
+        trailing_cloud_cover=[11, 2, 2],
+    )
+    assert eff > 300
+
+def test_effective_radiation_keeps_memory_under_a_deck_that_was_already_there():
+    """Cover of 90 % all window long is not an arriving deck.
+
+    Whatever cut this radiation, it was not a change in the sky, so this
+    guard has nothing to say about the hour and leaves the memory alone.
+    """
+    eff = effective_radiation(
+        current=150.0,
+        trailing=[700.0, 650.0, 600.0],
+        cloud_cover=90,
+        trailing_cloud_cover=[90, 88, 91],
+    )
+    assert eff > 400
+
+def test_effective_radiation_without_cloud_data_keeps_memory():
+    """Older fetches have no cloud series; the memory behaves as in Task 3."""
+    eff = effective_radiation(current=220.0, trailing=[640.0, 480.0, 330.0])
+    assert eff > 400
+
+@pytest.mark.parametrize("cloud_cover, trailing_cloud_cover, blocked", [
+    # Pins CLOUD_ARRIVAL_COVER (70) and CLOUD_ARRIVAL_RISE (25) from both
+    # sides.  Both conditions must hold: a covered sky that did not change,
+    # and a large change that leaves the sky mostly open, are each harmless.
+    (70, [45, 45, 45], True),    # both exactly at their threshold
+    (69, [44, 44, 44], False),   # rise of 25, but the sky is under COVER
+    (70, [46, 46, 46], False),   # covered enough, but the rise is only 24
+    (100, [0, 0, 0], True),      # clear to overcast
+    (70, [45, 20, 45], True),    # the clearest hour of the window is what counts
+    (70, [45, 90, 45], True),    # ... and a cloudy hour inside it cannot mask a deck
+    (85, [10, 40, 70], True),    # a deck that thickened all window long still counts,
+                                 # though it rose only 15 points in the last hour
+])
+def test_effective_radiation_cloud_arrival_thresholds(
+    cloud_cover, trailing_cloud_cover, blocked
+):
+    eff = effective_radiation(
+        current=150.0,
+        trailing=[700.0, 650.0, 600.0],
+        cloud_cover=cloud_cover,
+        trailing_cloud_cover=trailing_cloud_cover,
+    )
+    assert (eff == 150.0) is blocked
+
+
 def test_dealbreaker_radiation_night():
     """Radiation < 100 W/m² (night/dusk) should cap to 1."""
     score = apply_dealbreakers(7.0, lapse_rate=1.0, cloud_cover=30,
@@ -584,6 +676,72 @@ def test_radiation_gate_on_the_calibration_day(hour, expected_cap):
         trailing_radiation=trailing,
     )
     assert cap == expected_cap
+
+
+def test_dealbreaker_gate_drops_the_memory_when_a_deck_arrives():
+    """The gate must see the cloud series, not just the radiation series."""
+    score = apply_dealbreakers(
+        8.2, lapse_rate=1.05, cloud_cover=85, precipitation=0,
+        wind_kt=8.0, wind_gusts_kt=16.0, temp=23.0,
+        shortwave_radiation=150.0,
+        trailing_radiation=[720.0, 700.0, 640.0],
+        trailing_cloud_cover=[10, 15, 40],
+    )
+    assert score <= 3.0
+
+
+def _frontal_deck_score(cloud_cover, cloud_cover_low, cloud_cover_mid, surface_lapse):
+    """An otherwise good August afternoon that a cloud deck has just closed.
+
+    23 °C, lapse rate 1.0, radiation crushed from 720 to 150 W/m² with the
+    direct component down to 60.  The surface lapse rate is stated as an
+    argument because the first measurement of this case used a value of 1.97,
+    which is superadiabatic and physically incompatible with 150 W/m².
+    """
+    return compute_thermal_score(
+        temp_2m=23, dewpoint_2m=13, temp_850hpa=8,
+        cloud_cover=cloud_cover, shortwave_radiation=150,
+        wind_speed_kt=10, wind_dir=270, wind_gusts_kt=15,
+        precipitation=0, precip_last_6h=0, cape=200,
+        surface_pressure=1015, pressure_trend=0, temp_850hpa_trend=0,
+        coast_distance_km=80, coast_direction_deg=270, month=8,
+        temp_180m=23 - surface_lapse * 1.78,
+        wind_speed_80m_kt=13, wind_speed_180m_kt=14,
+        boundary_layer_height=1400,
+        cloud_cover_low=cloud_cover_low, cloud_cover_mid=cloud_cover_mid,
+        cloud_cover_high=0, direct_radiation=60,
+        trailing_radiation=[720.0, 700.0, 640.0],
+        trailing_cloud_cover=[10, 15, 40],
+    )["score"]
+
+
+def test_frontal_deck_is_not_rescued_by_the_heat_memory():
+    """The failure this guard exists for, measured end to end.
+
+    A mid-level deck at 85 % cover scored 8.4, "God termik", purely on the
+    memory's credit for a radiation peak the deck itself had ended.  Nothing
+    else in the scoring catches it: 85 % is under the raw cloud cap of 87,
+    and the layer-weighted cover is 62.5, under it by even more.
+    """
+    assert _frontal_deck_score(85, 10, 75, surface_lapse=0.84) <= 3.0
+
+
+def test_frontal_deck_is_not_rescued_at_a_lower_surface_lapse_rate():
+    """The same deck at the lowest surface lapse rate the case survives at."""
+    assert _frontal_deck_score(85, 10, 75, surface_lapse=0.56) <= 3.0
+
+
+def test_frontal_deck_at_raw_cover_90_stays_capped():
+    """The interaction test for the hole Task 5 opens.
+
+    Today a raw cover of 90 is caught by the cloud_cover >= 87 cap, so this
+    hour would score 2.0 with or without the memory guard.  When Task 5 moves
+    the caps onto layer-weighted cover, that cap stops firing here: 90 % of
+    mid-level cloud weighs 63.  What has to hold this hour down afterwards is
+    the guard, and test_effective_radiation_cloud_arrival_thresholds pins
+    that it fires on this sky independently of the raw cap.
+    """
+    assert _frontal_deck_score(90, 0, 90, surface_lapse=0.84) <= 3.0
 
 
 # --- Full scenario tests ---

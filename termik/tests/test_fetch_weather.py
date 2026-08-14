@@ -474,3 +474,31 @@ def test_process_point_hour_radiation_gate_skips_missing_trailing_hours():
 
     result = process_point_hour(_test_point(), hourly_data, 4, month=8)
     assert result["score"] > 6
+
+
+# The same declining afternoon, but the radiation falls because a deck moves
+# in rather than because the sun sets.  Only the cloud series tells the two
+# apart, so these two tests are what proves it reaches the gate in production.
+_ARRIVING_DECK = [720.0, 700.0, 640.0, 150.0]
+
+
+def test_process_point_hour_gate_sees_an_arriving_deck():
+    """Cover climbing from 10 % to 85 % blocks the memory: the hour scores on
+    its own 150 W/m², which caps it at 3."""
+    hourly_data = _minimal_hourly_data(
+        shortwave_radiation=_ARRIVING_DECK, cloud_cover=[10.0, 15.0, 40.0, 85.0]
+    )
+
+    result = process_point_hour(_test_point(), hourly_data, 3, month=8)
+    assert result["score"] <= 3
+
+
+def test_process_point_hour_gate_keeps_memory_when_the_sky_stays_clear():
+    """The control for the test above: same radiation, cloud never arrives,
+    so the fall is the sun going down and the memory still applies."""
+    hourly_data = _minimal_hourly_data(
+        shortwave_radiation=_ARRIVING_DECK, cloud_cover=[10.0, 15.0, 12.0, 14.0]
+    )
+
+    result = process_point_hour(_test_point(), hourly_data, 3, month=8)
+    assert result["score"] > 5

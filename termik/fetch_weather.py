@@ -245,6 +245,9 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     trailing_radiation = calculate_trailing_window(
         hourly_data["shortwave_radiation"], hour_index
     )
+    trailing_cloud_cover = calculate_trailing_window(
+        hourly_data["cloud_cover"], hour_index
+    )
 
     # Safe fallbacks for non-critical None values
     shortwave = shortwave if shortwave is not None else 0
@@ -281,6 +284,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         cloud_cover_high=cloud_cover_high,
         direct_radiation=direct_radiation,
         trailing_radiation=trailing_radiation,
+        trailing_cloud_cover=trailing_cloud_cover,
     )
 
     thermal_top = compute_thermal_top(

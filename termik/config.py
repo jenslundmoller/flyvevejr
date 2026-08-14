@@ -110,6 +110,47 @@ RADIATION_GATE = [(400, 5), (250, 3), (100, 1)]
 RADIATION_MEMORY_FACTOR = 0.65
 RADIATION_MEMORY_HOURS = 3
 
+# The memory keys on how far the radiation fell, never on why. A cloud deck
+# arriving mid-afternoon produces the same signature as sunset and used to get
+# the same rescue: measured end to end, a mid-level deck that crushed the
+# radiation from 720 to 150 W/m² scored 8.4 ("God termik") on the memory's
+# credit, where the same hour without a memory scored 3.0. These two constants
+# close that. The memory is blocked when the sky is BOTH substantially covered
+# now AND materially clearer at some point in the memory window.
+#
+# Both conditions are needed, and each is calibrated on a measured hour:
+#
+# COVER makes the guard about attenuation rather than about any rise at all.
+# At Tønder on 2026-08-08 20:00 the cover rose from 2 to 34 % while the
+# radiation fell to under a third of the window's peak. A third of the sky
+# cannot be what crushed it, that hour is sunset, and it keeps its memory.
+#
+# RISE keeps the guard off a sky that was already covered, where the radiation
+# was never high enough for the memory to lift anything anyway, and off the
+# ordinary hour-to-hour churn of the cloud field.
+#
+# Calibrated against 2026-08-08, the evening the memory exists to serve, where
+# cover fell across the afternoon (57, 61, 48, 32, 31, 26). At 18:00 and 19:00
+# the cover of 32 and 31 is far below COVER and the change against the
+# clearest hour of the window is negative, so both conditions fail with a wide
+# margin. Across 30 airfields x 11 days the guard blocks 27 of the 255 hours
+# where the memory is what sets the cap, and every one of those has 70 to 86 %
+# cover with the radiation cut to between 18 and 58 % of the window's peak.
+#
+# Read against the raw cloud_cover total, not the layer-weighted cover
+# score_solar uses. Deliberate, and measured: on the calibration evening the
+# layer-weighted value ROSE 13.6 points while the total fell 16, because the
+# low cloud building through the afternoon was thermal cumulus. Weighting the
+# layers here would read a good day's own cumulus as an arriving deck and shut
+# the memory off on exactly the days it exists for.
+#
+# Coupled to RADIATION_MEMORY_HOURS: the cloud window is the radiation window,
+# since the question is only ever asked about the hours the memory credits.
+# Both conditions are evaluated against the clearest hour in that window,
+# so a single cloudy hour inside it cannot mask a deck.
+CLOUD_ARRIVAL_COVER = 70
+CLOUD_ARRIVAL_RISE = 25
+
 # The memory must not rescue an hour whose own radiation is below the floor.
 # Without it, 21:00 with 30 W/m² is lifted from cap 1 to cap 5, after sunset.
 # Deliberately equal to the lowest RADIATION_GATE threshold: the memory can
