@@ -684,6 +684,36 @@ git add termik/scoring.py termik/config.py termik/tests/test_scoring.py
 git commit -m "scoring: caps bruger cirrus-vægtet skydække plus cirrus-skjold-cap"
 ```
 
+### Resultat af Task 5 (kørt 2026-08-14)
+
+Kriterium 2 er nået: søndag kl. 10 til 14 lander på 3.0. Kriterium 3 holder
+fortsat, og rammes nu af grænselagsgaten som tiltænkt. Lørdag er urørt.
+
+**Cap-ombytningen i Step 9 blev rullet tilbage, og Task 2-beslutningen om at
+caps skal læse lagene i stedet for totalen er dermed omgjort.** Målt ved
+replay af lørdag, dagen piloten fløj: kl. 13 rapporterer lagene 95 % lav sky
+under 736 W/m², hvilket er fysisk umuligt. Lagvægtet dække bliver 95, over
+cap'en, og timen faldt til 2.0 i fuld sol. Kl. 18 og 19 faldt med. Totalen og
+lagene modsiger hinanden i BEGGE retninger, så præmissen holder ikke. Det er
+samme lektie som `cloud_deck_arrived` allerede lærte, jf. noten ved
+`CLOUD_ARRIVAL_COVER`. Den generelle cap blev på den rå total, og cirrus når
+caps gennem de to lagspecifikke skjolde i stedet.
+
+**Advarslen om cap-hullet var korrekt.** Bekræftet ved måling: tre himle med
+88 til 99 % altostratus under 150 W/m² scorede 8.3 til 8.4.
+`cloud_deck_arrived` lukker det ikke, den kræver 25 points stigning i den rå
+total, så et dække der fortykkes over en allerede diset formiddag slipper
+forbi. Deraf `MID_LEVEL_DECK_THRESHOLD`.
+
+**Sæsonanalysen fangede en fejl begge referencedage bestod.** Cirrus-skjoldets
+trailing-maksimum holdt skjoldet oppe tre timer efter opklaring: 122 timer ud
+af det grønne, heraf 14 under skyfri himmel med 400+ W/m². Skjoldet kræver nu
+både persistens og tilstedeværelse (`CIRRUS_SHIELD_PRESENT_MIN`). Aftryk
+halveret til 4,6 %.
+
+Sæsonaftryk pr. mekanisme, målt på 5280 timer: grænselag 3,3 %, cirrus-skjold
+4,6 %, mellemhøjt dække 0,3 %.
+
 ---
 
 ## Task 6: Grænselagshøjde som scoringsinput

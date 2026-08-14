@@ -179,3 +179,91 @@ Modellens SW-felt reagerer med andre ord næsten ikke på dens eget cirrus-felt.
 1. **Task 3 og 4** kalibreres mod forecast-endpointets tal, ikke arkivets. `RADIATION_MEMORY_FACTOR = 0.65` opfylder kriterie 1 med ca. 7 % margin. Bagsiden efter solnedgang (kl. 21 løftes fra cap 1 til cap 5) skal måles, ikke antages væk.
 2. **Task 5** kan fortsætte: skyen *var* cirrus. Men `CIRRUS_SHIELD_THRESHOLD = 85` på øjebliksværdien opfylder ikke kriterie 2, og skal enten sænkes til 81 (fanger 4 af 5 timer) eller gives samme trailing-max-hukommelse som stråle-gaten (fanger alle 5).
 3. **Åbent spørgsmål ud over planen:** `boundary_layer_height` er det eneste felt der skiller de to dage rent i begge kalibreringsvinduer, og det indgår ikke i scoringen i dag.
+
+---
+
+# Del 2: Løsning, implementering og verifikation
+
+Skrevet ved afslutningen af Task 7, 2026-08-14. Del 1 ovenfor er diagnosen fra Task 2 og står uændret, også hvor den senere viste sig at pege forkert. Hvor det er sket, står det nedenfor.
+
+## Løsningsvalg
+
+Fem mekanismer, hver med sit eget afgrænsede job. Ingen af dem er en generel "gør scoren bedre"-knap, og hver enkelt har målte grænser i begge retninger.
+
+| mekanisme | spørgsmål den svarer på | virker på |
+|---|---|---|
+| Varmehukommelse på stråle-gaten | Er varmen fra de sidste timer stadig i grænselaget? | lør aften, kriterium 1 |
+| Skydække-delta-værn | Faldt strålingen fordi solen gik ned, eller fordi en front kom? | frontcases, C1 |
+| Grænselagshøjde-cap | Er der overhovedet vertikal plads at flyve i? | søn kl. 18, kriterium 3 |
+| Cirrus-skjold | Har der stået et optisk tykt cirrusdække, og står det der stadig? | søn kl. 10-14, kriterium 2 |
+| Mellemhøj dække-cap | Er der et solidt altostratus-dække? | frontcases efter cap-ombytning |
+
+### Det der blev forkastet undervejs
+
+**Cap-ombytningen til lagvægtet skydække blev rullet tilbage.** Del 1's sidefund om at `cloud_cover`-totalen modsiger sine egne lag førte til beslutningen om at caps skulle læse lagene i stedet. Det viste sig at være forkert, og det blev fanget ved replay af lørdag: kl. 13 rapporterer lagene **95 % lav sky under 736 W/m²**, hvilket er fysisk umuligt. Lagvægtet dække bliver 95, over cap'en på 87, og timen faldt til 2.0 "Ingen brugbar termik" i fuld sol. Kl. 18 og 19 faldt med.
+
+Totalen og lagene modsiger altså hinanden i **begge** retninger, og præmissen "lagene er de indbyrdes konsistente" holder ikke. Det er samme lektie som `cloud_deck_arrived` allerede havde lært, se noten ved `CLOUD_ARRIVAL_COVER`: en god dags egne termikcumulus læses som overtrukket, så snart man vægter lagene. Den generelle cloud-cap blev derfor på den rå total, og cirrus når caps gennem de to målrettede skjolde i stedet.
+
+**Overflade-lapse blev fravalgt** som værn mod C1. Det er fysisk det rigtigere signal, men `temperature_180m` er `None` for alle 360 historiske timer i API-svaret, så det kan hverken kalibreres eller regressionstestes på referencedagene.
+
+## Implementering
+
+20 commits på `fix/straale-gate-og-cirrus-caps`. De bærende:
+
+| commit | hvad |
+|---|---|
+| `e606849` | persistér stråling og skylag, uden dem kan intet revideres bagefter |
+| `2466863`, `6bff676` | `effective_radiation` og gaten der bruger den |
+| `7443d14` | hukommelsen gælder ikke når et skydække trækker ind (lukker C1) |
+| `563d32f` | grænselagshøjde som cap |
+| `7e4373d` | `replay_day.py`, så en dag kan måles uden at vente på cron |
+| `e65b480` | cirrus-skjold og mellemhøj pendant, og tilbagerulningen af cap-ombytningen |
+| `2e09c0b` | cirrus-skjoldet må ikke overleve cirrusen |
+
+Alle konstanter er bundet i begge retninger i `config.py`, med den målte øvre og nedre grænse skrevet ind. Det er bevidst: hver enkelt tærskel ligger i et smalt målt interval, og en senere justering "for at få tallene til at passe" skal støde på grænsen og fejle i testene.
+
+## Verifikation
+
+### Acceptkriterierne
+
+| kriterium | mål | før | efter | status |
+|---|---|---|---|---|
+| 1, lør 18:00 | > 6.5 | 5.0 | **6.7** | ✅ |
+| 1, lør 19:00 | > 6.5 | 5.0 | **5.9** | ❌ åbent, se nedenfor |
+| 2, søn 10:00-14:00 | ≤ 3.0 | 6.2 (hindcast) | **3.0** | ✅ |
+| 3, søn 18:00 | ≤ 5.0 | 7.4 | **5.0** | ✅ |
+
+Kriterium 3 rammes af grænselagsgaten, som planen tiltænkte, ikke af cirrus-skjoldet.
+
+### Sæsonanalyse pr. mekanisme
+
+Målt ved at gen-score 30 flyvepladser x 11 dage (5280 timer) med hver mekanisme slået til og fra, så hver forskel kan tilskrives ét navngivet greb.
+
+| mekanisme | timer flyttet | trukket ud af det grønne |
+|---|---|---|
+| Grænselagshøjde-cap | 175 (3,3 %) | 65 (1,2 %) |
+| Cirrus-skjold | 242 (4,6 %) | 56 (1,1 %) |
+| Mellemhøj dække-cap | 18 (0,3 %) | 2 (0,0 %) |
+
+De 25 % i den oprindelige grænselagsnote overvurderede udslaget: de fleste lave middagstimer lå i forvejen på 5 eller derunder af andre grunde.
+
+**Sæsonanalysen fangede en fejl testene ikke kunne se.** Cirrus-skjoldets trailing-maksimum holdt skjoldet oppe i tre timer efter at himlen var klaret op: 122 timer ud af det grønne, heraf 50 hvor cirrusen allerede lå under 25 % og 14 under en helt skyfri himmel med 400+ W/m². Værst var herning 2026-08-13 kl. 17, 8.4 til 3.0 med høj sky 0 og 558 W/m². Skjoldet stiller nu to spørgsmål, persistens og tilstedeværelse, og fyrer kun når begge svarer ja. Aftrykket halveredes, og de 56 tilbageværende grønne-træk har alle 52 til 94 % aktuel cirrus.
+
+Det er værd at holde fast i: begge referencedage bestod hele vejen igennem den fejl. Kun sæsonmålingen kunne se den.
+
+### Regressionstests
+
+`termik/tests/test_reference_days.py` låser begge dage fast med timedata bagt ind, så de kører offline og ikke kan drive når Open-Meteo reviderer en fortidig dag. Data er hentet fra forecast-endpointet, aldrig arkivet. Fixturen reproducerer replay'et præcist på alle testede timer.
+
+Suiten er på **268 beståede og 1 xfail**.
+
+## Åbne emner
+
+1. **Kriterium 1 kl. 19 er ikke nået, og er bevidst efterladt åbent.** Ingen cap binder timen: 5.9 er den vægtede sum selv. `score_solar` læser 88,6 % lagvægtet skydække, som er den gode dags egne termikcumulus, og 148,8 W/m² **direkte** stråling, som ingen strålingshukommelse rører. Det er markeret `xfail(strict=True)`, så det siger til hvis det nogensinde begynder at bestå.
+2. **`score_solar` behandler en termikdags egne cumulus som dæmpning.** Rodårsagen bag punkt 1, og samme fejltype som `cloud_deck_arrived` måtte arbejde udenom. Det rører hver eneste time på hver eneste dag og kræver sin egen kalibrering.
+3. **`gate_season.py` kan ikke køres som før-og-efter før deploy.** Den udleder fra udgivet `current.json`-historik, produceret af den gamle kode og uden `shortwave_radiation`. Sæsonmålingerne ovenfor bruger i stedet gen-scoring af cachet rådata.
+4. **Vindretning og luftmasse er stadig ikke scoret.** `wind_dir` bruges kun til søbrise. Pilotens tommelfingerregel, højtryk nordvest for Danmark, er ikke kodet. Task 2 bekræftede mønsteret: lørdag W 273 til 236 grader med fladt tryk, søndag S 150 til 179 grader med fald fra 1014,9 til 1007,1 hPa.
+5. **Lapse rate-vægten er stadig ikke efterprøvet.** Den tungest vægtede variabel (0,30) adskilte ikke de to dage.
+6. **Strålingsfeltet reagerer knap på modellens egen cirrus.** Søn kl. 13 gav 690 W/m² mod lørs 736. Kun `cloud_cover_high` vidste besked.
+7. **Begrænsende faktor vises stadig ikke i UI.** Med Task 1 på plads er data der nu.
+8. **Kalibreringsgrundlaget er n=2.** Kriterium 1 klarer sig med cirka 7 % margin og afhænger af at hukommelsen når præcis tre timer tilbage. Flere pilot-verificerede dage ville være det billigste næste skridt.
