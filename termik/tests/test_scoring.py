@@ -678,6 +678,115 @@ def test_radiation_gate_on_the_calibration_day(hour, expected_cap):
     assert cap == expected_cap
 
 
+# --- Boundary layer depth gate ---
+#
+# Measured boundary layer height at Ringsted, in metres, from the same
+# Open-Meteo forecast endpoint as _RINGSTED_2026_08_08 above.  The pilot flew
+# excellent thermals until 19:00 on the Saturday and found nothing at all on
+# the Sunday.
+#
+#   kl      08-08   08-09
+#   11       1270    1210
+#   12       1515    1280
+#   13       1600    1295
+#   17       1685     980
+#   18       1250     780
+#   19       1000     355
+
+def _bl_capped(boundary_layer_height, incoming=8.0):
+    """The cap a given mixed-layer depth imposes, with nothing else binding."""
+    return apply_dealbreakers(
+        incoming, lapse_rate=1.0, cloud_cover=30, precipitation=0,
+        wind_kt=10, wind_gusts_kt=15, temp=22,
+        boundary_layer_height=boundary_layer_height,
+    )
+
+
+def test_shallow_boundary_layer_caps_score():
+    """2026-08-09 at 18:00, the worst prediction of the two days.
+
+    The sky had cleared (total cover 15, no cirrus) and the radiation was
+    429 W/m², above every gate threshold, so nothing else in the scoring
+    reaches this hour.  The mixed layer had collapsed to 780 m, against
+    1250 m at the same hour on the Saturday the pilot flew.
+    """
+    assert _bl_capped(780) <= 5.0
+
+
+def test_deep_boundary_layer_does_not_cap():
+    """2026-08-08 at 18:00 and 19:00, where the pilot was still flying."""
+    assert _bl_capped(1250) == 8.0
+    assert _bl_capped(1000) == 8.0
+
+
+def test_boundary_layer_does_not_separate_midday_reference_hours():
+    """The two days are 1270 against 1210 at 11:00, and stay close to 13:00.
+
+    Depth cannot tell a day of massive thermals from a day of nothing in
+    those hours, and this gate must not be tuned as if it could.  Both days
+    must land on the same side of the threshold, so that the midday half of
+    the calibration stays the cirrus shield's problem to solve.  Anyone who
+    makes this gate stricter to bring the Sunday down will fail here, and
+    correctly: the Saturday would come down with it.
+    """
+    saturday = (1270, 1515, 1600)
+    sunday = (1210, 1280, 1295)
+    for depth in saturday + sunday:
+        assert _bl_capped(depth) == 8.0
+
+
+def test_boundary_layer_missing_does_not_cap():
+    """Older fetches without the field must score exactly as before."""
+    assert _bl_capped(None) == 8.0
+
+
+@pytest.mark.parametrize("depth, expected", [
+    (0, 5.0),
+    (780, 5.0),      # 2026-08-09 18:00, must be capped
+    (899.9, 5.0),
+    (900, 8.0),      # at the threshold the gate is already off
+    (1000, 8.0),     # 2026-08-08 19:00, must not be capped
+    (1250, 8.0),
+])
+def test_boundary_layer_gate_boundaries(depth, expected):
+    """Pins the threshold from both sides.
+
+    The interval it may live in is narrow and measured: above 780 m, or the
+    Sunday evening this gate exists for is not caught, and at most 1000 m, or
+    the Saturday evening the pilot actually flew is dragged down with it.
+    """
+    assert _bl_capped(depth) == expected
+
+
+def test_shallow_boundary_layer_caps_the_full_score():
+    """Ringsted 2026-08-09 at 18:00, end to end on the measured hour.
+
+    Every value is the one the Open-Meteo forecast endpoint gave for that
+    hour.  Without this gate the hour scores in the "God termik" band on a
+    day the pilot found nothing at all, and it reaches that score honestly:
+    the sky really had cleared and the radiation really was 429 W/m².  The
+    mixed layer at 780 m is the only field that knows better.
+
+    Written against compute_thermal_score rather than apply_dealbreakers so
+    that dropping the depth at the call site cannot pass unnoticed.
+    """
+    result = compute_thermal_score(
+        temp_2m=25.4, dewpoint_2m=10.4, temp_850hpa=12.7,
+        cloud_cover=15, shortwave_radiation=429.0,
+        wind_speed_kt=8.6, wind_dir=155, wind_gusts_kt=15.7,
+        precipitation=0.0, precip_last_6h=0.0, cape=0.0,
+        surface_pressure=1008.2, pressure_trend=-2.1, temp_850hpa_trend=1.6,
+        coast_distance_km=33, coast_direction_deg=239, month=8,
+        wind_speed_80m_kt=10.5, wind_speed_180m_kt=12.5,
+        boundary_layer_height=780.0,
+        cloud_cover_low=0, cloud_cover_mid=1, cloud_cover_high=0,
+        direct_radiation=283.1,
+        trailing_radiation=[442.0, 503.0, 453.0],
+        trailing_cloud_cover=[67, 63, 36],
+    )
+    assert result["score"] <= 5.0
+
+
 def test_dealbreaker_gate_drops_the_memory_when_a_deck_arrives():
     """The gate must see the cloud series, not just the radiation series."""
     score = apply_dealbreakers(

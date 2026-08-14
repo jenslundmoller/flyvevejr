@@ -15,6 +15,8 @@ from termik.config import (
     RADIATION_MEMORY_FLOOR,
     CLOUD_ARRIVAL_COVER,
     CLOUD_ARRIVAL_RISE,
+    SHALLOW_BOUNDARY_LAYER_M,
+    SHALLOW_BOUNDARY_LAYER_MAX_SCORE,
 )
 
 
@@ -532,6 +534,7 @@ def apply_dealbreakers(
     shortwave_radiation: float | None = None,
     trailing_radiation: list[float] | None = None,
     trailing_cloud_cover: list[float] | None = None,
+    boundary_layer_height: float | None = None,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
     max_score = 10.0
@@ -551,6 +554,16 @@ def apply_dealbreakers(
         for threshold, cap in RADIATION_GATE:
             if eff < threshold:
                 max_score = min(max_score, cap)
+    # Mixed-layer depth gate: thermals need vertical room to be worth
+    # climbing. Radiation says how hard the ground is being heated, this says
+    # how far the result reaches. The two disagree often enough to be worth
+    # asking separately, most sharply on a clear evening whose mixing layer
+    # has already collapsed.
+    if (
+        boundary_layer_height is not None
+        and boundary_layer_height < SHALLOW_BOUNDARY_LAYER_M
+    ):
+        max_score = min(max_score, SHALLOW_BOUNDARY_LAYER_MAX_SCORE)
     if lapse_rate < 0.50:
         max_score = min(max_score, 1)
     elif lapse_rate < 0.65:
@@ -697,6 +710,7 @@ def compute_thermal_score(
         shortwave_radiation=shortwave_radiation,
         trailing_radiation=trailing_radiation,
         trailing_cloud_cover=trailing_cloud_cover,
+        boundary_layer_height=boundary_layer_height,
     )
 
     # Clamp and round

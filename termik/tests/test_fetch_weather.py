@@ -493,6 +493,31 @@ def test_process_point_hour_gate_sees_an_arriving_deck():
     assert result["score"] <= 3
 
 
+def test_process_point_hour_caps_on_a_shallow_boundary_layer():
+    """Full sun and a mixed layer of 400 m: the depth has to reach the caps.
+
+    boundary_layer_height was fetched and stored long before it was scored,
+    so nothing else would notice if the score stopped receiving it.
+    """
+    hourly_data = _minimal_hourly_data(boundary_layer_height=[400.0] * 4)
+
+    result = process_point_hour(_test_point(), hourly_data, 3, month=8)
+    assert result["score"] <= 5
+    assert result["data"]["boundary_layer_height"] == 400.0
+
+
+def test_process_point_hour_deep_boundary_layer_is_not_capped():
+    """The control: 1200 m leaves the score alone.
+
+    Passed explicitly rather than left to the fixture default, so that a
+    later change to that default cannot weaken this control in silence.
+    """
+    hourly_data = _minimal_hourly_data(boundary_layer_height=[1200.0] * 4)
+
+    result = process_point_hour(_test_point(), hourly_data, 3, month=8)
+    assert result["score"] > 5
+
+
 def test_process_point_hour_gate_keeps_memory_when_the_sky_stays_clear():
     """The control for the test above: same radiation, cloud never arrives,
     so the fall is the sun going down and the memory still applies."""
