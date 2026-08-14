@@ -13,6 +13,7 @@ from termik.scoring import (
     calculate_wind_shear_modifier,
     calculate_bl_mixing_modifier,
     effective_radiation,
+    effective_cloud_cover,
     apply_dealbreakers,
     compute_thermal_score,
     get_score_label,
@@ -116,6 +117,22 @@ def test_solar_thick_low_cloud_heavily_penalised():
         direct_radiation=80,
     )
     assert score < 2
+
+
+# --- Layer-weighted cloud cover ---
+#
+# Extracted from score_solar so the hard caps can weigh cirrus the same way
+# the sub-score always has. Same numbers, two callers.
+
+def test_effective_cloud_cover_weights_cirrus_lighter():
+    """Cirrus attenuates about half as much per per cent as stratus."""
+    assert effective_cloud_cover(90, 0, 0, 90) == 45.0
+    assert effective_cloud_cover(90, 90, 0, 0) == 90.0
+
+
+def test_effective_cloud_cover_falls_back_to_total():
+    """Older fetches have no layer breakdown; the total is all there is."""
+    assert effective_cloud_cover(75, None, None, None) == 75
 
 
 # --- Spread (15% weight) ---

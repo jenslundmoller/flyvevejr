@@ -227,6 +227,28 @@ def score_surface_lapse_rate(surface_lapse: float) -> int:
         return 0
 
 
+def effective_cloud_cover(
+    cloud_cover: float,
+    cloud_cover_low: float | None = None,
+    cloud_cover_mid: float | None = None,
+    cloud_cover_high: float | None = None,
+) -> float:
+    """Cloud cover weighted by layer. Cirrus dims less per per cent than stratus.
+
+    Falls back to the total only when the layer breakdown is missing
+    entirely, as it is in older fetches. Where both exist the layers are the
+    better source: in the best_match blend the total contradicts its own
+    layers often enough to be unusable, for instance 74 % total over 99 %
+    high cloud at Ringsted on 2026-08-09 at 10:00.
+    """
+    if cloud_cover_low is None or cloud_cover_mid is None or cloud_cover_high is None:
+        return cloud_cover
+    return min(
+        100.0,
+        cloud_cover_low * 1.0 + cloud_cover_mid * 0.7 + cloud_cover_high * 0.5,
+    )
+
+
 def score_solar(
     cloud_cover: float,
     shortwave_radiation: float,
@@ -246,19 +268,9 @@ def score_solar(
     without strongly cutting total SW, but direct radiation drives the
     differential surface heating that triggers thermals.
     """
-    if (
-        cloud_cover_low is not None
-        and cloud_cover_mid is not None
-        and cloud_cover_high is not None
-    ):
-        effective_cloud = min(
-            100.0,
-            cloud_cover_low * 1.0
-            + cloud_cover_mid * 0.7
-            + cloud_cover_high * 0.5,
-        )
-    else:
-        effective_cloud = cloud_cover
+    effective_cloud = effective_cloud_cover(
+        cloud_cover, cloud_cover_low, cloud_cover_mid, cloud_cover_high
+    )
     cloud_factor = max(0.0, (100 - effective_cloud) / 100)
 
     if direct_radiation is not None:
