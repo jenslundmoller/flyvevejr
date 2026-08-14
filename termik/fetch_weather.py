@@ -14,6 +14,7 @@ from termik.config import (
     HOURLY_PARAMS,
     DATA_DIR,
     RADIATION_MEMORY_HOURS,
+    CIRRUS_SHIELD_MEMORY_HOURS,
 )
 from termik.scoring import compute_thermal_score, compute_thermal_top, THERMAL_TOP_LEVELS_HPA
 from termik.comments import generate_comment
@@ -107,14 +108,21 @@ def calculate_temp_850_trend(temps: list, hour_index: int) -> float:
     return current - previous
 
 
-def calculate_trailing_window(values: list, hour_index: int) -> list:
-    """Return the RADIATION_MEMORY_HOURS hours before hour_index.
+def calculate_trailing_window(
+    values: list, hour_index: int, hours: int = RADIATION_MEMORY_HOURS
+) -> list:
+    """Return the `hours` hours before hour_index.
 
     Feeds the radiation gate's heat memory (scoring.effective_radiation),
-    which reads two series over this same window: the radiation it remembers,
-    and the cloud cover that says whether a drop in that radiation was the sun
-    going down or a deck arriving. One window for both, deliberately, since
-    the second question is only ever asked about the first one's window.
+    which reads two series over the default window: the radiation it
+    remembers, and the cloud cover that says whether a drop in that radiation
+    was the sun going down or a deck arriving. One window for both,
+    deliberately, since the second question is only ever asked about the first
+    one's window.
+
+    The cirrus shield asks a different question over its own window, so it
+    passes CIRRUS_SHIELD_MEMORY_HOURS rather than inheriting this default. The
+    two happen to be equal today, and must be free to stop being equal.
 
     Hours the API left empty are dropped rather than counted as zero: a
     missing reading is not evidence of darkness, nor of a clear sky. Dropping
@@ -125,7 +133,7 @@ def calculate_trailing_window(values: list, hour_index: int) -> list:
     The window is short near the start of the series, which is fine, an
     early-morning hour has nothing to remember anyway.
     """
-    start = max(0, hour_index - RADIATION_MEMORY_HOURS)
+    start = max(0, hour_index - hours)
     return [v for v in values[start:hour_index] if v is not None]
 
 
@@ -248,6 +256,11 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     trailing_cloud_cover = calculate_trailing_window(
         hourly_data["cloud_cover"], hour_index
     )
+    trailing_cirrus = calculate_trailing_window(
+        hourly_data.get("cloud_cover_high") or [],
+        hour_index,
+        CIRRUS_SHIELD_MEMORY_HOURS,
+    )
 
     # Safe fallbacks for non-critical None values
     shortwave = shortwave if shortwave is not None else 0
@@ -285,6 +298,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         direct_radiation=direct_radiation,
         trailing_radiation=trailing_radiation,
         trailing_cloud_cover=trailing_cloud_cover,
+        trailing_cirrus=trailing_cirrus,
     )
 
     thermal_top = compute_thermal_top(

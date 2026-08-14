@@ -506,6 +506,22 @@ def test_process_point_hour_caps_on_a_shallow_boundary_layer():
     assert result["data"]["boundary_layer_height"] == 400.0
 
 
+def test_process_point_hour_passes_the_trailing_cirrus_window():
+    """A hole at noon in a shield that stood all morning must not lift the hour.
+
+    Mirrors 2026-08-09 at 12:00, where cirrus dipped to 59 between 81 and 84.
+    The cap reads the trailing maximum, so the score only stays down if the
+    window actually reaches it from the fetch.
+    """
+    hourly_data = _minimal_hourly_data(
+        cloud_cover_high=[99.0, 81.0, 59.0, 84.0],
+        shortwave_radiation=[500.0] * 4,
+    )
+
+    result = process_point_hour(_test_point(), hourly_data, 2, month=8)
+    assert result["score"] <= 3
+
+
 def test_process_point_hour_deep_boundary_layer_is_not_capped():
     """The control: 1200 m leaves the score alone.
 

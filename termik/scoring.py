@@ -17,6 +17,10 @@ from termik.config import (
     CLOUD_ARRIVAL_RISE,
     SHALLOW_BOUNDARY_LAYER_M,
     SHALLOW_BOUNDARY_LAYER_MAX_SCORE,
+    CIRRUS_SHIELD_THRESHOLD,
+    CIRRUS_SHIELD_MAX_SCORE,
+    MID_LEVEL_DECK_THRESHOLD,
+    MID_LEVEL_DECK_MAX_SCORE,
 )
 
 
@@ -236,10 +240,15 @@ def effective_cloud_cover(
     """Cloud cover weighted by layer. Cirrus dims less per per cent than stratus.
 
     Falls back to the total only when the layer breakdown is missing
-    entirely, as it is in older fetches. Where both exist the layers are the
-    better source: in the best_match blend the total contradicts its own
-    layers often enough to be unusable, for instance 74 % total over 99 %
-    high cloud at Ringsted on 2026-08-09 at 10:00.
+    entirely, as it is in older fetches.
+
+    Used by score_solar, and deliberately not by the hard caps. The two
+    sources contradict each other in both directions in the best_match blend,
+    74 % total under 99 % high cloud on 2026-08-09 at 10:00, and 67 % total
+    under 95 % low cloud on 2026-08-08 at 13:00 with 736 W/m² of sun. Neither
+    is reliably the better reading, so a cap that swaps one for the other
+    trades one class of error for another. See the note on the general cloud
+    cap in apply_dealbreakers.
     """
     if cloud_cover_low is None or cloud_cover_mid is None or cloud_cover_high is None:
         return cloud_cover
@@ -547,6 +556,10 @@ def apply_dealbreakers(
     trailing_radiation: list[float] | None = None,
     trailing_cloud_cover: list[float] | None = None,
     boundary_layer_height: float | None = None,
+    cloud_cover_low: float | None = None,
+    cloud_cover_mid: float | None = None,
+    cloud_cover_high: float | None = None,
+    trailing_cirrus: list[float] | None = None,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
     max_score = 10.0
@@ -588,8 +601,46 @@ def apply_dealbreakers(
             max_score = min(max_score, 1)
         elif surface_lapse_rate < 0.5:
             max_score = min(max_score, 2)
+    # The general cloud cap stays on the raw total, deliberately, and this is
+    # a reversal of the plan's Task 2 decision. Measured on 2026-08-08, the
+    # day the pilot flew: at 13:00 the layers report 95 % low cloud under
+    # 736 W/m² of shortwave, which is physically impossible and weighs 95,
+    # over the cap. Moving this cap onto layer-weighted cover scored that hour
+    # 2.0, "Ingen brugbar termik", along with 18:00 and 19:00.
+    #
+    # The total and the layers contradict each other in both directions in the
+    # best_match blend, so "the layers are the consistent ones" does not hold.
+    # It is the same lesson cloud_deck_arrived already learned, see the note
+    # on CLOUD_ARRIVAL_COVER: a good day's own thermal cumulus reads as
+    # overcast once the layers are weighted. The total is the conservative
+    # reading here, and the blunt cap has never been shown to misfire.
+    #
+    # Cirrus reaches the caps through the two targeted shields below instead,
+    # which is what "let the caps see cirrus as score_solar does" needs to
+    # mean. They cost nothing on either reference day's totals: 31 to 67 on
+    # the Saturday, 55 to 79 on the Sunday, all under this threshold.
     if cloud_cover >= 87:
         max_score = min(max_score, 2)
+    # Thick cirrus shield: the 0.5 weight above models cirrus in the middle of
+    # its range and cannot reach an optically deep cirrostratus sheet, which
+    # shuts the ground down while leaving the weighted cover unremarkable.
+    # Tested against the highest cirrus of the recent hours, because a shield
+    # that has stood all morning has already done the damage whatever this
+    # hour reads.
+    if cloud_cover_high is not None:
+        shield = max([cloud_cover_high] + list(trailing_cirrus or []))
+        if shield >= CIRRUS_SHIELD_THRESHOLD:
+            max_score = min(max_score, CIRRUS_SHIELD_MAX_SCORE)
+    # Thick mid-level deck: the same argument one layer down, and the pendant
+    # that makes the swap safe. A solid altostratus sheet weighs only 0.7 per
+    # per cent, so it clears the general cap while shutting the ground down,
+    # and cloud_deck_arrived misses it whenever the deck thickens over an
+    # already-hazy morning instead of arriving into a clear one.
+    if (
+        cloud_cover_mid is not None
+        and cloud_cover_mid >= MID_LEVEL_DECK_THRESHOLD
+    ):
+        max_score = min(max_score, MID_LEVEL_DECK_MAX_SCORE)
     if precipitation > 0:
         max_score = min(max_score, 1)
     if wind_kt > 35:
@@ -648,6 +699,9 @@ def compute_thermal_score(
     # radiation was the sun going down or a deck arriving
     trailing_radiation: list[float] | None = None,
     trailing_cloud_cover: list[float] | None = None,
+    # The same hours' high cloud, so a cirrus shield that has stood all
+    # morning is judged on the shield and not on a hole in it
+    trailing_cirrus: list[float] | None = None,
 ) -> dict:
     """Compute the full thermal score from weather parameters.
 
@@ -723,6 +777,10 @@ def compute_thermal_score(
         trailing_radiation=trailing_radiation,
         trailing_cloud_cover=trailing_cloud_cover,
         boundary_layer_height=boundary_layer_height,
+        cloud_cover_low=cloud_cover_low,
+        cloud_cover_mid=cloud_cover_mid,
+        cloud_cover_high=cloud_cover_high,
+        trailing_cirrus=trailing_cirrus,
     )
 
     # Clamp and round

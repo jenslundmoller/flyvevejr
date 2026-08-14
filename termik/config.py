@@ -195,6 +195,56 @@ RADIATION_MEMORY_FLOOR = 100
 SHALLOW_BOUNDARY_LAYER_M = 900
 SHALLOW_BOUNDARY_LAYER_MAX_SCORE = 5
 
+# Thick cirrus shield: high-cloud cover at or above the threshold, and the
+# score ceiling under it.
+# Calibrated against 2026-08-09, where near-total cirrus produced useless
+# thermals while lapse rate and wind both looked fine. The May research:
+# cirrostratus of optical depth above 1.5 is destructive, while thin cirrus is
+# negligible. The linear 0.5 weight in effective_cloud_cover models the middle
+# of that range and cannot reach the top of it, which is what this cap is for.
+#
+# Tested against the HIGHEST cirrus of the recent hours, not the instantaneous
+# value. Measured 2026-08-09 from 10:00 to 14:00: 99, 81, 59, 84, 100. An
+# instantaneous test at 85 catches only 10:00 and 14:00 and drops the middle
+# of the block, failing acceptance criterion 2. A shield standing since 06:00
+# has already shut the ground down whatever the noon value reads, so the
+# trailing maximum gives 99, 99, 99, 99, 100 and catches the whole block.
+#
+# The threshold is bounded on both sides by the two reference days. It must
+# stay above 57: the Saturday the pilot flew peaked there at 07:00, and a
+# threshold that reached it would drag down the day criterion 1 protects. It
+# must stay at or below 99 to catch the Sunday at all, and at or below 81 for
+# the trailing maximum to hold the whole 10:00 to 14:00 block. 85 sits inside
+# that window and leaves the Saturday untouched by a wide margin.
+CIRRUS_SHIELD_THRESHOLD = 85
+CIRRUS_SHIELD_MAX_SCORE = 3
+CIRRUS_SHIELD_MEMORY_HOURS = 3
+
+# Thick mid-level deck: the pendant the cirrus shield needs, and the reason
+# the cap swap above is safe to ship.
+# Moving the general cap onto layer-weighted cover drops the only thing that
+# caught a solid altostratus deck: 88 % of mid cloud weighs 61.6, well under
+# the 87 cap. Measured on a deck that thickened over an already-hazy morning,
+# with radiation crushed from 720 to 150 W/m²: 8.4, "God termik", where the
+# old raw cap gave 2.0.
+#
+# cloud_deck_arrived does not close this. It reads the raw total and needs a
+# rise of CLOUD_ARRIVAL_RISE, so a deck arriving over an existing 70 to 90 %
+# of cloud never trips it, keeps the heat memory, and takes the radiation gate
+# off with it. Three measured rises of 18, 10 and 9 points all scored above 8.
+#
+# The threshold is bounded on both sides. It must stay above 58: the Saturday
+# the pilot flew peaked there at 15:00, in good thermals, and a threshold that
+# reached it would drag down the day criterion 1 protects. It must stay at or
+# below 88 to close the measured hole. 85 sits inside that window and matches
+# the cirrus shield.
+#
+# The cap of 2 is the one the raw cloud cap gave these skies before the swap.
+# Mid cloud dims more per per cent than cirrus, which is why this is harder
+# than the shield's 3.
+MID_LEVEL_DECK_THRESHOLD = 85
+MID_LEVEL_DECK_MAX_SCORE = 2
+
 # Sea surface temperature estimate by month (1-12)
 # Based on average Danish waters temperature
 SEA_TEMP_BY_MONTH = {

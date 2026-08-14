@@ -804,6 +804,159 @@ def test_shallow_boundary_layer_caps_the_full_score():
     assert result["score"] <= 5.0
 
 
+# --- Cirrus shield cap ---
+#
+# Measured high cloud at Ringsted, 2026-08-09 from 10:00 to 14:00:
+# 99, 81, 59, 84, 100.  The pilot found nothing all day under it.  On the
+# Saturday the pilot flew, high cloud peaked at 57 at 07:00 and was 0 from
+# then until 23:00, so this cap must not touch that day at all.
+
+def _cirrus_capped(cloud_cover_high, trailing_cirrus=None, cloud_cover=74,
+                   incoming=7.5, shortwave_radiation=420.0):
+    """The cap a given cirrus sky imposes, with nothing else binding.
+
+    The default raw total is 2026-08-09's own 74, deliberately under the
+    general cloud cap of 87, so a passing test can only mean the shield fired.
+    """
+    return apply_dealbreakers(
+        incoming, lapse_rate=0.99, cloud_cover=cloud_cover, precipitation=0,
+        wind_kt=9.5, wind_gusts_kt=19.0, temp=24.6,
+        shortwave_radiation=shortwave_radiation,
+        cloud_cover_low=2, cloud_cover_mid=8, cloud_cover_high=cloud_cover_high,
+        trailing_cirrus=trailing_cirrus,
+        boundary_layer_height=1300,
+    )
+
+
+def test_thick_cirrus_shield_caps_score():
+    """2026-08-09: near-total cirrus, and everything else looked fine.
+
+    The raw total that day was 55 to 79, under the general cloud cap, and the
+    layer-weighted cover is 53.6, under it by more. Neither reading catches
+    the day, which is what this shield is for.
+    """
+    assert _cirrus_capped(92) <= 3
+
+
+def test_cirrus_shield_uses_the_trailing_maximum():
+    """2026-08-09 at 12:00: a hole in the shield, not the end of it.
+
+    Cirrus dipped to 59 at midday between 81 and 84.  An instantaneous test
+    at 85 catches only 10:00 and 14:00 and drops the middle of the block,
+    which fails acceptance criterion 2.  A shield standing since 06:00 has
+    already shut the ground down, whatever the noon value reads.
+    """
+    assert _cirrus_capped(59, trailing_cirrus=[99, 81]) <= 3
+
+
+def test_thin_cirrus_does_not_cap():
+    """55 % cirrus and otherwise clear: the research calls this negligible."""
+    assert _cirrus_capped(
+        55, cloud_cover=55, shortwave_radiation=600.0
+    ) > 6
+
+
+def test_cirrus_shield_does_not_touch_the_day_the_pilot_flew():
+    """2026-08-08 afternoon: cirrus 0, and it peaked at 57 at 07:00.
+
+    The anti-overfitting guard. Criterion 2 must not be bought by dragging
+    down the Saturday that criterion 1 exists to protect.
+    """
+    assert _cirrus_capped(0, trailing_cirrus=[0, 0, 57], cloud_cover=48) > 6
+
+
+# --- Mid-level deck cap ---
+#
+# The pendant the cap swap requires. Moving the general cap onto layer-weighted
+# cover drops the only thing that caught a thick altostratus deck: 88 % of mid
+# cloud weighs 61.6, well under the 87 cap.
+#
+# Task 3's arrival guard closes this only for a deck that arrives visibly. It
+# reads the raw total and needs a rise of CLOUD_ARRIVAL_RISE, so a deck that
+# thickens over an already-hazy morning slips past it, keeps the heat memory,
+# and takes the radiation gate off with it. Measured on the sky below: 8.4,
+# "God termik", on 150 W/m².
+#
+# Bounded by the Saturday the pilot flew, whose mid cloud peaked at 58 at
+# 15:00. The threshold must stay above that and at or below 88 to close the
+# hole, so 85 matches the cirrus shield and keeps a wide margin.
+
+def _mid_deck_score(cloud_cover, mid, was):
+    """A thickening mid-level deck, radiation crushed from 720 to 150 W/m²."""
+    return compute_thermal_score(
+        temp_2m=23, dewpoint_2m=13, temp_850hpa=8,
+        cloud_cover=cloud_cover, shortwave_radiation=150,
+        wind_speed_kt=10, wind_dir=270, wind_gusts_kt=15,
+        precipitation=0, precip_last_6h=0, cape=200,
+        surface_pressure=1015, pressure_trend=0, temp_850hpa_trend=0,
+        coast_distance_km=80, coast_direction_deg=270, month=8,
+        temp_180m=23 - 0.84 * 1.78,
+        wind_speed_80m_kt=13, wind_speed_180m_kt=14,
+        boundary_layer_height=1400,
+        cloud_cover_low=0, cloud_cover_mid=mid, cloud_cover_high=0,
+        direct_radiation=60,
+        trailing_radiation=[720.0, 700.0, 640.0],
+        trailing_cloud_cover=[was - 5, was, was + 2],
+        trailing_cirrus=[0, 0, 0],
+    )["score"]
+
+
+@pytest.mark.parametrize("cover, mid, was", [
+    (80, 88, 70),   # rise of 10 in the total, under the guard's 25
+    (75, 90, 65),   # the total disagreeing with its own layers by 15
+    (86, 99, 78),   # a deck that was almost already there, total just under
+])
+def test_mid_level_deck_capped_when_the_arrival_guard_cannot_see_it(cover, mid, was):
+    """Each of these scores above 8 without this cap.
+
+    Every raw total here is under the general cloud cap of 87, so that cap
+    cannot be what holds the hour down and a pass can only mean this one
+    fired. That combination is not contrived: the best_match blend reports a
+    total below its own mid-level layer routinely, and 2026-08-08 at 13:00 is
+    the same disagreement in the opposite direction.
+    """
+    assert _mid_deck_score(cover, mid, was) <= 3.0
+
+
+def test_mid_level_deck_leaves_the_day_the_pilot_flew_alone():
+    """2026-08-08 at 15:00 had 58 % mid cloud, the day's peak, in good thermals.
+
+    The anti-overfitting guard: this cap must not reach the Saturday that
+    acceptance criterion 1 exists to protect.
+    """
+    assert _mid_deck_score(57, 58, 50) > 3.0
+
+
+@pytest.mark.parametrize("mid, expected_cap", [
+    (84.9, 10.0),
+    (85, 2),
+    (100, 2),
+])
+def test_mid_level_deck_threshold(mid, expected_cap):
+    """Pins the threshold from both sides, above Saturday's 58 and at or below 88."""
+    assert apply_dealbreakers(
+        10.0, lapse_rate=1.0, cloud_cover=40, precipitation=0,
+        wind_kt=10, wind_gusts_kt=15, temp=22,
+        cloud_cover_low=0, cloud_cover_mid=mid, cloud_cover_high=0,
+        boundary_layer_height=1300,
+    ) == expected_cap
+
+
+def test_low_stratus_still_capped_hard():
+    """90 % low cloud weighs 90 and must still hit the general cloud cap.
+
+    The swap to layer-weighted cover must not soften stratus, only cirrus.
+    """
+    score = apply_dealbreakers(
+        7.5, lapse_rate=0.99, cloud_cover=90, precipitation=0,
+        wind_kt=8.0, wind_gusts_kt=15.0, temp=18.0,
+        shortwave_radiation=150.0,
+        cloud_cover_low=90, cloud_cover_mid=0, cloud_cover_high=0,
+        boundary_layer_height=1300,
+    )
+    assert score <= 2
+
+
 def test_dealbreaker_gate_drops_the_memory_when_a_deck_arrives():
     """The gate must see the cloud series, not just the radiation series."""
     score = apply_dealbreakers(
