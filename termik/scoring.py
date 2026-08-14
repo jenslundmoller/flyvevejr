@@ -6,7 +6,23 @@ designed for Danish glider pilots.
 
 import math
 
-from termik.config import WEIGHTS, SCORE_LABELS, SEA_TEMP_BY_MONTH
+from termik.config import (
+    WEIGHTS,
+    SCORE_LABELS,
+    SEA_TEMP_BY_MONTH,
+    RADIATION_GATE,
+    RADIATION_MEMORY_FACTOR,
+    RADIATION_MEMORY_FLOOR,
+    CLOUD_ARRIVAL_COVER,
+    CLOUD_ARRIVAL_RISE,
+    SHALLOW_BOUNDARY_LAYER_M,
+    SHALLOW_BOUNDARY_LAYER_MAX_SCORE,
+    CIRRUS_SHIELD_THRESHOLD,
+    CIRRUS_SHIELD_PRESENT_MIN,
+    CIRRUS_SHIELD_MAX_SCORE,
+    MID_LEVEL_DECK_THRESHOLD,
+    MID_LEVEL_DECK_MAX_SCORE,
+)
 
 
 THERMAL_TOP_LEVELS_HPA = (950, 925, 900, 850, 800, 700, 600)
@@ -216,6 +232,33 @@ def score_surface_lapse_rate(surface_lapse: float) -> int:
         return 0
 
 
+def effective_cloud_cover(
+    cloud_cover: float,
+    cloud_cover_low: float | None = None,
+    cloud_cover_mid: float | None = None,
+    cloud_cover_high: float | None = None,
+) -> float:
+    """Cloud cover weighted by layer. Cirrus dims less per per cent than stratus.
+
+    Falls back to the total only when the layer breakdown is missing
+    entirely, as it is in older fetches.
+
+    Used by score_solar, and deliberately not by the hard caps. The two
+    sources contradict each other in both directions in the best_match blend,
+    74 % total under 99 % high cloud on 2026-08-09 at 10:00, and 67 % total
+    under 95 % low cloud on 2026-08-08 at 13:00 with 736 W/m² of sun. Neither
+    is reliably the better reading, so a cap that swaps one for the other
+    trades one class of error for another. See the note on the general cloud
+    cap in apply_dealbreakers.
+    """
+    if cloud_cover_low is None or cloud_cover_mid is None or cloud_cover_high is None:
+        return cloud_cover
+    return min(
+        100.0,
+        cloud_cover_low * 1.0 + cloud_cover_mid * 0.7 + cloud_cover_high * 0.5,
+    )
+
+
 def score_solar(
     cloud_cover: float,
     shortwave_radiation: float,
@@ -235,19 +278,9 @@ def score_solar(
     without strongly cutting total SW, but direct radiation drives the
     differential surface heating that triggers thermals.
     """
-    if (
-        cloud_cover_low is not None
-        and cloud_cover_mid is not None
-        and cloud_cover_high is not None
-    ):
-        effective_cloud = min(
-            100.0,
-            cloud_cover_low * 1.0
-            + cloud_cover_mid * 0.7
-            + cloud_cover_high * 0.5,
-        )
-    else:
-        effective_cloud = cloud_cover
+    effective_cloud = effective_cloud_cover(
+        cloud_cover, cloud_cover_low, cloud_cover_mid, cloud_cover_high
+    )
     cloud_factor = max(0.0, (100 - effective_cloud) / 100)
 
     if direct_radiation is not None:
@@ -448,6 +481,68 @@ def calculate_modifiers(
     return mod
 
 
+def cloud_deck_arrived(
+    cloud_cover: float | None, trailing_cloud_cover: list[float] | None
+) -> bool:
+    """True when cloud has moved in across the trailing window.
+
+    Answers the question the heat memory cannot answer on its own: did the
+    radiation fall because the sun went down, or because a deck arrived? A
+    deck is a sky that is substantially covered now and was materially
+    clearer during the window, so both conditions must hold. A covered sky
+    that never changed did not cut anything, and a large rise that leaves the
+    sky mostly open cannot be what crushed the radiation.
+
+    The comparison is against the clearest hour of the window, which is the
+    hour whose stored heat the memory is crediting. Comparing against the
+    most recent hour, or against the window's mean, would let a deck that
+    thickened over several hours pass as ordinary cloud churn.
+
+    Missing cloud data is not evidence of a clear sky: without it the
+    question cannot be answered and the answer is False, which leaves the
+    memory exactly as Task 3 left it.
+    """
+    if cloud_cover is None or not trailing_cloud_cover:
+        return False
+    return (
+        cloud_cover >= CLOUD_ARRIVAL_COVER
+        and cloud_cover - min(trailing_cloud_cover) >= CLOUD_ARRIVAL_RISE
+    )
+
+
+def effective_radiation(
+    current: float,
+    trailing: list[float] | None = None,
+    cloud_cover: float | None = None,
+    trailing_cloud_cover: list[float] | None = None,
+) -> float:
+    """Radiation corrected for the boundary layer's heat memory.
+
+    Convection does not die at the same moment the radiation does: the
+    boundary layer is already mixed and keeps thermals going for an hour or
+    two after peak heating. We therefore credit a fraction of the highest
+    radiation of the last few hours, never less than the current value.
+
+    trailing is the preceding config.RADIATION_MEMORY_HOURS hours of
+    radiation, and trailing_cloud_cover the same hours of cloud cover.
+
+    The memory only applies while there is still enough light for there to be
+    anything to remember: below RADIATION_MEMORY_FLOOR the sun is effectively
+    gone, and a high afternoon peak must not be able to lift an hour after
+    sunset.
+
+    It also only applies when the radiation fell for a reason that leaves
+    heat behind. Sunset does; a deck arriving does not, because it cut the
+    surface flux that was building the heat in the first place. See
+    cloud_deck_arrived.
+    """
+    if not trailing or current < RADIATION_MEMORY_FLOOR:
+        return current
+    if cloud_deck_arrived(cloud_cover, trailing_cloud_cover):
+        return current
+    return max(current, RADIATION_MEMORY_FACTOR * max(trailing))
+
+
 def apply_dealbreakers(
     score: float,
     lapse_rate: float,
@@ -459,19 +554,42 @@ def apply_dealbreakers(
     cape: float = 0,
     surface_lapse_rate: float | None = None,
     shortwave_radiation: float | None = None,
+    trailing_radiation: list[float] | None = None,
+    trailing_cloud_cover: list[float] | None = None,
+    boundary_layer_height: float | None = None,
+    cloud_cover_low: float | None = None,
+    cloud_cover_mid: float | None = None,
+    cloud_cover_high: float | None = None,
+    trailing_cirrus: list[float] | None = None,
 ) -> float:
     """Apply hard caps for conditions that prevent usable thermals."""
     max_score = 10.0
     # Solar radiation gate: thermals require sufficient surface heating.
     # Caps reflect that low radiation (night, twilight, heavy overcast)
     # cannot drive convection regardless of other favourable conditions.
+    # Tested against the effective radiation, so a late hour keeps credit for
+    # the heat the boundary layer is still holding on to, unless the cloud
+    # series says the heating was cut short by an arriving deck.
     if shortwave_radiation is not None:
-        if shortwave_radiation < 100:
-            max_score = min(max_score, 1)
-        elif shortwave_radiation < 250:
-            max_score = min(max_score, 3)
-        elif shortwave_radiation < 400:
-            max_score = min(max_score, 5)
+        eff = effective_radiation(
+            shortwave_radiation,
+            trailing_radiation,
+            cloud_cover=cloud_cover,
+            trailing_cloud_cover=trailing_cloud_cover,
+        )
+        for threshold, cap in RADIATION_GATE:
+            if eff < threshold:
+                max_score = min(max_score, cap)
+    # Mixed-layer depth gate: thermals need vertical room to be worth
+    # climbing. Radiation says how hard the ground is being heated, this says
+    # how far the result reaches. The two disagree often enough to be worth
+    # asking separately, most sharply on a clear evening whose mixing layer
+    # has already collapsed.
+    if (
+        boundary_layer_height is not None
+        and boundary_layer_height < SHALLOW_BOUNDARY_LAYER_M
+    ):
+        max_score = min(max_score, SHALLOW_BOUNDARY_LAYER_MAX_SCORE)
     if lapse_rate < 0.50:
         max_score = min(max_score, 1)
     elif lapse_rate < 0.65:
@@ -484,8 +602,50 @@ def apply_dealbreakers(
             max_score = min(max_score, 1)
         elif surface_lapse_rate < 0.5:
             max_score = min(max_score, 2)
+    # The general cloud cap stays on the raw total, deliberately, and this is
+    # a reversal of the plan's Task 2 decision. Measured on 2026-08-08, the
+    # day the pilot flew: at 13:00 the layers report 95 % low cloud under
+    # 736 W/m² of shortwave, which is physically impossible and weighs 95,
+    # over the cap. Moving this cap onto layer-weighted cover scored that hour
+    # 2.0, "Ingen brugbar termik", along with 18:00 and 19:00.
+    #
+    # The total and the layers contradict each other in both directions in the
+    # best_match blend, so "the layers are the consistent ones" does not hold.
+    # It is the same lesson cloud_deck_arrived already learned, see the note
+    # on CLOUD_ARRIVAL_COVER: a good day's own thermal cumulus reads as
+    # overcast once the layers are weighted. The total is the conservative
+    # reading here, and the blunt cap has never been shown to misfire.
+    #
+    # Cirrus reaches the caps through the two targeted shields below instead,
+    # which is what "let the caps see cirrus as score_solar does" needs to
+    # mean. They cost nothing on either reference day's totals: 31 to 67 on
+    # the Saturday, 55 to 79 on the Sunday, all under this threshold.
     if cloud_cover >= 87:
         max_score = min(max_score, 2)
+    # Thick cirrus shield: the 0.5 weight above models cirrus in the middle of
+    # its range and cannot reach an optically deep cirrostratus sheet, which
+    # shuts the ground down while leaving the weighted cover unremarkable.
+    # Tested against the highest cirrus of the recent hours, because a shield
+    # that has stood all morning has already done the damage whatever this
+    # hour reads.
+    # Two questions, and the shield only fires when both answer yes. Has the
+    # sheet been standing (the trailing maximum, which sees through a hole at
+    # noon), and is it still overhead (the current reading, without which the
+    # shield outlives the cirrus by the length of its own window).
+    if cloud_cover_high is not None and cloud_cover_high >= CIRRUS_SHIELD_PRESENT_MIN:
+        shield = max([cloud_cover_high] + list(trailing_cirrus or []))
+        if shield >= CIRRUS_SHIELD_THRESHOLD:
+            max_score = min(max_score, CIRRUS_SHIELD_MAX_SCORE)
+    # Thick mid-level deck: the same argument one layer down, and the pendant
+    # that makes the swap safe. A solid altostratus sheet weighs only 0.7 per
+    # per cent, so it clears the general cap while shutting the ground down,
+    # and cloud_deck_arrived misses it whenever the deck thickens over an
+    # already-hazy morning instead of arriving into a clear one.
+    if (
+        cloud_cover_mid is not None
+        and cloud_cover_mid >= MID_LEVEL_DECK_THRESHOLD
+    ):
+        max_score = min(max_score, MID_LEVEL_DECK_MAX_SCORE)
     if precipitation > 0:
         max_score = min(max_score, 1)
     if wind_kt > 35:
@@ -539,6 +699,14 @@ def compute_thermal_score(
     cloud_cover_mid: float | None = None,
     cloud_cover_high: float | None = None,
     direct_radiation: float | None = None,
+    # The preceding hours' shortwave radiation, for the gate's heat memory,
+    # and the same hours' cloud cover, which says whether a fall in that
+    # radiation was the sun going down or a deck arriving
+    trailing_radiation: list[float] | None = None,
+    trailing_cloud_cover: list[float] | None = None,
+    # The same hours' high cloud, so a cirrus shield that has stood all
+    # morning is judged on the shield and not on a hole in it
+    trailing_cirrus: list[float] | None = None,
 ) -> dict:
     """Compute the full thermal score from weather parameters.
 
@@ -611,6 +779,13 @@ def compute_thermal_score(
         cape=cape,
         surface_lapse_rate=surface_lapse,
         shortwave_radiation=shortwave_radiation,
+        trailing_radiation=trailing_radiation,
+        trailing_cloud_cover=trailing_cloud_cover,
+        boundary_layer_height=boundary_layer_height,
+        cloud_cover_low=cloud_cover_low,
+        cloud_cover_mid=cloud_cover_mid,
+        cloud_cover_high=cloud_cover_high,
+        trailing_cirrus=trailing_cirrus,
     )
 
     # Clamp and round

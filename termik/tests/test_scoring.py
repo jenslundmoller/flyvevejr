@@ -12,6 +12,8 @@ from termik.scoring import (
     calculate_modifiers,
     calculate_wind_shear_modifier,
     calculate_bl_mixing_modifier,
+    effective_radiation,
+    effective_cloud_cover,
     apply_dealbreakers,
     compute_thermal_score,
     get_score_label,
@@ -115,6 +117,22 @@ def test_solar_thick_low_cloud_heavily_penalised():
         direct_radiation=80,
     )
     assert score < 2
+
+
+# --- Layer-weighted cloud cover ---
+#
+# Extracted from score_solar so the hard caps can weigh cirrus the same way
+# the sub-score always has. Same numbers, two callers.
+
+def test_effective_cloud_cover_weights_cirrus_lighter():
+    """Cirrus attenuates about half as much per per cent as stratus."""
+    assert effective_cloud_cover(90, 0, 0, 90) == 45.0
+    assert effective_cloud_cover(90, 90, 0, 0) == 90.0
+
+
+def test_effective_cloud_cover_falls_back_to_total():
+    """Older fetches have no layer breakdown; the total is all there is."""
+    assert effective_cloud_cover(75, None, None, None) == 75
 
 
 # --- Spread (15% weight) ---
@@ -422,6 +440,123 @@ def test_no_dealbreaker():
     assert score == 8.0
 
 
+# --- Effective radiation (boundary-layer heat memory) ---
+
+def test_effective_radiation_remembers_recent_peak():
+    # 19:00 in August: radiation has fallen to 220, but at 16:00 it was 640.
+    # The boundary layer is still mixed, the thermals are alive.
+    eff = effective_radiation(current=220.0, trailing=[640.0, 480.0, 330.0])
+    assert eff > 400
+
+def test_effective_radiation_no_credit_on_a_dead_day():
+    # Overcast all day: nothing to remember.
+    eff = effective_radiation(current=180.0, trailing=[260.0, 240.0, 210.0])
+    assert eff < 250
+
+def test_effective_radiation_never_below_current():
+    eff = effective_radiation(current=700.0, trailing=[100.0, 120.0, 140.0])
+    assert eff == 700.0
+
+def test_effective_radiation_no_memory_after_sunset():
+    # 2026-08-08 at 21:00: 30 W/m², with 398/274/139 over the preceding hours.
+    # Without the floor the memory would lift the cap from 1 to 5 (0.65 x 398
+    # = 259, which clears the 250 threshold) an hour after sunset.
+    eff = effective_radiation(current=30.0, trailing=[398.0, 274.0, 139.0])
+    assert eff == 30.0
+
+
+# --- Cloud-arrival guard on the heat memory ---
+
+def test_effective_radiation_blocked_by_an_arriving_deck():
+    """A deck arriving mid-afternoon has the same signature as sunset.
+
+    Radiation crushed from 720 to 150 W/m² while the sky went from nearly
+    clear to 85 % covered.  The flux was cut, not the sun angle, so there is
+    no stored heat left to credit and the hour must keep its own 150.
+    """
+    eff = effective_radiation(
+        current=150.0,
+        trailing=[720.0, 700.0, 640.0],
+        cloud_cover=85,
+        trailing_cloud_cover=[10, 15, 40],
+    )
+    assert eff == 150.0
+
+def test_effective_radiation_survives_a_clearing_evening():
+    """2026-08-08 at 19:00, the hour the memory was calibrated against.
+
+    Cover across the window was 61, 48, 32 and is now 31: the sky cleared
+    while the radiation fell, so the fall is the sun going down.  The guard
+    must stay out of the way, or Task 3 is undone.
+    """
+    eff = effective_radiation(
+        current=274.0,
+        trailing=[657.0, 523.0, 398.0],
+        cloud_cover=31,
+        trailing_cloud_cover=[61, 48, 32],
+    )
+    assert eff > 400
+
+def test_effective_radiation_ignores_a_rise_in_thin_cloud():
+    """Tønder, 2026-08-08 at 20:00: cover rose from 2 % to 34 %.
+
+    Radiation fell to under a third of the window's peak, but a third of the
+    sky covered cannot be what crushed it.  That hour is sunset with a few
+    clouds in it, and a guard keyed on the rise alone would wrongly kill the
+    memory on every such evening.
+    """
+    eff = effective_radiation(
+        current=168.0,
+        trailing=[569.0, 480.0, 300.0],
+        cloud_cover=34,
+        trailing_cloud_cover=[11, 2, 2],
+    )
+    assert eff > 300
+
+def test_effective_radiation_keeps_memory_under_a_deck_that_was_already_there():
+    """Cover of 90 % all window long is not an arriving deck.
+
+    Whatever cut this radiation, it was not a change in the sky, so this
+    guard has nothing to say about the hour and leaves the memory alone.
+    """
+    eff = effective_radiation(
+        current=150.0,
+        trailing=[700.0, 650.0, 600.0],
+        cloud_cover=90,
+        trailing_cloud_cover=[90, 88, 91],
+    )
+    assert eff > 400
+
+def test_effective_radiation_without_cloud_data_keeps_memory():
+    """Older fetches have no cloud series; the memory behaves as in Task 3."""
+    eff = effective_radiation(current=220.0, trailing=[640.0, 480.0, 330.0])
+    assert eff > 400
+
+@pytest.mark.parametrize("cloud_cover, trailing_cloud_cover, blocked", [
+    # Pins CLOUD_ARRIVAL_COVER (70) and CLOUD_ARRIVAL_RISE (25) from both
+    # sides.  Both conditions must hold: a covered sky that did not change,
+    # and a large change that leaves the sky mostly open, are each harmless.
+    (70, [45, 45, 45], True),    # both exactly at their threshold
+    (69, [44, 44, 44], False),   # rise of 25, but the sky is under COVER
+    (70, [46, 46, 46], False),   # covered enough, but the rise is only 24
+    (100, [0, 0, 0], True),      # clear to overcast
+    (70, [45, 20, 45], True),    # the clearest hour of the window is what counts
+    (70, [45, 90, 45], True),    # ... and a cloudy hour inside it cannot mask a deck
+    (85, [10, 40, 70], True),    # a deck that thickened all window long still counts,
+                                 # though it rose only 15 points in the last hour
+])
+def test_effective_radiation_cloud_arrival_thresholds(
+    cloud_cover, trailing_cloud_cover, blocked
+):
+    eff = effective_radiation(
+        current=150.0,
+        trailing=[700.0, 650.0, 600.0],
+        cloud_cover=cloud_cover,
+        trailing_cloud_cover=trailing_cloud_cover,
+    )
+    assert (eff == 150.0) is blocked
+
+
 def test_dealbreaker_radiation_night():
     """Radiation < 100 W/m² (night/dusk) should cap to 1."""
     score = apply_dealbreakers(7.0, lapse_rate=1.0, cloud_cover=30,
@@ -464,6 +599,459 @@ def test_dealbreaker_radiation_boundary_100():
                                 shortwave_radiation=100)
     assert score <= 3  # falls under the < 250 tier
     assert score > 1   # but not under the < 100 tier
+
+
+def test_dealbreaker_gate_uses_effective_radiation():
+    # A good evening: everything else allows 8+, instantaneous radiation is
+    # 220 but the peak an hour ago was 640. Must not be clamped to 5.
+    score = apply_dealbreakers(
+        8.2, lapse_rate=1.05, cloud_cover=35, precipitation=0,
+        wind_kt=8.0, wind_gusts_kt=16.0, temp=21.5,
+        shortwave_radiation=220.0,
+        trailing_radiation=[640.0, 480.0, 330.0],
+    )
+    assert score > 6.5
+
+def test_dealbreaker_gate_still_kills_a_genuinely_dark_hour():
+    score = apply_dealbreakers(
+        8.2, lapse_rate=1.05, cloud_cover=35, precipitation=0,
+        wind_kt=8.0, wind_gusts_kt=16.0, temp=21.5,
+        shortwave_radiation=60.0,
+        trailing_radiation=[90.0, 80.0, 70.0],
+    )
+    assert score <= 1
+
+@pytest.mark.parametrize("radiation, expected_score", [
+    (0, 1), (50, 1), (99.9, 1),
+    (100, 3), (150, 3), (249.9, 3),
+    (250, 5), (350, 5), (399.9, 5),
+    (400, 8.0), (500, 8.0), (900, 8.0),
+])
+def test_dealbreaker_gate_without_trailing_caps_on_instantaneous_radiation(
+    radiation, expected_score
+):
+    """Pins every cap tier for the no-trailing case, boundaries included.
+
+    The memory must not change what an hour scores when no trailing series is
+    supplied: an hour below several thresholds still gets the lowest cap.
+    """
+    score = apply_dealbreakers(8.0, lapse_rate=1.0, cloud_cover=30,
+                                precipitation=0, wind_kt=10, wind_gusts_kt=15, temp=15,
+                                shortwave_radiation=radiation)
+    assert score == expected_score
+
+
+# Ringsted (55.4517, 11.6425) on 2026-08-08, shortwave_radiation in W/m² per
+# local hour, from the Open-Meteo forecast endpoint: the best_match blend
+# production scores against.  Not the archive endpoint, which falls back to a
+# different model for days ERA5 does not cover yet and disagrees by up to
+# 253 W/m².  These are the numbers RADIATION_MEMORY_FACTOR was calibrated on.
+_RINGSTED_2026_08_08 = {
+    13: 736.0, 14: 726.0, 15: 708.0, 16: 657.0, 17: 523.0,
+    18: 398.0, 19: 274.0, 20: 139.0, 21: 30.0,
+}
+
+
+@pytest.mark.parametrize("hour, expected_cap", [
+    (18, 10.0),  # freed:   0.65 x 708 = 460, clears 400
+    (19, 10.0),  # freed:   0.65 x 657 = 427, the hour the factor is fitted to
+    (20, 5.0),   # clamped: 0.65 x 523 = 340, below 400 but above 250
+    (21, 1.0),   # dead:    30 W/m² is under the floor, no memory applies
+])
+def test_radiation_gate_on_the_calibration_day(hour, expected_cap):
+    """The published cap for the evening the memory was calibrated against.
+
+    What this test contributes is the upper bound on
+    RADIATION_MEMORY_FACTOR and both bounds on RADIATION_MEMORY_FLOOR.
+    20:00 must not reach 400 off a 523 W/m² peak, so the factor stays under
+    0.765; without that, widening it would silently free hours the plan
+    requires to stay clamped.  20:00 also pins the floor from above (<= 139,
+    or the hour drops to cap 3) and 21:00 pins it from below (> 30, or the
+    memory revives it to cap 5).
+
+    The factor's lower bound is not this test's.  At 0.609 the 19:00 case here
+    still passes, since 0.609 x 657 = 400.1.  The bound comes from the three
+    tests built on a 640 W/m² peak, which need 400/640 = 0.625:
+    test_effective_radiation_remembers_recent_peak,
+    test_dealbreaker_gate_uses_effective_radiation and
+    test_process_point_hour_radiation_gate_skips_missing_trailing_hours.
+    Re-tuning below 0.625 fails there, not here.
+
+    The interval those bounds leave open is equivalent on this day only.  Its
+    width is an artifact of one afternoon's radiation curve, not a physically
+    justified tolerance: on a day with a different peak shape 0.65 and 0.70
+    diverge.  A green suite at some other value is not evidence for it.
+
+    Scored with an incoming 10.0 and everything else neutral, so the returned
+    value is the gate's cap and nothing else.
+    """
+    trailing = [_RINGSTED_2026_08_08[h] for h in range(hour - 3, hour)]
+    cap = apply_dealbreakers(
+        10.0, lapse_rate=1.0, cloud_cover=30, precipitation=0,
+        wind_kt=10, wind_gusts_kt=15, temp=15,
+        shortwave_radiation=_RINGSTED_2026_08_08[hour],
+        trailing_radiation=trailing,
+    )
+    assert cap == expected_cap
+
+
+# --- Boundary layer depth gate ---
+#
+# Measured boundary layer height at Ringsted, in metres, from the same
+# Open-Meteo forecast endpoint as _RINGSTED_2026_08_08 above.  The pilot flew
+# excellent thermals until 19:00 on the Saturday and found nothing at all on
+# the Sunday.
+#
+#   kl      08-08   08-09
+#   11       1270    1210
+#   12       1515    1280
+#   13       1600    1295
+#   17       1685     980
+#   18       1250     780
+#   19       1000     355
+
+def _bl_capped(boundary_layer_height, incoming=8.0):
+    """The cap a given mixed-layer depth imposes, with nothing else binding."""
+    return apply_dealbreakers(
+        incoming, lapse_rate=1.0, cloud_cover=30, precipitation=0,
+        wind_kt=10, wind_gusts_kt=15, temp=22,
+        boundary_layer_height=boundary_layer_height,
+    )
+
+
+def test_shallow_boundary_layer_caps_score():
+    """2026-08-09 at 18:00, the worst prediction of the two days.
+
+    The sky had cleared (total cover 15, no cirrus) and the radiation was
+    429 W/m², above every gate threshold, so nothing else in the scoring
+    reaches this hour.  The mixed layer had collapsed to 780 m, against
+    1250 m at the same hour on the Saturday the pilot flew.
+    """
+    assert _bl_capped(780) <= 5.0
+
+
+def test_deep_boundary_layer_does_not_cap():
+    """2026-08-08 at 18:00 and 19:00, where the pilot was still flying."""
+    assert _bl_capped(1250) == 8.0
+    assert _bl_capped(1000) == 8.0
+
+
+def test_boundary_layer_does_not_separate_midday_reference_hours():
+    """The two days are 1270 against 1210 at 11:00, and stay close to 13:00.
+
+    Depth cannot tell a day of massive thermals from a day of nothing in
+    those hours, and this gate must not be tuned as if it could.  Both days
+    must land on the same side of the threshold, so that the midday half of
+    the calibration stays the cirrus shield's problem to solve.  Anyone who
+    makes this gate stricter to bring the Sunday down will fail here, and
+    correctly: the Saturday would come down with it.
+    """
+    saturday = (1270, 1515, 1600)
+    sunday = (1210, 1280, 1295)
+    for depth in saturday + sunday:
+        assert _bl_capped(depth) == 8.0
+
+
+def test_boundary_layer_missing_does_not_cap():
+    """Older fetches without the field must score exactly as before."""
+    assert _bl_capped(None) == 8.0
+
+
+@pytest.mark.parametrize("depth, expected", [
+    (0, 5.0),
+    (780, 5.0),      # 2026-08-09 18:00, must be capped
+    (899.9, 5.0),
+    (900, 8.0),      # at the threshold the gate is already off
+    (1000, 8.0),     # 2026-08-08 19:00, must not be capped
+    (1250, 8.0),
+])
+def test_boundary_layer_gate_boundaries(depth, expected):
+    """Pins the threshold from both sides.
+
+    The interval it may live in is narrow and measured: above 780 m, or the
+    Sunday evening this gate exists for is not caught, and at most 1000 m, or
+    the Saturday evening the pilot actually flew is dragged down with it.
+    """
+    assert _bl_capped(depth) == expected
+
+
+def test_shallow_boundary_layer_caps_the_full_score():
+    """Ringsted 2026-08-09 at 18:00, end to end on the measured hour.
+
+    Every value is the one the Open-Meteo forecast endpoint gave for that
+    hour.  Without this gate the hour scores in the "God termik" band on a
+    day the pilot found nothing at all, and it reaches that score honestly:
+    the sky really had cleared and the radiation really was 429 W/m².  The
+    mixed layer at 780 m is the only field that knows better.
+
+    Written against compute_thermal_score rather than apply_dealbreakers so
+    that dropping the depth at the call site cannot pass unnoticed.
+    """
+    result = compute_thermal_score(
+        temp_2m=25.4, dewpoint_2m=10.4, temp_850hpa=12.7,
+        cloud_cover=15, shortwave_radiation=429.0,
+        wind_speed_kt=8.6, wind_dir=155, wind_gusts_kt=15.7,
+        precipitation=0.0, precip_last_6h=0.0, cape=0.0,
+        surface_pressure=1008.2, pressure_trend=-2.1, temp_850hpa_trend=1.6,
+        coast_distance_km=33, coast_direction_deg=239, month=8,
+        wind_speed_80m_kt=10.5, wind_speed_180m_kt=12.5,
+        boundary_layer_height=780.0,
+        cloud_cover_low=0, cloud_cover_mid=1, cloud_cover_high=0,
+        direct_radiation=283.1,
+        trailing_radiation=[442.0, 503.0, 453.0],
+        trailing_cloud_cover=[67, 63, 36],
+    )
+    assert result["score"] <= 5.0
+
+
+# --- Cirrus shield cap ---
+#
+# Measured high cloud at Ringsted, 2026-08-09 from 10:00 to 14:00:
+# 99, 81, 59, 84, 100.  The pilot found nothing all day under it.  On the
+# Saturday the pilot flew, high cloud peaked at 57 at 07:00 and was 0 from
+# then until 23:00, so this cap must not touch that day at all.
+
+def _cirrus_capped(cloud_cover_high, trailing_cirrus=None, cloud_cover=74,
+                   incoming=7.5, shortwave_radiation=420.0):
+    """The cap a given cirrus sky imposes, with nothing else binding.
+
+    The default raw total is 2026-08-09's own 74, deliberately under the
+    general cloud cap of 87, so a passing test can only mean the shield fired.
+    """
+    return apply_dealbreakers(
+        incoming, lapse_rate=0.99, cloud_cover=cloud_cover, precipitation=0,
+        wind_kt=9.5, wind_gusts_kt=19.0, temp=24.6,
+        shortwave_radiation=shortwave_radiation,
+        cloud_cover_low=2, cloud_cover_mid=8, cloud_cover_high=cloud_cover_high,
+        trailing_cirrus=trailing_cirrus,
+        boundary_layer_height=1300,
+    )
+
+
+def test_thick_cirrus_shield_caps_score():
+    """2026-08-09: near-total cirrus, and everything else looked fine.
+
+    The raw total that day was 55 to 79, under the general cloud cap, and the
+    layer-weighted cover is 53.6, under it by more. Neither reading catches
+    the day, which is what this shield is for.
+    """
+    assert _cirrus_capped(92) <= 3
+
+
+def test_cirrus_shield_uses_the_trailing_maximum():
+    """2026-08-09 at 12:00: a hole in the shield, not the end of it.
+
+    Cirrus dipped to 59 at midday between 81 and 84.  An instantaneous test
+    at 85 catches only 10:00 and 14:00 and drops the middle of the block,
+    which fails acceptance criterion 2.  A shield standing since 06:00 has
+    already shut the ground down, whatever the noon value reads.
+    """
+    assert _cirrus_capped(59, trailing_cirrus=[99, 81]) <= 3
+
+
+def test_cirrus_shield_does_not_outlive_the_cirrus():
+    """A sky that has cleared is not still shielded.
+
+    2026-08-09 at 18:00 reads 0 % high cloud with 88, 13 and 7 behind it. The
+    trailing maximum alone keeps the shield standing for three hours after the
+    sheet has gone, which across 30 airfields x 11 days capped 50 sunny hours
+    whose cirrus was already under 25 %, 14 of them under a completely clear
+    sky. Persistence is the trailing maximum's question; presence is this one.
+    """
+    assert _cirrus_capped(0, trailing_cirrus=[88, 13, 7], cloud_cover=15) > 3
+
+
+@pytest.mark.parametrize("current_high, expected_cap", [
+    (0, 10.0),
+    (24, 10.0),     # the top of the bucket the season data says to release
+    (49.9, 10.0),
+    (50, 3),
+    (59, 3),        # 2026-08-09 12:00, the hole that must still be caught
+])
+def test_cirrus_shield_presence_floor(current_high, expected_cap):
+    """Pins the floor from both sides, between two measured bounds.
+
+    Above 59 and the midday hole on 2026-08-09 stops being caught, which
+    fails acceptance criterion 2. At or below 24 and the shield keeps firing
+    on hours whose sheet has visibly gone. 50 sits between them.
+    """
+    assert _cirrus_capped(
+        current_high, trailing_cirrus=[99, 95, 90], cloud_cover=74, incoming=10.0
+    ) == expected_cap
+
+
+def test_thin_cirrus_does_not_cap():
+    """55 % cirrus and otherwise clear: the research calls this negligible."""
+    assert _cirrus_capped(
+        55, cloud_cover=55, shortwave_radiation=600.0
+    ) > 6
+
+
+def test_cirrus_shield_does_not_touch_the_day_the_pilot_flew():
+    """2026-08-08 afternoon: cirrus 0, and it peaked at 57 at 07:00.
+
+    The anti-overfitting guard. Criterion 2 must not be bought by dragging
+    down the Saturday that criterion 1 exists to protect.
+    """
+    assert _cirrus_capped(0, trailing_cirrus=[0, 0, 57], cloud_cover=48) > 6
+
+
+# --- Mid-level deck cap ---
+#
+# The pendant the cap swap requires. Moving the general cap onto layer-weighted
+# cover drops the only thing that caught a thick altostratus deck: 88 % of mid
+# cloud weighs 61.6, well under the 87 cap.
+#
+# Task 3's arrival guard closes this only for a deck that arrives visibly. It
+# reads the raw total and needs a rise of CLOUD_ARRIVAL_RISE, so a deck that
+# thickens over an already-hazy morning slips past it, keeps the heat memory,
+# and takes the radiation gate off with it. Measured on the sky below: 8.4,
+# "God termik", on 150 W/m².
+#
+# Bounded by the Saturday the pilot flew, whose mid cloud peaked at 58 at
+# 15:00. The threshold must stay above that and at or below 88 to close the
+# hole, so 85 matches the cirrus shield and keeps a wide margin.
+
+def _mid_deck_score(cloud_cover, mid, was):
+    """A thickening mid-level deck, radiation crushed from 720 to 150 W/m²."""
+    return compute_thermal_score(
+        temp_2m=23, dewpoint_2m=13, temp_850hpa=8,
+        cloud_cover=cloud_cover, shortwave_radiation=150,
+        wind_speed_kt=10, wind_dir=270, wind_gusts_kt=15,
+        precipitation=0, precip_last_6h=0, cape=200,
+        surface_pressure=1015, pressure_trend=0, temp_850hpa_trend=0,
+        coast_distance_km=80, coast_direction_deg=270, month=8,
+        temp_180m=23 - 0.84 * 1.78,
+        wind_speed_80m_kt=13, wind_speed_180m_kt=14,
+        boundary_layer_height=1400,
+        cloud_cover_low=0, cloud_cover_mid=mid, cloud_cover_high=0,
+        direct_radiation=60,
+        trailing_radiation=[720.0, 700.0, 640.0],
+        trailing_cloud_cover=[was - 5, was, was + 2],
+        trailing_cirrus=[0, 0, 0],
+    )["score"]
+
+
+@pytest.mark.parametrize("cover, mid, was", [
+    (80, 88, 70),   # rise of 10 in the total, under the guard's 25
+    (75, 90, 65),   # the total disagreeing with its own layers by 15
+    (86, 99, 78),   # a deck that was almost already there, total just under
+])
+def test_mid_level_deck_capped_when_the_arrival_guard_cannot_see_it(cover, mid, was):
+    """Each of these scores above 8 without this cap.
+
+    Every raw total here is under the general cloud cap of 87, so that cap
+    cannot be what holds the hour down and a pass can only mean this one
+    fired. That combination is not contrived: the best_match blend reports a
+    total below its own mid-level layer routinely, and 2026-08-08 at 13:00 is
+    the same disagreement in the opposite direction.
+    """
+    assert _mid_deck_score(cover, mid, was) <= 3.0
+
+
+def test_mid_level_deck_leaves_the_day_the_pilot_flew_alone():
+    """2026-08-08 at 15:00 had 58 % mid cloud, the day's peak, in good thermals.
+
+    The anti-overfitting guard: this cap must not reach the Saturday that
+    acceptance criterion 1 exists to protect.
+    """
+    assert _mid_deck_score(57, 58, 50) > 3.0
+
+
+@pytest.mark.parametrize("mid, expected_cap", [
+    (84.9, 10.0),
+    (85, 2),
+    (100, 2),
+])
+def test_mid_level_deck_threshold(mid, expected_cap):
+    """Pins the threshold from both sides, above Saturday's 58 and at or below 88."""
+    assert apply_dealbreakers(
+        10.0, lapse_rate=1.0, cloud_cover=40, precipitation=0,
+        wind_kt=10, wind_gusts_kt=15, temp=22,
+        cloud_cover_low=0, cloud_cover_mid=mid, cloud_cover_high=0,
+        boundary_layer_height=1300,
+    ) == expected_cap
+
+
+def test_low_stratus_still_capped_hard():
+    """90 % low cloud weighs 90 and must still hit the general cloud cap.
+
+    The swap to layer-weighted cover must not soften stratus, only cirrus.
+    """
+    score = apply_dealbreakers(
+        7.5, lapse_rate=0.99, cloud_cover=90, precipitation=0,
+        wind_kt=8.0, wind_gusts_kt=15.0, temp=18.0,
+        shortwave_radiation=150.0,
+        cloud_cover_low=90, cloud_cover_mid=0, cloud_cover_high=0,
+        boundary_layer_height=1300,
+    )
+    assert score <= 2
+
+
+def test_dealbreaker_gate_drops_the_memory_when_a_deck_arrives():
+    """The gate must see the cloud series, not just the radiation series."""
+    score = apply_dealbreakers(
+        8.2, lapse_rate=1.05, cloud_cover=85, precipitation=0,
+        wind_kt=8.0, wind_gusts_kt=16.0, temp=23.0,
+        shortwave_radiation=150.0,
+        trailing_radiation=[720.0, 700.0, 640.0],
+        trailing_cloud_cover=[10, 15, 40],
+    )
+    assert score <= 3.0
+
+
+def _frontal_deck_score(cloud_cover, cloud_cover_low, cloud_cover_mid, surface_lapse):
+    """An otherwise good August afternoon that a cloud deck has just closed.
+
+    23 °C, lapse rate 1.0, radiation crushed from 720 to 150 W/m² with the
+    direct component down to 60.  The surface lapse rate is stated as an
+    argument because the first measurement of this case used a value of 1.97,
+    which is superadiabatic and physically incompatible with 150 W/m².
+    """
+    return compute_thermal_score(
+        temp_2m=23, dewpoint_2m=13, temp_850hpa=8,
+        cloud_cover=cloud_cover, shortwave_radiation=150,
+        wind_speed_kt=10, wind_dir=270, wind_gusts_kt=15,
+        precipitation=0, precip_last_6h=0, cape=200,
+        surface_pressure=1015, pressure_trend=0, temp_850hpa_trend=0,
+        coast_distance_km=80, coast_direction_deg=270, month=8,
+        temp_180m=23 - surface_lapse * 1.78,
+        wind_speed_80m_kt=13, wind_speed_180m_kt=14,
+        boundary_layer_height=1400,
+        cloud_cover_low=cloud_cover_low, cloud_cover_mid=cloud_cover_mid,
+        cloud_cover_high=0, direct_radiation=60,
+        trailing_radiation=[720.0, 700.0, 640.0],
+        trailing_cloud_cover=[10, 15, 40],
+    )["score"]
+
+
+def test_frontal_deck_is_not_rescued_by_the_heat_memory():
+    """The failure this guard exists for, measured end to end.
+
+    A mid-level deck at 85 % cover scored 8.4, "God termik", purely on the
+    memory's credit for a radiation peak the deck itself had ended.  Nothing
+    else in the scoring catches it: 85 % is under the raw cloud cap of 87,
+    and the layer-weighted cover is 62.5, under it by even more.
+    """
+    assert _frontal_deck_score(85, 10, 75, surface_lapse=0.84) <= 3.0
+
+
+def test_frontal_deck_is_not_rescued_at_a_lower_surface_lapse_rate():
+    """The same deck at the lowest surface lapse rate the case survives at."""
+    assert _frontal_deck_score(85, 10, 75, surface_lapse=0.56) <= 3.0
+
+
+def test_frontal_deck_at_raw_cover_90_stays_capped():
+    """The interaction test for the hole Task 5 opens.
+
+    Today a raw cover of 90 is caught by the cloud_cover >= 87 cap, so this
+    hour would score 2.0 with or without the memory guard.  When Task 5 moves
+    the caps onto layer-weighted cover, that cap stops firing here: 90 % of
+    mid-level cloud weighs 63.  What has to hold this hour down afterwards is
+    the guard, and test_effective_radiation_cloud_arrival_thresholds pins
+    that it fires on this sky independently of the raw cap.
+    """
+    assert _frontal_deck_score(90, 0, 90, surface_lapse=0.84) <= 3.0
 
 
 # --- Full scenario tests ---

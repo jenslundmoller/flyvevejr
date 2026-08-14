@@ -143,12 +143,21 @@ Et 0.2° × 0.2° grid over Danmark (54.5°N-57.8°N, 8.0°E-15.2°E). Punkter i
 |-----------|-----------|------------|
 | Lapse rate <0.50 | 1 | Stærk inversion — ingen termik mulig |
 | Lapse rate <0.65 | 3 | Stabil atmosfære — meget begrænset termik |
-| Skydække ≥87% | 2 | Sol blokeret — ingen opvarmning |
+| Skydække ≥87% | 2 | Sol blokeret — ingen opvarmning. Læser den **rå** total, ikke lagvægtet, se nedenfor |
+| Effektiv stråling <400 / <250 / <100 W/m² | 5 / 3 / 1 | For lidt opvarmning til konvektion |
+| Grænselagshøjde <900 m | 5 | For tyndt arbejdslag til at blive oppe i |
+| Høj sky ≥85% nu og i de sidste 3 timer | 3 | Optisk tykt cirrus-skjold lukker jorden ned |
+| Mellemhøj sky ≥85% | 2 | Solidt altostratus-dække |
 | Aktiv nedbør | 1 | Jorden afkøles |
 | Vind >35 kt | 2 | For turbulent til brugbar termik |
 | Temperatur <5°C | 3 | For koldt til konvektion |
 
 Lapse rate-dealbreakeren er den vigtigste: **uden atmosfærisk instabilitet kan der ikke være termik**, uanset hvor godt de andre faktorer ser ud. Dette fanger f.eks. "Sahara-dage" med 30°C og blå himmel men stabil luft i højden.
+
+De fem nederste caps kom til i august 2026, kalibreret mod to pilot-verificerede dage. Se [Referat 2026-08-12](Referat/2026-08-12-straale-gate.md). To ting er værd at kende:
+
+- **Effektiv stråling** er ikke øjebliksstrålingen. Grænselaget holder på varmen en time eller to efter solen er begyndt at falde, så gaten krediterer en andel af de sidste tre timers højeste værdi. Den kredit bortfalder når skydækket er steget væsentligt hen over vinduet, for så blev opvarmningen skåret over af en front og ikke af solnedgang.
+- **Caps læser den rå `cloud_cover`-total, ikke lagvægtet dække**, modsat `score_solar`. Det er afprøvet og rullet tilbage: i `best_match` modsiger totalen og lagene hinanden i begge retninger, og lagvægtning læser en god dags egne termikcumulus som overtrukket. Cirrus når caps gennem de to lagspecifikke skjolde i stedet.
 
 ### Solindstråling — håndtering af cirrus-skyer
 
@@ -372,15 +381,18 @@ Cloudflare-proxy er slået fra for at undgå konflikt med GitHub Pages' eget SSL
 
 ## Test
 
-174 automatiserede tests fordelt på 5 moduler:
+269 automatiserede tests fordelt på 6 moduler (268 beståede, 1 `xfail`):
 
 | Modul | Tests | Dækker |
 |-------|-------|--------|
 | test_locations.py | 8 | Datastruktur, koordinatvalidering, grid-dækning |
-| test_scoring.py | 111 | Score-funktioner, dealbreakers, modifikatorer, scenario-tests, parcel-teori for termik-tophøjde |
+| test_scoring.py | 180 | Score-funktioner, dealbreakers, modifikatorer, scenario-tests, parcel-teori for termik-tophøjde |
 | test_scenarios_multilevel.py | 24 | Multilevel-data scenarier (vindshear, BL-mixing) |
 | test_comments.py | 17 | Kommentargenerering for alle vejrsituationer |
-| test_fetch_weather.py | 14 | URL-bygning, response-parsing, trendberegninger, thermal_top-integration |
+| test_fetch_weather.py | 30 | URL-bygning, response-parsing, trendberegninger, thermal_top-integration |
+| test_reference_days.py | 10 | De to pilot-verificerede dage, med timedata bagt ind så de kører offline |
+
+`xfail`'en er acceptkriterium 1 kl. 19 på 2026-08-08, bevidst efterladt åbent og markeret `strict=True`, så den siger til hvis den nogensinde begynder at bestå. Se [Referat 2026-08-12](Referat/2026-08-12-straale-gate.md).
 
 Kør alle tests:
 ```bash

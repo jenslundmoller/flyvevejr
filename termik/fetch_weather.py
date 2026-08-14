@@ -13,6 +13,8 @@ from termik.config import (
     TIMEZONE,
     HOURLY_PARAMS,
     DATA_DIR,
+    RADIATION_MEMORY_HOURS,
+    CIRRUS_SHIELD_MEMORY_HOURS,
 )
 from termik.scoring import compute_thermal_score, compute_thermal_top, THERMAL_TOP_LEVELS_HPA
 from termik.comments import generate_comment
@@ -106,6 +108,35 @@ def calculate_temp_850_trend(temps: list, hour_index: int) -> float:
     return current - previous
 
 
+def calculate_trailing_window(
+    values: list, hour_index: int, hours: int = RADIATION_MEMORY_HOURS
+) -> list:
+    """Return the `hours` hours before hour_index.
+
+    Feeds the radiation gate's heat memory (scoring.effective_radiation),
+    which reads two series over the default window: the radiation it
+    remembers, and the cloud cover that says whether a drop in that radiation
+    was the sun going down or a deck arriving. One window for both,
+    deliberately, since the second question is only ever asked about the first
+    one's window.
+
+    The cirrus shield asks a different question over its own window, so it
+    passes CIRRUS_SHIELD_MEMORY_HOURS rather than inheriting this default. The
+    two happen to be equal today, and must be free to stop being equal.
+
+    Hours the API left empty are dropped rather than counted as zero: a
+    missing reading is not evidence of darkness, nor of a clear sky. Dropping
+    rather than padding also means the two series can lose different hours
+    without the caller having to align them, which is why the guard compares
+    magnitudes within each series and never pairs them up by index.
+
+    The window is short near the start of the series, which is fine, an
+    early-morning hour has nothing to remember anyway.
+    """
+    start = max(0, hour_index - hours)
+    return [v for v in values[start:hour_index] if v is not None]
+
+
 def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: int) -> dict:
     """Process one hour of forecast data for one point.
 
@@ -174,6 +205,15 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
                 "skybase_m": None,
                 "skybase_ft": None,
                 "cloud_cover": cloud_cover,
+                # Same audit fields as the scored path below, kept in sync so
+                # consumers can read them without branching. Raw values here:
+                # scoring never ran, so no fallback was applied and None
+                # honestly means "the API gave us nothing".
+                "cloud_cover_low": cloud_cover_low,
+                "cloud_cover_mid": cloud_cover_mid,
+                "cloud_cover_high": cloud_cover_high,
+                "shortwave_radiation": shortwave,
+                "direct_radiation": direct_radiation,
                 "wind_speed_kt": wind_speed,
                 "wind_dir": wind_dir,
                 "wind_gusts_kt": wind_gusts,
@@ -210,6 +250,17 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     temp_850_trend = calculate_temp_850_trend(
         hourly_data["temperature_850hPa"], hour_index
     )
+    trailing_radiation = calculate_trailing_window(
+        hourly_data["shortwave_radiation"], hour_index
+    )
+    trailing_cloud_cover = calculate_trailing_window(
+        hourly_data["cloud_cover"], hour_index
+    )
+    trailing_cirrus = calculate_trailing_window(
+        hourly_data.get("cloud_cover_high") or [],
+        hour_index,
+        CIRRUS_SHIELD_MEMORY_HOURS,
+    )
 
     # Safe fallbacks for non-critical None values
     shortwave = shortwave if shortwave is not None else 0
@@ -245,6 +296,9 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         cloud_cover_mid=cloud_cover_mid,
         cloud_cover_high=cloud_cover_high,
         direct_radiation=direct_radiation,
+        trailing_radiation=trailing_radiation,
+        trailing_cloud_cover=trailing_cloud_cover,
+        trailing_cirrus=trailing_cirrus,
     )
 
     thermal_top = compute_thermal_top(
@@ -290,6 +344,14 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             "skybase_m": result["skybase_m"],
             "skybase_ft": result["skybase_ft"],
             "cloud_cover": cloud_cover,
+            # Audit trail: the radiation and cloud-layer values the scoring
+            # actually used, so a score can be re-derived after the fact.
+            # shortwave is the post-fallback value (None becomes 0 above).
+            "cloud_cover_low": cloud_cover_low,
+            "cloud_cover_mid": cloud_cover_mid,
+            "cloud_cover_high": cloud_cover_high,
+            "shortwave_radiation": shortwave,
+            "direct_radiation": direct_radiation,
             "wind_speed_kt": wind_speed,
             "wind_dir": wind_dir,
             "wind_gusts_kt": wind_gusts,
