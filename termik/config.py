@@ -216,7 +216,20 @@ SHALLOW_BOUNDARY_LAYER_MAX_SCORE = 5
 # must stay at or below 99 to catch the Sunday at all, and at or below 81 for
 # the trailing maximum to hold the whole 10:00 to 14:00 block. 85 sits inside
 # that window and leaves the Saturday untouched by a wide margin.
+#
+# The trailing maximum answers whether the shield has been STANDING. On its
+# own it also keeps the shield up for three hours after the sheet has gone:
+# measured across 30 airfields x 11 days, it capped 122 hours out of the
+# green, 50 of them with the cirrus already under 25 % and 14 under a
+# completely clear sky at 400+ W/m². CIRRUS_SHIELD_PRESENT_MIN asks the other
+# half, whether there is still a sheet overhead now, and both must hold.
+#
+# That floor is bounded on both sides by measurement too. It must stay at or
+# below 59, the midday hole on 2026-08-09 that the trailing maximum exists to
+# see through, and above 24, the top of the band of cleared sunny hours the
+# season data says to release. 50 sits between them.
 CIRRUS_SHIELD_THRESHOLD = 85
+CIRRUS_SHIELD_PRESENT_MIN = 50
 CIRRUS_SHIELD_MAX_SCORE = 3
 CIRRUS_SHIELD_MEMORY_HOURS = 3
 

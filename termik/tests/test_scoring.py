@@ -849,6 +849,37 @@ def test_cirrus_shield_uses_the_trailing_maximum():
     assert _cirrus_capped(59, trailing_cirrus=[99, 81]) <= 3
 
 
+def test_cirrus_shield_does_not_outlive_the_cirrus():
+    """A sky that has cleared is not still shielded.
+
+    2026-08-09 at 18:00 reads 0 % high cloud with 88, 13 and 7 behind it. The
+    trailing maximum alone keeps the shield standing for three hours after the
+    sheet has gone, which across 30 airfields x 11 days capped 50 sunny hours
+    whose cirrus was already under 25 %, 14 of them under a completely clear
+    sky. Persistence is the trailing maximum's question; presence is this one.
+    """
+    assert _cirrus_capped(0, trailing_cirrus=[88, 13, 7], cloud_cover=15) > 3
+
+
+@pytest.mark.parametrize("current_high, expected_cap", [
+    (0, 10.0),
+    (24, 10.0),     # the top of the bucket the season data says to release
+    (49.9, 10.0),
+    (50, 3),
+    (59, 3),        # 2026-08-09 12:00, the hole that must still be caught
+])
+def test_cirrus_shield_presence_floor(current_high, expected_cap):
+    """Pins the floor from both sides, between two measured bounds.
+
+    Above 59 and the midday hole on 2026-08-09 stops being caught, which
+    fails acceptance criterion 2. At or below 24 and the shield keeps firing
+    on hours whose sheet has visibly gone. 50 sits between them.
+    """
+    assert _cirrus_capped(
+        current_high, trailing_cirrus=[99, 95, 90], cloud_cover=74, incoming=10.0
+    ) == expected_cap
+
+
 def test_thin_cirrus_does_not_cap():
     """55 % cirrus and otherwise clear: the research calls this negligible."""
     assert _cirrus_capped(

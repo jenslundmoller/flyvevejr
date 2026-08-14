@@ -18,6 +18,7 @@ from termik.config import (
     SHALLOW_BOUNDARY_LAYER_M,
     SHALLOW_BOUNDARY_LAYER_MAX_SCORE,
     CIRRUS_SHIELD_THRESHOLD,
+    CIRRUS_SHIELD_PRESENT_MIN,
     CIRRUS_SHIELD_MAX_SCORE,
     MID_LEVEL_DECK_THRESHOLD,
     MID_LEVEL_DECK_MAX_SCORE,
@@ -627,7 +628,11 @@ def apply_dealbreakers(
     # Tested against the highest cirrus of the recent hours, because a shield
     # that has stood all morning has already done the damage whatever this
     # hour reads.
-    if cloud_cover_high is not None:
+    # Two questions, and the shield only fires when both answer yes. Has the
+    # sheet been standing (the trailing maximum, which sees through a hole at
+    # noon), and is it still overhead (the current reading, without which the
+    # shield outlives the cirrus by the length of its own window).
+    if cloud_cover_high is not None and cloud_cover_high >= CIRRUS_SHIELD_PRESENT_MIN:
         shield = max([cloud_cover_high] + list(trailing_cirrus or []))
         if shield >= CIRRUS_SHIELD_THRESHOLD:
             max_score = min(max_score, CIRRUS_SHIELD_MAX_SCORE)
