@@ -71,3 +71,56 @@ Hvad der kan afgøre sagen senere:
 Rådata: scanningen og facit ligger i scratchpad-pipelinen fra denne session;
 metoden er beskrevet ovenfor og kan genkøres med
 `termik.tools.compare_scores` plus startlist-parseren.
+
+## Kryds-plads-udvidelsen (samme dag): afgørelsen
+
+Udvidet til 10 pladser (Kalundborg, Kongsted, Sæby, Gørløse, Frederikssund,
+Aars, True/Aarhus, Lolland, Gesten, Slaglille; Hammer udeladt som
+skrænt-plads), somrene 2024-2026 (2023 mangler 850 hPa-data), 4180
+plads-dage scannet. 79 unionsweekenddage med v2 >= 6.5 gav 288 plads-dage
+med startlist-sektion, heraf 128 aktive med facit (rådata:
+`2026-08-25-paalandsvind-pooled.json`).
+
+### Rest-straffen for diff <= 2 er definitivt død
+
+| Gruppe | N | Bar (>=60 min) | Median længste |
+|---|---|---|---|
+| Påland, diff <= 2 | 8 | **8/8** | 174 min |
+| Påland, diff > 2 | 16 | 9/16 | 106 min |
+| Fraland/svag, diff <= 2 | 13 | 8/13 | 135 min |
+| Fraland/svag, diff > 2 | 71 | 56/71 | 128 min |
+
+Slaglille 22/8 var en outlier: præcis det hjørne, hypotesen ville straffe,
+leverede 8 af 8 gange på tværs af pladser.
+
+### Diskriminatoren: havluftens instabilitet (havtemp minus 850-temp)
+
+| Pålandsdage | Bar |
+|---|---|
+| Instab >= 7 | **15/17 (88 %)** |
+| Instab < 7 | **2/7 (29 %)** |
+
+I fralandsgruppen er instabiliteten ligegyldig (76 mod 77 %), så effekten
+er specifikt marin: pålandsvind bærer termik når havluften er konvektiv
+(kold luftmasse over varmt hav, typisk sensommer, hvor land/hav-diff
+samtidig er lille: derfor "hullet" aldrig var et hul), og dræber når
+havluften er stabil (typisk forår, også ved moderat diff hvor v2's
+diff-kurve kun gav halv straf).
+
+### Implementeret: punkt 5b
+
+`calculate_seabreeze_penalty_v2` tager nu `temp_850hpa`: ved pålandsvind
+>= 8 kt og instab < `SEABREEZE_STABLE_MARINE_INSTAB` (7.0) løftes
+drivkraften til maksimum uanset land/hav-diff. Ændringen rører præcis de
+målte fejlrækker og ingen af de målte bar-rækker:
+
+- True/Aarhus 12/5-2024 (facit 20 min): v2 6.8 -> 6.2.
+- Slaglille 18/7-2026 (facit 10 min): v2 8.8 -> 8.6 (resterende overcall
+  skyldes andet end søbrise).
+- Sæson-valideringens 88 rækker: 0 flyttede sig (61/88 bånd, afvigelse
+  51.6, uændret).
+- Kalundborg 16/8 og 2/8, Slaglille 24/8-25 m.fl. (konvektive pålandsdage):
+  uændrede.
+
+Diff <= 2-hjørnet forbliver bevidst straffrit: alle målte dage der var
+konvektive og bar. 347 tests grønne.

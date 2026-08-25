@@ -322,6 +322,17 @@ THERMAL_TOP_CAP_MIN_SW = 400
 MEMORY_FACTOR_COLD_BONUS = 0.10
 MEMORY_FACTOR_MAX = 0.75
 
+# Punkt 5b: stabil havluft i pålandsvind. Kryds-plads-studiet 2026-08-25
+# (24 påland-facitdage, 10 pladser, 3 somre) viste at det afgørende for om
+# pålandsvind dræber termikken ikke er land/hav-forskellen men om selve
+# havluften er konvektiv: instabilitet = havtemp minus 850 hPa-temp.
+# Instab >= 7 bar 15/17 dage, instab < 7 bar 2/7; i fralandsvind er
+# instabiliteten ligegyldig (76 mod 77 %). Ved pålandsvind >= 8 kt og
+# instab under tærsklen løftes søbrise-drivkraften derfor til maksimum
+# uanset land/hav-diff. Tærsklen 7 skiller de målte fejl (instab -0.5 til
+# 6.6) fra de målte successer (8.5 og op).
+SEABREEZE_STABLE_MARINE_INSTAB = 7.0
+
 # Sea surface temperature estimate by month (1-12)
 # Based on average Danish waters temperature
 SEA_TEMP_BY_MONTH = {

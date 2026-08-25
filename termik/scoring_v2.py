@@ -25,6 +25,7 @@ from termik.config import (
     MID_LEVEL_DECK_THRESHOLD,
     MID_LEVEL_DECK_MAX_SCORE,
     SEA_TEMP_BY_MONTH,
+    SEABREEZE_STABLE_MARINE_INSTAB,
     CU_ALLOWANCE,
     CIRRUS_BANK_LIGHT,
     CIRRUS_BANK_HEAVY,
@@ -139,6 +140,7 @@ def calculate_seabreeze_penalty_v2(
     wind_speed_kt: float,
     temp_2m: float,
     month: int,
+    temp_850hpa: float | None = None,
 ) -> float:
     """Punkt 5: søbrisens styrke følger land/hav-forskellen og vinden.
 
@@ -148,11 +150,22 @@ def calculate_seabreeze_penalty_v2(
     fralandsvind holder den ude. v1 gav pålandsvind fast risiko 3 året rundt;
     her skaleres drivkraften med den faktiske forskel, så en kølig
     sensommerdag med lunt hav slipper billigere.
+
+    Punkt 5b: pålandsvind >= 8 kt med STABIL havluft (havtemp minus 850-temp
+    under SEABREEZE_STABLE_MARINE_INSTAB) løfter drivkraften til maksimum
+    uanset land/hav-diff: den tilførte marine luft skal så genopvarmes og
+    destabiliseres over land. Er havluften derimod konvektiv (kold luftmasse
+    over varmt hav), bærer pålandsvinden termik med ind: kryds-plads-studiet
+    målte 8/8 bar-dage i påland med lille diff, alle med instab >= 12.
+    Diff <= 2 forbliver straffri: alle målte dage i det hjørne var
+    konvektive, og et ustraffet ukendt hjørne er bedre end et udokumenteret
+    straffet.
     """
     if coast_distance_km >= 80:
         return 0
 
-    land_sea_diff = temp_2m - SEA_TEMP_BY_MONTH[month]
+    sea_temp = SEA_TEMP_BY_MONTH[month]
+    land_sea_diff = temp_2m - sea_temp
     if land_sea_diff <= 2:
         return 0
 
@@ -170,6 +183,14 @@ def calculate_seabreeze_penalty_v2(
         drive = 1.0
     else:
         drive = 0.5
+
+    if (
+        is_onshore
+        and wind_speed_kt >= 8
+        and temp_850hpa is not None
+        and sea_temp - temp_850hpa < SEABREEZE_STABLE_MARINE_INSTAB
+    ):
+        drive = 2.0
 
     if is_onshore:
         risk = min(3.0, drive + 1.0)
@@ -423,6 +444,7 @@ def compute_thermal_score_v2(
     seabreeze_penalty = calculate_seabreeze_penalty_v2(
         coast_distance_km, coast_direction_deg,
         wind_dir, wind_speed_kt, temp_2m, month,
+        temp_850hpa=temp_850hpa,
     )
     total -= seabreeze_penalty
 

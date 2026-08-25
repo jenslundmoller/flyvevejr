@@ -130,6 +130,37 @@ def test_seabreeze_v2_strong_offshore_wind_blocks():
     assert calculate_seabreeze_penalty_v2(30, 270, 90, 18, 20, 5) == 0
 
 
+# --- Punkt 5b: stabil havluft i pålandsvind (kryds-plads-studiet 2026-08-25) ---
+
+def test_seabreeze_v2_stable_marine_air_escalates():
+    # Maj (hav 10), land 15 (diff 5, drive 1), påland 10 kt, 850-temp 6:
+    # instab 4 < 7: stabil havluft, drivkraft løftes til maksimum (risk 3)
+    penalty = calculate_seabreeze_penalty_v2(30, 270, 270, 10, 15, 5, temp_850hpa=6.0)
+    assert penalty == pytest.approx(1.9)
+
+
+def test_seabreeze_v2_convective_marine_air_keeps_scaled_drive():
+    # Samme dag men 850-temp -2: instab 12: konvektiv havluft, uændret risk 2
+    penalty = calculate_seabreeze_penalty_v2(30, 270, 270, 10, 15, 5, temp_850hpa=-2.0)
+    assert penalty == pytest.approx(1.2)
+
+
+def test_seabreeze_v2_weak_onshore_wind_no_escalation():
+    # Under 8 kt bærer vinden ikke havluften ind: evidensen dækker kun >= 8 kt
+    penalty = calculate_seabreeze_penalty_v2(30, 270, 270, 6, 15, 5, temp_850hpa=6.0)
+    assert penalty == pytest.approx(1.2)
+
+
+def test_seabreeze_v2_missing_850_temp_behaves_as_before():
+    penalty = calculate_seabreeze_penalty_v2(30, 270, 270, 10, 15, 5)
+    assert penalty == pytest.approx(1.2)
+
+
+def test_seabreeze_v2_small_diff_still_free_despite_stable_air():
+    # Diff <= 2-hjørnet forbliver straffrit: alle målte dage der var BAR
+    assert calculate_seabreeze_penalty_v2(30, 270, 270, 10, 11, 5, temp_850hpa=6.0) == 0
+
+
 # --- Task 6 / punkt 6: luftmasse-skaleret varmehukommelse ---
 
 def test_memory_factor_v2_neutral_matches_v1():
