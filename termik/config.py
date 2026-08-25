@@ -68,6 +68,25 @@ WEIGHTS = {
     "precipitation": 0.07,
 }
 
+# Hvilken scoring produktionen kører: "v1" (scoring.py, den gamle) eller
+# "v2" (scoring_v2.py, DSvU-hæftets justeringer, se
+# docs/plans/2026-08-25-scoring-v2-dsvu-haefte.md). Rollback = sæt "v1".
+SCORING_VERSION = "v2"
+
+# v2-vægte (punkt 7): temperatur ned, sol op. Kold luftmasse behøver ikke
+# høje temperaturer for at danne termik (hæftet s. 14); instabiliteten bor
+# allerede i lapse rate-scoren, og hæftet gør solindstrålingen til den
+# afgørende drivkraft.
+WEIGHTS_V2 = {
+    "lapse_rate": 0.30,
+    "solar": 0.24,
+    "spread": 0.15,
+    "wind": 0.10,
+    "gusts": 0.10,
+    "temperature": 0.04,
+    "precipitation": 0.07,
+}
+
 # Score labels (min_score, max_score, label)
 SCORE_LABELS = [
     (9, 10, "Fremragende termik"),
@@ -257,6 +276,34 @@ CIRRUS_SHIELD_MEMORY_HOURS = 3
 # than the shield's 3.
 MID_LEVEL_DECK_THRESHOLD = 85
 MID_LEVEL_DECK_MAX_SCORE = 2
+
+# --- v2-konstanter (DSvU-hæftet, se docs/plans/2026-08-25-scoring-v2-dsvu-haefte.md) ---
+
+# Punkt 2: 1-4/8 lav cumulus er hæftets optimale skybillede (Skema 1 s. 13,
+# konklusionen s. 21). De første 40 procentpoint lav sky koster derfor intet i
+# solscoren; den reelle dæmpning fanges af direct_radiation-leddet.
+CU_ALLOWANCE = 40
+
+# Punkt 3: "Allerede når det kun er banker af cirrusskyer, begynder termikken
+# at svækkes med op til 1 m/s" (s. 20). Gradueret fradrag længe før
+# CIRRUS_SHIELD_THRESHOLD-cappet tager over.
+CIRRUS_BANK_LIGHT = 40   # >= 40 % høj sky: -0.5 point
+CIRRUS_BANK_HEAVY = 60   # >= 60 % høj sky: -1.0 point
+
+# Punkt 4: termikstyrken følger basehøjden (Skema 1; svæveflyveudsigtens bånd
+# s. 41: svag < 1 m/s ved base op til 600 m, kraftig > 2 m/s over 1200 m).
+THERMAL_TOP_WEAK_AGL_M = 600     # under: cap på "Svag termik"
+THERMAL_TOP_WEAK_MAX_SCORE = 4
+THERMAL_TOP_STRONG_AGL_M = 1200  # over: +0.5 bonus
+THERMAL_TOP_STRONG_BONUS = 0.5
+
+# Punkt 6: koldluftsadvektion holder termikken længere, varm luft dør før
+# solnedgang (s. 14). Varmehukommelsens faktor flyttes ±0.10 efter
+# 850 hPa-trenden, inden for [0.55, 0.75].
+MEMORY_FACTOR_COLD_BONUS = 0.10
+MEMORY_FACTOR_WARM_MALUS = 0.10
+MEMORY_FACTOR_MAX = 0.75
+MEMORY_FACTOR_MIN = 0.55
 
 # Sea surface temperature estimate by month (1-12)
 # Based on average Danish waters temperature
