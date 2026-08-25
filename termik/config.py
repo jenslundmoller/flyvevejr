@@ -68,6 +68,25 @@ WEIGHTS = {
     "precipitation": 0.07,
 }
 
+# Hvilken scoring produktionen kører: "v1" (scoring.py, den gamle) eller
+# "v2" (scoring_v2.py, DSvU-hæftets justeringer, se
+# docs/plans/2026-08-25-scoring-v2-dsvu-haefte.md). Rollback = sæt "v1".
+SCORING_VERSION = "v2"
+
+# v2-vægte (punkt 7): temperatur ned, sol op. Kold luftmasse behøver ikke
+# høje temperaturer for at danne termik (hæftet s. 14); instabiliteten bor
+# allerede i lapse rate-scoren, og hæftet gør solindstrålingen til den
+# afgørende drivkraft.
+WEIGHTS_V2 = {
+    "lapse_rate": 0.30,
+    "solar": 0.24,
+    "spread": 0.15,
+    "wind": 0.10,
+    "gusts": 0.10,
+    "temperature": 0.04,
+    "precipitation": 0.07,
+}
+
 # Score labels (min_score, max_score, label)
 SCORE_LABELS = [
     (9, 10, "Fremragende termik"),
@@ -257,6 +276,62 @@ CIRRUS_SHIELD_MEMORY_HOURS = 3
 # than the shield's 3.
 MID_LEVEL_DECK_THRESHOLD = 85
 MID_LEVEL_DECK_MAX_SCORE = 2
+
+# --- v2-konstanter (DSvU-hæftet, se docs/plans/2026-08-25-scoring-v2-dsvu-haefte.md) ---
+
+# Punkt 2: 1-4/8 lav cumulus er hæftets optimale skybillede (Skema 1 s. 13,
+# konklusionen s. 21). De første 40 procentpoint lav sky koster derfor intet i
+# solscoren; den reelle dæmpning fanges af direct_radiation-leddet.
+CU_ALLOWANCE = 40
+
+# Punkt 3: "Allerede når det kun er banker af cirrusskyer, begynder termikken
+# at svækkes med OP TIL 1 m/s" (s. 20). Gradueret fradrag længe før
+# CIRRUS_SHIELD_THRESHOLD-cappet tager over. Fuldt fradrag kræver et næsten
+# tæt lag: ved 67 % høj sky fløj en pilot 108 min fra Sæby (2026-08-08
+# kl. 11), mens 83 % på 2026-05-27 kl. 15 reelt svækkede dagen. 70 skiller
+# de to målte tilfælde.
+CIRRUS_BANK_LIGHT = 40   # >= 40 % høj sky: -0.5 point
+CIRRUS_BANK_HEAVY = 70   # >= 70 % høj sky: -1.0 point
+
+# Punkt 4: termikstyrken følger basehøjden (Skema 1; svæveflyveudsigtens bånd
+# s. 41: svag < 1 m/s ved base op til 600 m, kraftig > 2 m/s over 1200 m).
+# Båndene testes mod den UKORRIGEREDE base, min(LCL, TI-nul) AGL, ikke mod
+# den Hcrit-korrigerede thermal_top: Skema 1's rækker er basehøjder, og
+# margin-fradraget (200-500 m) fik cappet til at ramme dage med reel base op
+# til ~850 m. Målt på Sæby 2026-07-26: LCL 664 m, korrigeret top 408 m, og
+# to flyvninger på 169/134 min i præcis de timer cappet dømte "svag".
+# Cappet gælder kun mens solen reelt driver konvektionen (SW >= 400 W/m²,
+# samme tærskel som strålings-gatens øverste tier): om aftenen kollapser
+# parcel-toppen pr. definition, men varmehukommelsen holder termikken i live,
+# målt på 2026-08-08 kl. 18-19 hvor piloten fløj. Et cap uden sol-gate
+# scorede de timer 4 og brød referencedagens kalibrering.
+THERMAL_TOP_WEAK_AGL_M = 600     # under: cap på "Svag termik"
+THERMAL_TOP_WEAK_MAX_SCORE = 4
+THERMAL_TOP_STRONG_AGL_M = 1200  # over: +0.5 bonus
+THERMAL_TOP_STRONG_BONUS = 0.5
+THERMAL_TOP_CAP_MIN_SW = 400
+
+# Punkt 6: koldluftsadvektion holder termikken længere (s. 14), så
+# varmehukommelsens faktor løftes +0.10 når 850 hPa er faldet mindst 1 grad
+# på 3 timer, klampet til 0.75. Hæftet siger også at termikken dør tidligt i
+# VARM luft, men en spejlvendt malus er droppet med vilje: på referencedagen
+# 2026-08-08 var trenden kl. 18 præcis +1.0 mens piloten fløj i god termik,
+# og en faktor på 0.55 giver 0.55 x 657 = 361 < 400, som capper netop de
+# timer hukommelsen er kalibreret til at redde. Varm luftmasse må altså ikke
+# røre den målte 0.65.
+MEMORY_FACTOR_COLD_BONUS = 0.10
+MEMORY_FACTOR_MAX = 0.75
+
+# Punkt 5b: stabil havluft i pålandsvind. Kryds-plads-studiet 2026-08-25
+# (24 påland-facitdage, 10 pladser, 3 somre) viste at det afgørende for om
+# pålandsvind dræber termikken ikke er land/hav-forskellen men om selve
+# havluften er konvektiv: instabilitet = havtemp minus 850 hPa-temp.
+# Instab >= 7 bar 15/17 dage, instab < 7 bar 2/7; i fralandsvind er
+# instabiliteten ligegyldig (76 mod 77 %). Ved pålandsvind >= 8 kt og
+# instab under tærsklen løftes søbrise-drivkraften derfor til maksimum
+# uanset land/hav-diff. Tærsklen 7 skiller de målte fejl (instab -0.5 til
+# 6.6) fra de målte successer (8.5 og op).
+SEABREEZE_STABLE_MARINE_INSTAB = 7.0
 
 # Sea surface temperature estimate by month (1-12)
 # Based on average Danish waters temperature

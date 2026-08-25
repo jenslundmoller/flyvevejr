@@ -404,16 +404,15 @@ def test_saturday_1800_stays_flyable():
     assert _score(DAY_2026_08_08, 18) > 6.5
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "Acceptance criterion 1 is not met at 19:00 and is deliberately left "
-    "open. No cap binds this hour: 5.9 is the weighted sum itself. "
-    "score_solar reads 88.6 % layer-weighted cloud, which is the good day's "
-    "own thermal cumulus, and 148.8 W/m² of DIRECT radiation, which no "
-    "radiation memory reaches. Closing it means changing how score_solar "
-    "treats cumulus, which moves every hour of every day and needs its own "
-    "calibration. strict=True so that this speaks up if it ever passes."
-))
 def test_saturday_1900_reaches_the_target():
+    """Closed by scoring v2's CU_ALLOWANCE (DSvU-hæftets punkt 2).
+
+    Under v1 var dette en strict xfail: 5.9 var den vægtede sum selv, fordi
+    score_solar læste dagens egen termik-cumulus som 88.6 % vægtet skydække.
+    v2 lader de første 40 procentpoint lav sky være gratis (Skema 1), og
+    timen når nu kriteriet. Falder SCORING_VERSION tilbage til v1, fejler
+    denne test, hvilket er korrekt: hullet er der stadig i v1.
+    """
     assert _score(DAY_2026_08_08, 19) > 6.5
 
 
