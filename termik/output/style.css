@@ -774,7 +774,7 @@ body.om-page {
 }
 
 .ww-wrap:hover .ww-details {
-    max-height: 150px;
+    max-height: 220px;
     opacity: 1;
     padding: 10px 16px;
 }
