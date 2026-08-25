@@ -341,13 +341,17 @@ function buildThermalTopCanvas() {
     const W = Math.round((lonMax - lonMin) / GRID_STEP_DEG) + 1;
     const H = Math.round((latMax - latMin) / GRID_STEP_DEG) + 1;
 
+    // Kun celler med en reel værdi: null-celler (ældre data) må ikke ende som
+    // grå pixels i kildecanvasset, for med smoothing slået til ville de smøre
+    // gråt ind over naboerne. Nærmeste-nabo-udfyldningen nedenfor giver i
+    // stedet null-cellerne den nærmeste rigtige værdi, præcis som score-laget
+    // håndterer havceller.
     const points = [];
     for (const p of forecastData.points) {
         if (p.type !== 'grid') continue;
         const hd = getPointAtTime(p, currentDay, currentHour);
-        if (!hd) continue;
-        const m = hd.thermal_top_m; // may be null on older data
-        points.push({ lat: p.lat, lon: p.lon, m: m });
+        if (!hd || hd.thermal_top_m == null) continue;
+        points.push({ lat: p.lat, lon: p.lon, m: hd.thermal_top_m });
     }
     if (!points.length) return null;
 
@@ -397,11 +401,14 @@ function updateHeatmap() {
         if (countryMask) scoreLayer.setMask(countryMask);
     }
     if (activeLayer === 'thermal-top') {
+        // Samme glatte rendering som score-laget: smoothing=true. De diskrete
+        // felter fra den oprindelige plan er droppet; højdelabels ovenpå
+        // beholder aflæseligheden af de konkrete tal.
         const built = buildThermalTopCanvas();
         if (built) {
-            scoreLayer.setScoreCanvas(built.canvas, false, built.labels);
+            scoreLayer.setScoreCanvas(built.canvas, true, built.labels);
         } else {
-            scoreLayer.setScoreCanvas(null, false, null);
+            scoreLayer.setScoreCanvas(null, true, null);
         }
         updateLegend('thermal-top');
     } else {
