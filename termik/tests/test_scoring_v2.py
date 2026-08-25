@@ -93,7 +93,11 @@ def test_score_solar_v2_without_layers_matches_v1_behaviour():
 @pytest.mark.parametrize("high,expected", [
     (None, 0.0), (0, 0.0), (30, 0.0), (39, 0.0),
     (40, -0.5), (55, -0.5),
-    (60, -1.0), (70, -1.0), (95, -1.0),
+    # Hæftet: "svækkes med OP TIL 1 m/s": fuldt fradrag kræver et næsten tæt
+    # lag. Kalibreret mod Sæby 2026-08-08 kl. 11 (67 % høj sky, pilot fløj
+    # alligevel 108 min) og 2026-05-27 kl. 15 (83 %, reelt svækket).
+    (60, -0.5), (67, -0.5),
+    (70, -1.0), (83, -1.0), (95, -1.0),
 ])
 def test_cirrus_penalty_v2(high, expected):
     assert cirrus_penalty_v2(high) == expected
@@ -162,15 +166,21 @@ def test_effective_radiation_v2_deck_arrival_still_blocks():
 
 # --- Task 7 / punkt 4: termiktop-kobling ---
 
-@pytest.mark.parametrize("top,limited_by,sw,bonus,cap", [
-    (400, "ti_zero", 600, 0.0, 4),      # < 600 m AGL i fuld sol: svag termik
+# Båndene testes mod den UKORRIGEREDE base (min(LCL, TI-nul) AGL), ikke mod
+# den Hcrit-korrigerede top. Skema 1's rækker er basehøjder; margin-fradraget
+# fik cappet til at ramme dage med reel base op til ~850 m, målt på Sæby
+# 2026-07-26 (LCL 664 m, korrigeret 408 m, to flyvninger på 169 og 134 min
+# i præcis de cappede timer).
+@pytest.mark.parametrize("base,limited_by,sw,bonus,cap", [
+    (400, "ti_zero", 600, 0.0, 4),      # base < 600 m AGL i fuld sol: svag
     (599, "lcl", 450, 0.0, 4),
+    (664, "lcl", 600, 0.0, None),       # Sæby 26/7 kl. 13: må IKKE cappe
     (800, "lcl", 600, 0.0, None),       # 600-1200: moderat, ingen justering
     (1400, "ti_zero", 600, 0.5, None),  # > 1200: kraftig termik
     (None, "no_data", 600, 0.0, None),
-    (400, "no_dewpoint", 600, 0.0, None),  # utroværdig top må ikke cappe
+    (400, "no_dewpoint", 600, 0.0, None),  # utroværdig base må ikke cappe
     # Aftentimer: parcel-toppen kollapser men varmehukommelsen bærer termikken
-    # (2026-08-08 kl. 18-19). Under 400 W/m² må lav top ikke cappe.
+    # (2026-08-08 kl. 18-19). Under 400 W/m² må lav base ikke cappe.
     (300, "ti_zero", 250, 0.0, None),
     (1400, "ti_zero", 250, 0.5, None),  # bonus gælder hele dagen
     # "inversion"-dom fra de grove trykniveauer må ikke cappe alene;
@@ -178,8 +188,8 @@ def test_effective_radiation_v2_deck_arrival_still_blocks():
     (0, "inversion", 700, 0.0, None),
     (4000, "cap", 600, 0.5, None),  # dyb konvektiv lagdeling: bonus
 ])
-def test_thermal_top_adjustment_v2(top, limited_by, sw, bonus, cap):
-    assert thermal_top_adjustment_v2(top, limited_by, sw) == (bonus, cap)
+def test_thermal_top_adjustment_v2(base, limited_by, sw, bonus, cap):
+    assert thermal_top_adjustment_v2(base, limited_by, sw) == (bonus, cap)
 
 
 # --- Task 8: samlet v2-score ---
@@ -222,7 +232,7 @@ def test_v2_perfect_june_day_scores_high():
         temp_180m=21.5,
         wind_speed_80m_kt=10.0, wind_speed_180m_kt=11.0,
         boundary_layer_height=1800.0,
-        thermal_top_agl_m=1600, thermal_top_limited_by="lcl",
+        thermal_base_agl_m=1600, thermal_top_limited_by="lcl",
     ))
     assert result["score"] >= 9.0
     assert result["version"] == "v2"
@@ -246,7 +256,7 @@ def test_v2_cirrus_banks_subtract():
 
 def test_v2_shallow_thermal_top_caps_at_4():
     result = compute_thermal_score_v2(**base_kwargs(
-        thermal_top_agl_m=400, thermal_top_limited_by="ti_zero",
+        thermal_base_agl_m=400, thermal_top_limited_by="ti_zero",
     ))
     assert result["score"] <= 4.0
 

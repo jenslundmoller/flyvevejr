@@ -10,7 +10,7 @@ og asserter dels v2's forventede niveau, dels den forventede retning af
 from termik.scoring import compute_thermal_score
 from termik.scoring_v2 import compute_thermal_score_v2
 
-V2_ONLY_KEYS = ("thermal_top_agl_m", "thermal_top_limited_by")
+V2_ONLY_KEYS = ("thermal_base_agl_m", "thermal_top_limited_by")
 
 
 def day(**overrides):
@@ -63,7 +63,7 @@ def test_april_bagsidevejr_scores_high():
         temp_180m=11.8,
         wind_speed_80m_kt=13.0, wind_speed_180m_kt=14.0,
         boundary_layer_height=1500.0,
-        thermal_top_agl_m=1500, thermal_top_limited_by="ti_zero",
+        thermal_base_agl_m=1500, thermal_top_limited_by="ti_zero",
     ))
     # Kold luftmasse ved kun 14 grader er en topdag (punkt 7): v2 må ikke
     # straffe den lave temperatur
@@ -192,7 +192,7 @@ def test_october_low_thermal_top_caps_where_v1_did_not():
         temp_2m=12.0, dewpoint_2m=8.0, temp_850hpa=-2.0,   # lapse 0.93
         shortwave_radiation=420.0, direct_radiation=380.0,
         cloud_cover=10.0, cloud_cover_low=10.0,
-        thermal_top_agl_m=450, thermal_top_limited_by="lcl",
+        thermal_base_agl_m=450, thermal_top_limited_by="lcl",
     )
     v1, v2 = both_scores(**october)
     assert v2 <= 4.0

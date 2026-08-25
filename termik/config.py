@@ -285,13 +285,21 @@ MID_LEVEL_DECK_MAX_SCORE = 2
 CU_ALLOWANCE = 40
 
 # Punkt 3: "Allerede når det kun er banker af cirrusskyer, begynder termikken
-# at svækkes med op til 1 m/s" (s. 20). Gradueret fradrag længe før
-# CIRRUS_SHIELD_THRESHOLD-cappet tager over.
+# at svækkes med OP TIL 1 m/s" (s. 20). Gradueret fradrag længe før
+# CIRRUS_SHIELD_THRESHOLD-cappet tager over. Fuldt fradrag kræver et næsten
+# tæt lag: ved 67 % høj sky fløj en pilot 108 min fra Sæby (2026-08-08
+# kl. 11), mens 83 % på 2026-05-27 kl. 15 reelt svækkede dagen. 70 skiller
+# de to målte tilfælde.
 CIRRUS_BANK_LIGHT = 40   # >= 40 % høj sky: -0.5 point
-CIRRUS_BANK_HEAVY = 60   # >= 60 % høj sky: -1.0 point
+CIRRUS_BANK_HEAVY = 70   # >= 70 % høj sky: -1.0 point
 
 # Punkt 4: termikstyrken følger basehøjden (Skema 1; svæveflyveudsigtens bånd
 # s. 41: svag < 1 m/s ved base op til 600 m, kraftig > 2 m/s over 1200 m).
+# Båndene testes mod den UKORRIGEREDE base, min(LCL, TI-nul) AGL, ikke mod
+# den Hcrit-korrigerede thermal_top: Skema 1's rækker er basehøjder, og
+# margin-fradraget (200-500 m) fik cappet til at ramme dage med reel base op
+# til ~850 m. Målt på Sæby 2026-07-26: LCL 664 m, korrigeret top 408 m, og
+# to flyvninger på 169/134 min i præcis de timer cappet dømte "svag".
 # Cappet gælder kun mens solen reelt driver konvektionen (SW >= 400 W/m²,
 # samme tærskel som strålings-gatens øverste tier): om aftenen kollapser
 # parcel-toppen pr. definition, men varmehukommelsen holder termikken i live,

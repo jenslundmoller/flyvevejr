@@ -90,3 +90,37 @@ rollback. Åbne kalibreringspunkter, i prioriteret rækkefølge:
 2. Pålandsvind-reststraf (Slaglille 22/8-hypotesen fra forrige referat):
    ikke implementeret; kræver flere pålandsvinds-dage som facit.
 3. Hammer undtages fra fremtidig termik-validering (skrænt/bølge).
+
+## Opfølgning samme dag: Sæby-undercalls opklaret og rettet
+
+Dybdeanalysen af de to Sæby-dage fandt to årsager:
+
+**26/7 (fløjet 169 og 134 min kl. 13-16, v2 sagde 4.0): en ægte fejl i
+punkt 4.** Toppen var begrænset af LCL (664 m kl. 13), TI-nul lå sundt i
+1351-1645 m, men cappet testede den Hcrit-korrigerede top (LCL minus ~256 m
+margin = 408 m) mod Skema 1's 600 m-bånd. Skema 1's rækker er BASEhøjder;
+margin-fradraget fik cappet til at ramme dage med reel base op til ~850 m.
+Rettet: båndene testes nu mod den ukorrigerede base, min(LCL, TI-nul) AGL
+(`fetch_weather` sender `thermal_base_agl_m`).
+
+**8/8 (fløjet 108 min fra kl. 11:33, v2 sagde 5.8): cirrus-fradraget for
+hårdt i mellemområdet.** Fuldt fradrag (-1.0) faldt allerede ved 60 % høj
+sky; hæftet siger "svækkes med OP TIL 1 m/s". CIRRUS_BANK_HEAVY er flyttet
+til 70 %, så 67 % (timen hvor VI startede og fløj 108 min) giver -0.5,
+mens 83 % (2026-05-27 kl. 15, reelt svækket) stadig giver fuldt fradrag.
+
+Sæson-valideringen genkørt efter rettelserne (rådata i
+`2026-08-25-startlist-season-v2fix.jsonl`):
+
+| Metrik | v1 | v2 før | v2 efter |
+|---|---|---|---|
+| Inden for bånd | 57/88 | 63/88 | 61/88 |
+| Samlet afvigelse | 55.0 | 52.6 | **51.6** |
+| Største enkeltfejl | 3.3 | 2.5 | **1.6** |
+
+De to rettede rækker: Sæby 26/7 err 2.5 -> 0.3, Sæby 8/8 err 0.7 -> 0.2.
+Tre rækker krydsede en båndkant den anden vej med højst 0.5 point (True
+20/6, Sæby 2/8 og 23/8), alle på dage med blødt facit. Nettoresultat:
+lavere samlet afvigelse og markant mindre værste fejl; rettelsen af punkt 4
+er desuden en kategorirettelse (base mod base, ikke base mod brugshøjde),
+ikke en tilpasning til én dag.

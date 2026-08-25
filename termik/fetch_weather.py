@@ -321,12 +321,20 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     # Versionskontakten læses ved kald, ikke ved import, så en test (eller en
     # rollback) kan flippe termik.config.SCORING_VERSION uden genstart.
     if config_module.SCORING_VERSION == "v2":
-        thermal_top_agl = None
-        if thermal_top["thermal_top_m"] is not None:
-            thermal_top_agl = thermal_top["thermal_top_m"] - surface_elevation_m
+        # v2's basehøjde-bånd (Skema 1) testes mod den UKORRIGEREDE base,
+        # min(LCL, TI-nul): den Hcrit-korrigerede thermal_top er et
+        # brugshøjde-produkt, og at teste den mod basehøjde-bånd cappede
+        # dage med reel base op til ~850 m (Sæby 2026-07-26).
+        base_candidates = [
+            v for v in (thermal_top["lcl_m"], thermal_top["ti_zero_m"])
+            if v is not None
+        ]
+        thermal_base_agl = (
+            min(base_candidates) - surface_elevation_m if base_candidates else None
+        )
         result = compute_thermal_score_v2(
             **score_kwargs,
-            thermal_top_agl_m=thermal_top_agl,
+            thermal_base_agl_m=thermal_base_agl,
             thermal_top_limited_by=thermal_top["limited_by"],
         )
     else:

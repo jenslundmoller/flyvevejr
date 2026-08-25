@@ -216,33 +216,38 @@ def effective_radiation_v2(
 
 
 def thermal_top_adjustment_v2(
-    thermal_top_agl_m: float | None,
+    thermal_base_agl_m: float | None,
     limited_by: str | None,
     shortwave_radiation: float | None = None,
 ) -> tuple[float, int | None]:
-    """Punkt 4: kobl scoren til den brugbare termikhøjde.
+    """Punkt 4: kobl scoren til termikkens basehøjde.
 
     Skema 1 og svæveflyveudsigtens bånd (s. 41): under 600 m base er
     termikken svag uanset alt andet, over 1200 m er den typisk kraftig.
     Returnerer (bonus, cap); cap=None betyder intet loft.
+
+    Båndene testes mod den UKORRIGEREDE base, min(LCL, TI-nul) AGL, aldrig
+    mod den Hcrit-korrigerede thermal_top: Skema 1's rækker er basehøjder,
+    og margin-fradraget fik cappet til at ramme dage med reel base op til
+    ~850 m (Sæby 2026-07-26: LCL 664 m, korrigeret 408 m, flyvninger på
+    169/134 min i de cappede timer).
 
     Cappet gælder kun mens solen driver konvektionen (SW >= 400 W/m²): om
     aftenen kollapser parcel-toppen pr. definition, men varmehukommelsen
     holder termikken i live, målt 2026-08-08 kl. 18-19.
 
     Cappet kræver desuden at parcel-beregningen POSITIVT har fundet en lav
-    top ("lcl" eller "ti_zero"). En "inversion"-dom fra de grove trykniveauer
-    må ikke cappe alene: overfladelaget måles direkte i 2m->180m
-    (surface-lapse-dealbreakeren), og den grove profil kan melde inversion
-    hen over et superadiabatisk målt overfladelag. Skema 1's bånd handler om
-    basehøjden for arbejdende termik, ikke om profilens nul-domme.
+    base ("lcl" eller "ti_zero"). En "inversion"-dom fra de grove
+    trykniveauer må ikke cappe alene: overfladelaget måles direkte i
+    2m->180m (surface-lapse-dealbreakeren), og den grove profil kan melde
+    inversion hen over et superadiabatisk målt overfladelag.
     """
-    if thermal_top_agl_m is None or limited_by in ("no_data", "no_dewpoint"):
+    if thermal_base_agl_m is None or limited_by in ("no_data", "no_dewpoint"):
         return 0.0, None
-    if thermal_top_agl_m > THERMAL_TOP_STRONG_AGL_M:
+    if thermal_base_agl_m > THERMAL_TOP_STRONG_AGL_M:
         return THERMAL_TOP_STRONG_BONUS, None
     if (
-        thermal_top_agl_m < THERMAL_TOP_WEAK_AGL_M
+        thermal_base_agl_m < THERMAL_TOP_WEAK_AGL_M
         and limited_by in ("lcl", "ti_zero")
         and shortwave_radiation is not None
         and shortwave_radiation >= THERMAL_TOP_CAP_MIN_SW
@@ -373,7 +378,7 @@ def compute_thermal_score_v2(
     trailing_radiation: list[float] | None = None,
     trailing_cloud_cover: list[float] | None = None,
     trailing_cirrus: list[float] | None = None,
-    thermal_top_agl_m: float | None = None,
+    thermal_base_agl_m: float | None = None,
     thermal_top_limited_by: str | None = None,
 ) -> dict:
     """Den samlede v2-score. Samme signatur og resultatform som v1 plus
@@ -431,7 +436,7 @@ def compute_thermal_score_v2(
         total += bl_mixing_mod
 
     top_bonus, top_cap = thermal_top_adjustment_v2(
-        thermal_top_agl_m, thermal_top_limited_by, shortwave_radiation
+        thermal_base_agl_m, thermal_top_limited_by, shortwave_radiation
     )
     total += top_bonus
 
