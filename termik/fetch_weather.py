@@ -16,7 +16,9 @@ from termik.config import (
     RADIATION_MEMORY_HOURS,
     CIRRUS_SHIELD_MEMORY_HOURS,
 )
+import termik.config as config_module
 from termik.scoring import compute_thermal_score, compute_thermal_top, THERMAL_TOP_LEVELS_HPA
+from termik.scoring_v2 import compute_thermal_score_v2
 from termik.comments import generate_comment
 from termik.locations import ALL_POINTS, AIRFIELDS
 
@@ -201,6 +203,9 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             "data": {
                 "temp": temp,
                 "dewpoint": dewpoint,
+                # Scoringen kørte aldrig, så ingen version kan hæfte for
+                # tallet; None holder skemaet identisk med den scorede sti.
+                "scoring_version": None,
                 "spread": None,
                 "skybase_m": None,
                 "skybase_ft": None,
@@ -270,7 +275,19 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     # direct_radiation: None means parameter missing entirely (older fetches);
     # 0 from API at night is fine and should pass through as 0.
 
-    result = compute_thermal_score(
+    # Termiktoppen beregnes før scoren: v2 bruger den som input (punkt 4),
+    # og den er uafhængig af scoren i begge versioner.
+    thermal_top = compute_thermal_top(
+        surface_temp_c=temp,
+        surface_dewpoint_c=dewpoint,
+        surface_pressure_hpa=pressure,
+        surface_elevation_m=surface_elevation_m,
+        level_temps_c=level_temps_c,
+        level_heights_m=level_heights_m,
+        shortwave_radiation=shortwave,
+    )
+
+    score_kwargs = dict(
         temp_2m=temp,
         dewpoint_2m=dewpoint,
         temp_850hpa=temp_850,
@@ -301,15 +318,19 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         trailing_cirrus=trailing_cirrus,
     )
 
-    thermal_top = compute_thermal_top(
-        surface_temp_c=temp,
-        surface_dewpoint_c=dewpoint,
-        surface_pressure_hpa=pressure,
-        surface_elevation_m=surface_elevation_m,
-        level_temps_c=level_temps_c,
-        level_heights_m=level_heights_m,
-        shortwave_radiation=shortwave,
-    )
+    # Versionskontakten læses ved kald, ikke ved import, så en test (eller en
+    # rollback) kan flippe termik.config.SCORING_VERSION uden genstart.
+    if config_module.SCORING_VERSION == "v2":
+        thermal_top_agl = None
+        if thermal_top["thermal_top_m"] is not None:
+            thermal_top_agl = thermal_top["thermal_top_m"] - surface_elevation_m
+        result = compute_thermal_score_v2(
+            **score_kwargs,
+            thermal_top_agl_m=thermal_top_agl,
+            thermal_top_limited_by=thermal_top["limited_by"],
+        )
+    else:
+        result = compute_thermal_score(**score_kwargs)
 
     # Calculate wind shear for comments
     wind_shear_for_comment = None
@@ -340,6 +361,9 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         "data": {
             "temp": temp,
             "dewpoint": dewpoint,
+            # Revisionsspor: hvilken scoring producerede tallet. v1's
+            # resultat-dict har ingen version-nøgle, deraf fallbacken.
+            "scoring_version": result.get("version", "v1"),
             "spread": result["spread"],
             "skybase_m": result["skybase_m"],
             "skybase_ft": result["skybase_ft"],

@@ -136,8 +136,10 @@ def test_memory_factor_v2_cold_advection_extends():
     assert memory_factor_v2(-1.5) == pytest.approx(0.75)
 
 
-def test_memory_factor_v2_warm_advection_shortens():
-    assert memory_factor_v2(1.5) == pytest.approx(0.55)
+def test_memory_factor_v2_warm_advection_keeps_calibrated_factor():
+    # Bevidst INGEN varme-malus: 2026-08-08 kl. 18 havde trend +1.0 mens
+    # piloten fløj; en lavere faktor ville cappe de fredede aftentimer.
+    assert memory_factor_v2(1.5) == RADIATION_MEMORY_FACTOR
 
 
 def test_effective_radiation_v2_uses_scaled_factor():
@@ -160,16 +162,24 @@ def test_effective_radiation_v2_deck_arrival_still_blocks():
 
 # --- Task 7 / punkt 4: termiktop-kobling ---
 
-@pytest.mark.parametrize("top,limited_by,bonus,cap", [
-    (400, "ti_zero", 0.0, 4),      # < 600 m AGL: svag termik (s. 41)
-    (599, "lcl", 0.0, 4),
-    (800, "lcl", 0.0, None),       # 600-1200: moderat, ingen justering
-    (1400, "ti_zero", 0.5, None),  # > 1200: kraftig termik
-    (None, "no_data", 0.0, None),
-    (400, "no_dewpoint", 0.0, None),  # utroværdig top må ikke cappe
+@pytest.mark.parametrize("top,limited_by,sw,bonus,cap", [
+    (400, "ti_zero", 600, 0.0, 4),      # < 600 m AGL i fuld sol: svag termik
+    (599, "lcl", 450, 0.0, 4),
+    (800, "lcl", 600, 0.0, None),       # 600-1200: moderat, ingen justering
+    (1400, "ti_zero", 600, 0.5, None),  # > 1200: kraftig termik
+    (None, "no_data", 600, 0.0, None),
+    (400, "no_dewpoint", 600, 0.0, None),  # utroværdig top må ikke cappe
+    # Aftentimer: parcel-toppen kollapser men varmehukommelsen bærer termikken
+    # (2026-08-08 kl. 18-19). Under 400 W/m² må lav top ikke cappe.
+    (300, "ti_zero", 250, 0.0, None),
+    (1400, "ti_zero", 250, 0.5, None),  # bonus gælder hele dagen
+    # "inversion"-dom fra de grove trykniveauer må ikke cappe alene;
+    # overfladelaget måles direkte af surface-lapse-dealbreakeren
+    (0, "inversion", 700, 0.0, None),
+    (4000, "cap", 600, 0.5, None),  # dyb konvektiv lagdeling: bonus
 ])
-def test_thermal_top_adjustment_v2(top, limited_by, bonus, cap):
-    assert thermal_top_adjustment_v2(top, limited_by) == (bonus, cap)
+def test_thermal_top_adjustment_v2(top, limited_by, sw, bonus, cap):
+    assert thermal_top_adjustment_v2(top, limited_by, sw) == (bonus, cap)
 
 
 # --- Task 8: samlet v2-score ---
@@ -247,3 +257,58 @@ def test_v2_result_shape_matches_v1_consumers():
     for key in ("score", "label", "spread", "skybase_m", "skybase_ft",
                 "lapse_rate", "seabreeze_penalty"):
         assert key in result
+
+
+# --- Task 9: versionskontakten i fetch_weather ---
+
+def _synthetic_hourly():
+    """Én god junimiddagstime med 13 kt vind."""
+    return {
+        "time": ["2026-06-15T13:00"],
+        "temperature_2m": [22.0],
+        "dewpoint_2m": [11.0],
+        "temperature_850hPa": [6.0],
+        "cloud_cover": [15.0],
+        "cloud_cover_low": [15.0],
+        "cloud_cover_mid": [0.0],
+        "cloud_cover_high": [0.0],
+        "shortwave_radiation": [650.0],
+        "direct_radiation": [550.0],
+        "wind_speed_10m": [13.0],
+        "wind_direction_10m": [270.0],
+        "wind_gusts_10m": [18.0],
+        "precipitation": [0.0],
+        "cape": [400.0],
+        "surface_pressure": [1015.0],
+        "relative_humidity_2m": [50.0],
+    }
+
+
+def _inland_point():
+    return {
+        "id": "testpunkt",
+        "lat": 56.0,
+        "lon": 9.5,
+        "coast_distance_km": 90.0,
+        "coast_direction_deg": 270.0,
+    }
+
+
+def test_process_point_hour_respects_scoring_version(monkeypatch):
+    from termik.fetch_weather import process_point_hour
+    import termik.config as config_module
+
+    monkeypatch.setattr(config_module, "SCORING_VERSION", "v1")
+    v1_result = process_point_hour(_inland_point(), _synthetic_hourly(), 0, month=6)
+
+    monkeypatch.setattr(config_module, "SCORING_VERSION", "v2")
+    v2_result = process_point_hour(_inland_point(), _synthetic_hourly(), 0, month=6)
+
+    # Kontakten skal vælge den rigtige motor, og valget skal kunne revideres
+    # i den publicerede JSON
+    assert v1_result["data"]["scoring_version"] == "v1"
+    assert v2_result["data"]["scoring_version"] == "v2"
+    # Begge stier skal levere den fulde datablok til frontend/kommentarer
+    for result in (v1_result, v2_result):
+        assert "thermal_top_m" in result["data"]
+        assert result["label"]

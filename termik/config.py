@@ -292,18 +292,27 @@ CIRRUS_BANK_HEAVY = 60   # >= 60 % høj sky: -1.0 point
 
 # Punkt 4: termikstyrken følger basehøjden (Skema 1; svæveflyveudsigtens bånd
 # s. 41: svag < 1 m/s ved base op til 600 m, kraftig > 2 m/s over 1200 m).
+# Cappet gælder kun mens solen reelt driver konvektionen (SW >= 400 W/m²,
+# samme tærskel som strålings-gatens øverste tier): om aftenen kollapser
+# parcel-toppen pr. definition, men varmehukommelsen holder termikken i live,
+# målt på 2026-08-08 kl. 18-19 hvor piloten fløj. Et cap uden sol-gate
+# scorede de timer 4 og brød referencedagens kalibrering.
 THERMAL_TOP_WEAK_AGL_M = 600     # under: cap på "Svag termik"
 THERMAL_TOP_WEAK_MAX_SCORE = 4
 THERMAL_TOP_STRONG_AGL_M = 1200  # over: +0.5 bonus
 THERMAL_TOP_STRONG_BONUS = 0.5
+THERMAL_TOP_CAP_MIN_SW = 400
 
-# Punkt 6: koldluftsadvektion holder termikken længere, varm luft dør før
-# solnedgang (s. 14). Varmehukommelsens faktor flyttes ±0.10 efter
-# 850 hPa-trenden, inden for [0.55, 0.75].
+# Punkt 6: koldluftsadvektion holder termikken længere (s. 14), så
+# varmehukommelsens faktor løftes +0.10 når 850 hPa er faldet mindst 1 grad
+# på 3 timer, klampet til 0.75. Hæftet siger også at termikken dør tidligt i
+# VARM luft, men en spejlvendt malus er droppet med vilje: på referencedagen
+# 2026-08-08 var trenden kl. 18 præcis +1.0 mens piloten fløj i god termik,
+# og en faktor på 0.55 giver 0.55 x 657 = 361 < 400, som capper netop de
+# timer hukommelsen er kalibreret til at redde. Varm luftmasse må altså ikke
+# røre den målte 0.65.
 MEMORY_FACTOR_COLD_BONUS = 0.10
-MEMORY_FACTOR_WARM_MALUS = 0.10
 MEMORY_FACTOR_MAX = 0.75
-MEMORY_FACTOR_MIN = 0.55
 
 # Sea surface temperature estimate by month (1-12)
 # Based on average Danish waters temperature

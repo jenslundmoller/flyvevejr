@@ -32,10 +32,9 @@ from termik.config import (
     THERMAL_TOP_WEAK_MAX_SCORE,
     THERMAL_TOP_STRONG_AGL_M,
     THERMAL_TOP_STRONG_BONUS,
+    THERMAL_TOP_CAP_MIN_SW,
     MEMORY_FACTOR_COLD_BONUS,
-    MEMORY_FACTOR_WARM_MALUS,
     MEMORY_FACTOR_MAX,
-    MEMORY_FACTOR_MIN,
 )
 from termik.scoring import (
     score_lapse_rate,
@@ -184,17 +183,16 @@ def calculate_seabreeze_penalty_v2(
 
 
 def memory_factor_v2(temp_850hpa_trend: float) -> float:
-    """Punkt 6: varmehukommelsen følger luftmassen.
+    """Punkt 6: koldluftsadvektion forlænger varmehukommelsen.
 
-    I koldluftsadvektion holder termikken længere efter peak-opvarmning, i
-    varm luft dør den længe inden solnedgang (s. 14). Faktoren flyttes ±0.10
-    omkring v1's kalibrerede 0.65, klampet så kalibreringen mod 2026-08-08
-    ikke kan skride mere end et tier.
+    I koldluftsadvektion holder termikken længere efter peak-opvarmning
+    (s. 14). Den spejlvendte varme-malus er bevidst udeladt: referencedagen
+    2026-08-08 havde trend +1.0 kl. 18 mens piloten fløj, og en lavere faktor
+    capper netop de timer hukommelsen er kalibreret til at redde. Se noten
+    ved MEMORY_FACTOR_COLD_BONUS i config.
     """
     if temp_850hpa_trend <= -1.0:
         return min(MEMORY_FACTOR_MAX, RADIATION_MEMORY_FACTOR + MEMORY_FACTOR_COLD_BONUS)
-    if temp_850hpa_trend >= 1.0:
-        return max(MEMORY_FACTOR_MIN, RADIATION_MEMORY_FACTOR - MEMORY_FACTOR_WARM_MALUS)
     return RADIATION_MEMORY_FACTOR
 
 
@@ -218,22 +216,38 @@ def effective_radiation_v2(
 
 
 def thermal_top_adjustment_v2(
-    thermal_top_agl_m: float | None, limited_by: str | None
+    thermal_top_agl_m: float | None,
+    limited_by: str | None,
+    shortwave_radiation: float | None = None,
 ) -> tuple[float, int | None]:
     """Punkt 4: kobl scoren til den brugbare termikhøjde.
 
     Skema 1 og svæveflyveudsigtens bånd (s. 41): under 600 m base er
     termikken svag uanset alt andet, over 1200 m er den typisk kraftig.
-    Returnerer (bonus, cap); cap=None betyder intet loft. En top uden målt
-    dugpunkt eller uden data må ikke cappe en ellers god dag, men en målt
-    høj top må gerne give bonus.
+    Returnerer (bonus, cap); cap=None betyder intet loft.
+
+    Cappet gælder kun mens solen driver konvektionen (SW >= 400 W/m²): om
+    aftenen kollapser parcel-toppen pr. definition, men varmehukommelsen
+    holder termikken i live, målt 2026-08-08 kl. 18-19.
+
+    Cappet kræver desuden at parcel-beregningen POSITIVT har fundet en lav
+    top ("lcl" eller "ti_zero"). En "inversion"-dom fra de grove trykniveauer
+    må ikke cappe alene: overfladelaget måles direkte i 2m->180m
+    (surface-lapse-dealbreakeren), og den grove profil kan melde inversion
+    hen over et superadiabatisk målt overfladelag. Skema 1's bånd handler om
+    basehøjden for arbejdende termik, ikke om profilens nul-domme.
     """
     if thermal_top_agl_m is None or limited_by in ("no_data", "no_dewpoint"):
         return 0.0, None
-    if thermal_top_agl_m < THERMAL_TOP_WEAK_AGL_M:
-        return 0.0, THERMAL_TOP_WEAK_MAX_SCORE
     if thermal_top_agl_m > THERMAL_TOP_STRONG_AGL_M:
         return THERMAL_TOP_STRONG_BONUS, None
+    if (
+        thermal_top_agl_m < THERMAL_TOP_WEAK_AGL_M
+        and limited_by in ("lcl", "ti_zero")
+        and shortwave_radiation is not None
+        and shortwave_radiation >= THERMAL_TOP_CAP_MIN_SW
+    ):
+        return 0.0, THERMAL_TOP_WEAK_MAX_SCORE
     return 0.0, None
 
 
@@ -417,7 +431,7 @@ def compute_thermal_score_v2(
         total += bl_mixing_mod
 
     top_bonus, top_cap = thermal_top_adjustment_v2(
-        thermal_top_agl_m, thermal_top_limited_by
+        thermal_top_agl_m, thermal_top_limited_by, shortwave_radiation
     )
     total += top_bonus
 
