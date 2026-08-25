@@ -22,6 +22,7 @@ import termik.config as config_module
 from termik.config import HOURLY_PARAMS, TIMEZONE
 from termik.fetch_weather import process_point_hour
 from termik.tools.fetch_reference_day import fetch_hourly, parse_day
+from termik.tools.replay_day import build_url as build_forecast_url
 from termik.tools.replay_day import day_hour_indices, resolve_airfield
 
 HISTORICAL_URL = "https://historical-forecast-api.open-meteo.com/v1/forecast"
@@ -105,10 +106,20 @@ def main(argv: list[str]) -> None:
         raise SystemExit(__doc__.strip().split("\n")[-2])
     point = resolve_airfield(argv[0])
     day = parse_day(argv[1])
-    hourly = fetch_hourly(build_url(point, day))
+    # Historical-forecast-endpointet lagger et par dage bag realtid; helt
+    # friske dage hentes fra forecast-endpointet med past_days, som replay_day
+    # gør det. Samme best_match-model i begge tilfælde.
+    source = "historical-forecast"
+    try:
+        hourly = fetch_hourly(build_url(point, day))
+    except Exception:
+        hourly = None
+    if hourly is None or not day_hour_indices(hourly, day):
+        source = "forecast+past_days"
+        hourly = fetch_hourly(build_forecast_url(point, day, date.today()))
     if not day_hour_indices(hourly, day):
         raise SystemExit(f"ERROR: svaret dækker ikke {day}")
-    print(f"### {point['name']} ({point['id']}), {day}\n")
+    print(f"### {point['name']} ({point['id']}), {day} ({source})\n")
     rows = compare(point, hourly, day)
     summarize(rows)
 
