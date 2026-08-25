@@ -742,6 +742,41 @@ function weatherIconSvg(cloud, precip) {
         + '<line x1="13" y1="51" x2="19" y2="45"/><line x1="45" y1="19" x2="51" y2="13"/></g></svg>';
 }
 
+// Sunrise/sunset (official zenith 90.833°) from the Almanac for Computers
+// algorithm. Returns a Date, or null at latitudes where the sun never
+// rises/sets that day.
+function sunEventUTC(year, month, day, lat, lon, isRise) {
+    const rad = Math.PI / 180;
+    const mod = function (a, n) { return ((a % n) + n) % n; };
+    const N = Math.floor((Date.UTC(year, month - 1, day) - Date.UTC(year, 0, 1)) / 86400000) + 1;
+    const lngHour = lon / 15;
+    const t = N + ((isRise ? 6 : 18) - lngHour) / 24;
+    const M = 0.9856 * t - 3.289;
+    const L = mod(M + 1.916 * Math.sin(M * rad) + 0.020 * Math.sin(2 * M * rad) + 282.634, 360);
+    let RA = mod(Math.atan(0.91764 * Math.tan(L * rad)) / rad, 360);
+    RA = (RA + Math.floor(L / 90) * 90 - Math.floor(RA / 90) * 90) / 15;
+    const sinDec = 0.39782 * Math.sin(L * rad);
+    const cosDec = Math.cos(Math.asin(sinDec));
+    const cosH = (Math.cos(90.833 * rad) - sinDec * Math.sin(lat * rad)) / (cosDec * Math.cos(lat * rad));
+    if (cosH > 1 || cosH < -1) return null;
+    const H = (isRise ? 360 - Math.acos(cosH) / rad : Math.acos(cosH) / rad) / 15;
+    const T = H + RA - 0.06571 * t - 6.622;
+    return new Date(Date.UTC(year, month - 1, day) + mod(T - lngHour, 24) * 3600000);
+}
+
+// Today's sunrise/sunset at a position, formatted as local HH:MM (or "–")
+function sunTimesText(lat, lon) {
+    const now = new Date();
+    const fmt = function (d) {
+        return d ? d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' }) : '–';
+    };
+    const y = now.getFullYear(), m = now.getMonth() + 1, day = now.getDate();
+    return {
+        rise: fmt(sunEventUTC(y, m, day, lat, lon, true)),
+        set: fmt(sunEventUTC(y, m, day, lat, lon, false)),
+    };
+}
+
 // Today's day-offset and the actual current hour (0-23, unclamped)
 function getNowDayHour() {
     const now = new Date();
@@ -795,6 +830,7 @@ function updateWeatherWidget() {
     const barText = textColorForScore(hd.score);
     const feel = Math.round(apparentTemp(d.temp, d.relative_humidity, d.wind_speed_kt));
     const windArrow = getWindArrow(d.wind_dir);
+    const sun = sunTimesText(af.lat, af.lon);
 
     el.innerHTML =
         '<div class="ww-main">'
@@ -809,6 +845,8 @@ function updateWeatherWidget() {
         +   '<div class="ww-stat"><span>Vind</span><b>' + windArrow + ' ' + Math.round(d.wind_speed_kt) + ' kt</b></div>'
         +   '<div class="ww-stat"><span>Føles som</span><b>' + feel + '°</b></div>'
         +   '<div class="ww-stat"><span>Tryk</span><b>' + Math.round(d.pressure) + ' hPa</b></div>'
+        +   '<div class="ww-stat"><span>Solopgang</span><b>' + sun.rise + '</b></div>'
+        +   '<div class="ww-stat"><span>Solnedgang</span><b>' + sun.set + '</b></div>'
         + '</div>'
         + '<div class="ww-bar" style="background:' + barColor + ';color:' + barText + '">'
         +   escapeHtml(hd.label) + '</div>';
