@@ -238,3 +238,24 @@ def test_comment_low_score_still_explains_stability():
 def test_comment_without_thermal_top_falls_back_to_stability():
     comment = generate_comment(**_base_kwargs())
     assert "labil" in comment.lower()
+
+
+def test_comment_distrusts_inversion_verdict_on_usable_day():
+    # Parcel-profilens "inversion"-dom er upålidelig hen over et
+    # superadiabatisk overfladelag (samme grund til at scoringens cap
+    # ignorerer den alene). Ved brugbar score må teksten ikke modsige
+    # scoren: målt 2026-08-26 kl. 12, score 8.1 med "Jordinversion"-tekst.
+    comment = generate_comment(**_base_kwargs(
+        score=8.1, lapse_rate=1.05,
+        thermal_top_m=0, thermal_top_limited_by="inversion",
+    ))
+    assert "Jordinversion" not in comment
+    assert "labil" in comment.lower()
+
+
+def test_comment_distrusts_saturated_verdict_on_usable_day():
+    comment = generate_comment(**_base_kwargs(
+        score=6.0, lapse_rate=0.9,
+        thermal_top_m=0, thermal_top_limited_by="saturated",
+    ))
+    assert "mættet" not in comment.lower()

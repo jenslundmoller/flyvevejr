@@ -28,7 +28,15 @@ def _stability_line(lapse_rate: float) -> str:
 
 
 def _binding_line(thermal_top_m: float, limited_by: str) -> str | None:
-    """Sætning for den faktor der begrænser toppen, når dagen er brugbar."""
+    """Sætning for den faktor der begrænser toppen, når dagen er brugbar.
+
+    "inversion" og "saturated" oversættes bevidst IKKE: de domme kommer fra
+    de grove trykniveauer og kan være falske hen over et superadiabatisk
+    overfladelag (samme grund til at scoringens cap ignorerer dem alene).
+    Da denne funktion kun kaldes ved score >= 3, ville teksten modsige
+    scoren; målt 2026-08-26 kl. 12: score 8.1 med "Jordinversion"-tekst.
+    Fallback er stabilitetslinjen, som bygger på den målte lapse rate.
+    """
     top = round(thermal_top_m / 50) * 50
     if limited_by == "lcl":
         return f"Toppen begrænses af skybasen, regn med ca. {top} m."
@@ -38,10 +46,6 @@ def _binding_line(thermal_top_m: float, limited_by: str) -> str | None:
         return f"Dyb konvektion, regn med mindst {top} m."
     if limited_by in ("weak_solar", "margin_collapse"):
         return f"Svag sol: termikken bærer kun til ca. {top} m."
-    if limited_by == "inversion":
-        return "Jordinversion: termikken er ikke kommet i gang."
-    if limited_by == "saturated":
-        return "Luften er mættet: tåge eller lave skyer."
     return None
 
 
