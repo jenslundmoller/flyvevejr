@@ -460,7 +460,7 @@ function createAirfieldMarkers() {
             fillColor: '#888',
         });
 
-        marker.bindPopup('', { maxWidth: 360, maxHeight: 480, className: 'termik-popup' });
+        marker.bindPopup('', { maxWidth: 360, maxHeight: popupMaxHeight(), className: 'termik-popup' });
 
         // Store reference to airfield on marker for popup updates
         marker._airfieldData = af;
@@ -489,6 +489,21 @@ function updateMarkerColors() {
 }
 
 // === Popup ===
+// Popup-højden følger skærmen: på mobil scroller indholdet i popup'en,
+// på desktop er der plads til at vise det meste eller det hele. Leaflet
+// læser maxHeight ved bind, så resize-lytteren opdaterer alle markørers
+// popup-options; næste åbning bruger den nye højde.
+function popupMaxHeight() {
+    return Math.max(420, window.innerHeight - 150);
+}
+
+window.addEventListener('resize', function() {
+    for (const entry of airfieldMarkers) {
+        const popup = entry.marker && entry.marker.getPopup();
+        if (popup) popup.options.maxHeight = popupMaxHeight();
+    }
+});
+
 // Redesign 2026-08-26: prioriteret hierarki. Ring + termikvindue, tekst,
 // dagsforl\u00F8b, tre heltetal, og sektionerne Termik (h\u00F8jdeakse + lapse-
 // m\u00E5ler), Temperatur (spread-termometer), Vind (kompas + s\u00F8jler i knob)
@@ -520,18 +535,33 @@ function createPopupContent(airfield) {
 }
 
 function buildScoreHeader(airfield, hourData) {
-    const score = hourData.score;
-    const color = scoreToColor(score);
-    const deg = Math.round(Math.max(0, Math.min(10, score)) / 10 * 360);
+    // Ringen viser dagens gennemsnit kl. 10-18, samme tal som favorit-
+    // panelet (getDaySummary), ikke den valgte times score. Timens score
+    // ses i dagsforl\u00F8bet og p\u00E5 kortet.
+    const summary = getDaySummary(airfield, currentDay);
+    const avg = summary ? summary.avg : hourData.score;
+    const color = scoreToColor(avg);
+    const deg = Math.round(Math.max(0, Math.min(10, avg)) / 10 * 360);
     const windowText = computeThermalWindow(airfield);
     return '<div class="popup-bigscore">'
         + '<div class="popup-ring" style="background:conic-gradient(' + color + ' 0 ' + deg + 'deg, #e5e7eb ' + deg + 'deg 360deg)">'
-        +   '<i style="background:' + color + '">' + score + '</i>'
+        +   '<i style="background:' + color + '">' + avg + '</i>'
         + '</div>'
         + '<div class="popup-window">' + windowText
-        +   '<small>' + escapeHtml(hourData.label) + ' \u00B7 kl. ' + String(currentHour).padStart(2, '0') + '</small>'
+        +   '<small>' + scoreLabelDa(avg) + ' \u00B7 gennemsnit kl. 10\u201318</small>'
         + '</div>'
         + '</div>';
+}
+
+// Klient-udgave af SCORE_LABELS i config.py; bruges til dagsgennemsnittet,
+// hvor der ikke findes en server-genereret label.
+function scoreLabelDa(score) {
+    const s = Math.floor(score);
+    if (s >= 9) return 'Fremragende termik';
+    if (s >= 7) return 'God termik';
+    if (s >= 5) return 'Moderat termik';
+    if (s >= 3) return 'Svag termik';
+    return 'Ingen brugbar termik';
 }
 
 // Termikvinduet afl\u00E6ses af dagens timer: f\u00F8rste og sidste time med
