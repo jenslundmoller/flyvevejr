@@ -117,16 +117,35 @@ Et 0.2° × 0.2° grid over Danmark (54.5°N-57.8°N, 8.0°E-15.2°E). Punkter i
 
 ## Scoringsmodel
 
-### Basis-scorer (vægtet sum)
+Produktionen kører **scoring v2** (`termik/scoring_v2.py`), som implementerer
+justeringer fra DSvU-hæftet "Svæveflyvningen og vejret" oven på den
+oprindelige model. Den gamle score (`termik/scoring.py`) er urørt og er
+rollback-stien: sæt `SCORING_VERSION = "v1"` i `termik/config.py`. Hver
+publiceret time bærer `scoring_version` som revisionsspor. Se
+[plan](plans/2026-08-25-scoring-v2-dsvu-haefte.md) og referaterne fra
+2026-08-25 for kalibrering og validering.
+
+### v2's justeringer fra hæftet
+
+1. **Vind**: 5-10 kt er ideal (før 5-15); 15-25 kt mildnes ved koldluftsadvektion (skygader).
+2. **Cu-allowance**: de første 40 procentpoint lav sky er gratis i solscoren (Skema 1: 1-4/8 cumulus er det optimale skybillede).
+3. **Cirrus-fradrag**: -0.5 ved ≥40 % høj sky, -1.0 ved ≥70 % (fuldt fradrag kræver næsten tæt lag).
+4. **Basehøjde-kobling**: cap 4 ved base under 600 m AGL (kun i sol, SW ≥400, og kun ved positiv lcl/ti_zero-dom), +0.5 bonus over 1200 m. Båndene testes mod den ukorrigerede base, min(LCL, TI-nul).
+5. **Søbrise skalerer med land/hav-forskellen** i stedet for v1's faste pålandsstraf; **5b**: pålandsvind ≥8 kt med stabil havluft (havtemp minus 850-temp under 7) løfter drivkraften til maksimum.
+6. **Varmehukommelsen forlænges** ved koldluftsadvektion (faktor 0.65 → 0.75); ingen spejlvendt varme-malus (modbevist på referencedagen 8/8).
+7. **Temperaturvægt sænket** (kold luftmasse behøver ikke høje temperaturer).
+
+### Basis-scorer (vægtet sum, v2)
 
 | Faktor | Vægt | Score 10 | Score 0 |
 |--------|------|----------|---------|
 | Lapse rate (stabilitet) | 30% | ≥1.2°C/100m (meget labil) | <0.65°C/100m (stabil) |
-| Solindstråling | 20% | Skyfrit + stærk **direkte** stråling | Overskyet + ingen stråling |
+| Solindstråling | 24% | Stærk **direkte** stråling; første 40 pp lav sky gratis | Overskyet + ingen stråling |
 | Spread (dugpunktsspredning) | 15% | 8-15°C (optimal skybase) | <3°C (tåge-risiko) |
-| Vindstyrke | 15% | 5-15 kt (optimal udløsning) | >35 kt eller vindstille |
-| Temperatur | 10% | Høj overfladetemperatur | <5°C |
-| Nedbør | 10% | Tørt, ingen nedbør seneste 6t | Aktiv nedbør |
+| Vindstyrke | 10% | 5-10 kt (optimal udløsning) | >35 kt |
+| Vindstød | 10% | Effektiv vind ≤20 kt | Stød ≥35 kt |
+| Temperatur | 4% | Høj overfladetemperatur | <5°C |
+| Nedbør | 7% | Tørt, ingen nedbør seneste 6t | Aktiv nedbør |
 
 ### Modifikatorer (justerer basis-scoren)
 
@@ -176,41 +195,26 @@ De fem nederste caps kom til i august 2026, kalibreret mod to pilot-verificerede
 | 3-4 | Svag termik | Lyseblå |
 | 0-2 | Ingen brugbar termik | Mørkeblå |
 
-### Søbrise-model
+### Søbrise-model (v2, punkt 5 og 5b)
 
 Danmark er meget kystnært, og søbrisen er en af de vigtigste termik-dræbere. For hvert punkt beregnes:
 
-1. **Kystafstand** (forudberegnet, statisk)
+1. **Kystafstand** (forudberegnet, statisk); straffen skaleres med afstanden, max effekt inden for 80 km
 2. **Vindretning vs. kystretning** — er vinden fralands eller pålands?
-3. **Land/hav temperaturforskel** — stor forskel + svag vind = høj søbrise-risiko
-4. **Penalty skaleret med afstand** — max effekt inden for 80 km fra kysten
-
-Fyn og Sjælland rammes hårdest, Midtjylland mindst.
+3. **Land/hav-temperaturforskel** driver risikoen; er forskellen ≤2 grader, er der ingen straf (kryds-plads-studiet 2026-08-25: 8/8 pålandsdage med lille forskel bar, median 174 min)
+4. **Havluftens instabilitet (5b)**: pålandsvind ≥8 kt med stabil havluft (havtemp minus 850 hPa-temp under 7) løfter drivkraften til maksimum uanset land/hav-forskellen. Konvektiv havluft (kold luftmasse over varmt sensommerhav) bærer derimod termik med ind over land.
 
 ### Validering
 
-Modellen er testet mod 8 realistiske danske scenarier:
-
-| Scenario | Resultat | Forventet |
-|----------|----------|-----------|
-| Perfekt bagsidevejr (juni) | 9.7 | 9-10 |
-| Moderat dansk sommerdag | 7.5 | 5-7 |
-| Varmefront nærmer sig | 3.0 | 2-3 |
-| Overskyet vinterdag | 1.0 | 0-1 |
-| Kraftig vind + koldfront | 7.0 | 5-7 |
-| Søbrise kyst (Kongsted) | 6.4 | 5-7 |
-| Søbrise indland (Arnborg) | 8.4 | 8-9 |
-| Udkagningsdag | 4.8 | 3-5 |
-| Sahara-luft (30°C, stabil) | 3.0 | 1-3 |
+Ud over de syntetiske scenarier ([scoring-scenarios.md](scoring-scenarios.md), v1-reference) er v2 valideret mod **virkelige flyvninger fra startlist.club**: 18 dage maj-august 2026, 88 plads-dage med facit (skolefly frafiltreret: samme fly med 3+ forskellige forsædepiloter samme dag tæller ikke). Resultat: v2 rammer 61/88 forventede bånd mod v1's 57/88, samlet afvigelse 51.6 mod 55.0, største enkeltfejl 1.6 mod 3.3. Se [sæson-valideringen](Referat/2026-08-25-startlist-saeson-validering.md) og [pålandsvinds-studiet](Referat/2026-08-25-paalandsvind-studie.md) (4180 plads-dage scannet).
 
 ### Kommentargenerering
 
-Systemet genererer en kort dansk kommentar (2-3 sætninger) der forklarer scoren. Kommentaren opbygges af moduler:
+`termik/comments.py` genererer en kort dansk kommentar (2-3 sætninger). Struktur (siden popup-redesignet 2026-08-26): tal der står i popup'ens felter og grafik gentages ikke; sætningerne har faste roller:
 
-- **Stabilitetsvurdering** (altid med): "Labil atmosfære — god konvektion."
-- **Skybase** (hvis termik mulig): "Skybase ca. 1290m (4200 ft)."
-- **Advarsler** (betinget): søbrise, udkagning, overudvikling, stærk vind, front
-- **Positive noter** (betinget): bagsidevejr, skygade-betingelser
+- **Bindende faktor** (leder, når dagen er brugbar): "Toppen begrænses af skybasen, regn med ca. 1100 m." Styret af `thermal_top_limited_by`; "inversion"- og "saturated"-domme oversættes bevidst ikke ved brugbar score (de kan være falske hen over et superadiabatisk overfladelag) — der falder teksten tilbage på stabilitetslinjen fra målt lapse rate.
+- **Advarsler/observationer** (op til 2, prioriteret): cirrus-banker, søbrise, vindstød/effektiv vind, vind der øger i højden, Cb-risiko, bagsidevejr, tørtermik.
+- **Termikvinduet** ("Termik ca. 11 til 19") genereres i frontenden af dagsforløbet og hører ikke til her.
 
 ---
 
@@ -316,12 +320,13 @@ Mørkeblå (0) → Lyseblå (3) → Gul (5) → Orange (7) → Rød (10)
 - **Dagvælger**: 7 knapper (I dag, I morgen, Overmorgen, +3 til +6 dage)
 - **Timeslider**: Kl. 06-21, opdaterer heatmap og markører i realtid
 - **Favorit-plads**: vælg én flyveplads og se hele dagens forløb i sidepanelet
-- **Kortlag**: vælg mellem to lag — Flyveforhold (score-heatmap) eller Termik-tophøjde (diskrete celler med tal per celle ved zoom ≥ 9). Valget huskes i localStorage.
+- **Kortlag**: vælg mellem to lag — Flyveforhold (score-heatmap) eller Termik-tophøjde (glat interpoleret, med højde-labels per celle ved zoom ≥ 9). Valget huskes i localStorage.
+- **Opdater-knap**: ved siden af "Opdateret:"-teksten; henter nyeste data med `cache: no-cache` og genbygger markører, dagknapper og lag. Derudover genhenter appen automatisk ved `visibilitychange`, når den kommer i forgrunden og sidste hentning er over 30 min gammel (PWA'en genoptages ellers fra hukommelsen på mobil med timegamle data).
 - **Vejr-widget**: lille kort i kortets venstre top (under zoom-knapperne) der viser vejret lige nu for favorit-pladsen. Se eget afsnit nedenfor.
 
 ### Kortlag — termik-tophøjde
 
-Diskret-farvet lag baseret på `compute_thermal_top()`-resultatet per grid-celle. Distinkt viridis-lignende palet (lilla → orange) for at undgå forveksling med score-laget. Værdier <500 m vises lilla, ~1500 m grøn (god dansk dag), 2500 m+ orange-rød (sjælden i DK).
+Lag baseret på `compute_thermal_top()`-resultatet per grid-celle, renderet med samme glatte browser-interpolation og kystklipning som score-laget (siden 2026-08-25; null-celler udfyldes med nærmeste reelle værdi før interpolationen). Distinkt viridis-lignende palet (lilla → orange) for at undgå forveksling med score-laget. Værdier <500 m vises lilla, ~1500 m grøn (god dansk dag), 2500 m+ orange-rød (sjælden i DK). Højde-labels tegnes ovenpå ved zoom ≥ 9.
 
 ### Vejr-widget — vejret lige nu på favorit-pladsen
 
@@ -345,7 +350,18 @@ zoom-knapperne. Viser de aktuelle forhold for den valgte favorit-plads (jf.
 
 ### Popup ved klik på svæveflyveplads
 
-Viser: score med farvede prikker, label, kommentar, temperatur, spread, skybase, vind (retning + styrke), lapse rate, termik-tophøjde, blandingslag, CAPE, skydække, fugtighed, samt et mini-søjlediagram med dagsforløbet.
+Redesignet 2026-08-26 med prioriteret hierarki (design-forløbet ligger i sessionsrapporten, se [Referat 2026-08-26](Referat/2026-08-26-sessionsrapport.md)):
+
+1. **Score-ring** med dagens gennemsnit kl. 10-18 (samme tal som favorit-panelet) og **termikvinduet** ("Termik ca. 11 til 19, bedst 13 til 15"), beregnet i frontenden af dagsforløbet (timer ≥5 hhv. ≥8.5).
+2. **Kommentar** (bindende faktor + advarsler, se Kommentargenerering).
+3. **Dagsforløb** (mini-søjlediagram).
+4. **Tre heltetal**: Termiktop (med begrænsnings-årsag), Skybase (m + ft), Vind (retningspil + kt + stød).
+5. **Termik**: højdeakse med termiksøjle, base- og blandingslag-linjer og cirrusbånd, plus lapse-måler med scoringens zonegrænser.
+6. **Temperatur (°C)**: spread-termometer fra dugpunkt til temperatur på 0-30°-skala.
+7. **Vind (knob)**: kompas med drejningsvifte (10/80/180 m, pilene peger med vinden) og styrkesøjler pr. højde med stødmærke.
+8. **Himmel og sol**: skylag-bjælker (høj/mellem/lav), direkte sol; CAPE og nedbør kun når de er informative.
+
+Popup-højden følger skærmen (vindueshøjde minus 150 px, min. 420): desktop viser det hele, mobil scroller i popup'en. Alle multi-level-felter kan mangle uden at vælte layoutet.
 
 ### Responsivt
 
@@ -357,9 +373,14 @@ Desktop: sidepanel til højre. Mobil (<768px): sidepanel som bund-panel.
 
 ### update-forecast.yml
 
-- **Trigger**: Cron `0 */3 * * *` (hver 3. time kl. XX:15) + manuel dispatch
+- **Trigger**: Cron `15 */3 * * *` (hver 3. time kl. XX:15) + manuel dispatch
 - **Kører**: Python 3.12, installerer requests, kører `python -m termik`
 - **Committer**: Opdaterede JSON-filer til repo'et med bot-bruger
+- **Push med rebase-retry** (siden 2026-08-26): kørslen tager ~20 min fra checkout til push, så et kode-push i det vindue flyttede main og fik datapushet afvist. Push-trinnet prøver nu op til 3 gange med `git pull --rebase` imellem; datacommits rører kun `termik/output/data/`, så rebasen er altid ren.
+
+### rerun-failed-forecast.yml
+
+Vagthund: trigges når en forecast-kørsel slutter. Fejlede den (og attempt < 3), ventes 60 s og de fejlede jobs genstartes. Bemærk to ting: listen i Actions viser én (oftest "skipped") kørsel pr. datakørsel, det er GitHubs workflow_run-mekanik og harmløst; og en genstart kører på det oprindelige commit-SHA, så den kan aldrig reparere en push-race (det gør rebase-retry ovenfor), kun transiente fejl som API-nedetid og runner-nedbrud.
 
 ### deploy-pages.yml
 

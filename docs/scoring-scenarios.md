@@ -1,5 +1,14 @@
 # Termik Scoring — Scenariereference
 
+> **Status 2026-08-25**: Produktionen kører nu **scoring v2**
+> (`termik/scoring_v2.py`, DSvU-hæftets justeringer); dette dokument
+> beskriver v1, som er bevaret som rollback via `SCORING_VERSION`.
+> v2's ændringer og validering mod virkelige flyvninger:
+> [plan](plans/2026-08-25-scoring-v2-dsvu-haefte.md),
+> [sammenligning](Referat/2026-08-25-scoring-v2-sammenligning.md),
+> [sæson-validering](Referat/2026-08-25-startlist-saeson-validering.md).
+> v2's sæson-scenarier ligger i `termik/tests/test_scenarios_v2_season.py`.
+
 Referencedokument til validering og finjustering af scoring-systemet.
 Genereret 2026-04-07 med multi-level data (80m/120m/180m vind+temp, boundary layer height).
 
