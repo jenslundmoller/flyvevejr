@@ -1159,10 +1159,10 @@ function setupControls() {
         }
     });
 
-    // Show generated timestamp
-    const genDate = new Date(forecastData.generated);
-    document.getElementById('update-info').textContent =
-        'Opdateret: ' + genDate.toLocaleString('da-DK');
+    // Opdater-knappen henter nyeste data uden at lukke appen
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+        refreshForecastData();
+    });
 }
 
 // === Update everything ===
@@ -1171,6 +1171,69 @@ function updateAll() {
     updateMarkerColors();
     updateFavoriteForecast();
 }
+
+// === Genindlæsning af vejrdata ===
+// PWA'en genoptages fra hukommelsen på mobil, så forecastData kan være
+// timer gammel selv om serveren har friske data. To veje ind: Opdater-
+// knappen, og en automatisk hentning når appen kommer i forgrunden og
+// sidste hentning er over 30 minutter gammel.
+let lastDataFetchMs = 0;
+const AUTO_REFRESH_AGE_MS = 30 * 60 * 1000;
+
+function applyGeneratedTimestamp() {
+    const genParts = forecastData.generated.split('T')[0].split('-');
+    baseDate = new Date(
+        parseInt(genParts[0], 10),
+        parseInt(genParts[1], 10) - 1,
+        parseInt(genParts[2], 10)
+    );
+    const genDate = new Date(forecastData.generated);
+    const info = document.getElementById('update-info');
+    if (info) info.textContent = 'Opdateret: ' + genDate.toLocaleString('da-DK');
+}
+
+async function refreshForecastData() {
+    const btn = document.getElementById('refresh-btn');
+    if (btn) btn.classList.add('refreshing');
+    try {
+        // cache: 'no-cache' revaliderer forbi både HTTP-cachen og SW'ens
+        // network-first, så knappen altid rammer serveren
+        const resp = await fetch('data/current.json', { cache: 'no-cache' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const fresh = await resp.json();
+        lastDataFetchMs = Date.now();
+        if (fresh.generated !== forecastData.generated) {
+            forecastData = fresh;
+            applyGeneratedTimestamp();
+            // Markørernes click-handlers lukker over de gamle punkt-objekter,
+            // så de bygges om frem for at få nye referencer listet ind
+            for (const entry of airfieldMarkers) {
+                entry.marker.remove();
+            }
+            airfieldMarkers = [];
+            createAirfieldMarkers();
+            document.querySelectorAll('.day-btn').forEach(function(b) {
+                const d = parseInt(b.getAttribute('data-day'), 10);
+                b.textContent = getDayLabel(d);
+            });
+            updateAll();
+        }
+    } catch (e) {
+        // Ingen netdækning eller serverfejl: behold de data vi har
+    } finally {
+        if (btn) btn.classList.remove('refreshing');
+    }
+}
+
+document.addEventListener('visibilitychange', function() {
+    if (
+        document.visibilityState === 'visible'
+        && forecastData
+        && Date.now() - lastDataFetchMs > AUTO_REFRESH_AGE_MS
+    ) {
+        refreshForecastData();
+    }
+});
 
 // === Loading UI helpers ===
 function showLoading() {
@@ -1217,13 +1280,11 @@ async function init() {
         return;
     }
 
-    // Parse the base date from the generated timestamp (day 0 = date of generated)
-    const genParts = forecastData.generated.split('T')[0].split('-');
-    baseDate = new Date(
-        parseInt(genParts[0], 10),
-        parseInt(genParts[1], 10) - 1,
-        parseInt(genParts[2], 10)
-    );
+    lastDataFetchMs = Date.now();
+
+    // Parse the base date from the generated timestamp (day 0 = date of
+    // generated) and show it in the sidebar
+    applyGeneratedTimestamp();
 
     // Set initial day and hour from URL hash or current time
     var params = parseHash();
