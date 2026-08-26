@@ -39,7 +39,15 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "data: update termik forecast $(date -u +'%Y-%m-%d %H:%M UTC')"
-            git push
+            # Kørslen tager ~20 min, så main kan være rykket siden checkout
+            # (kode-pushes rammer ellers en push-race). Datacommits rører kun
+            # termik/output/data/, så rebase oven på ny main er altid ren.
+            for attempt in 1 2 3; do
+              if git push; then
+                break
+              fi
+              git pull --rebase origin main
+            done
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
