@@ -460,7 +460,7 @@ function createAirfieldMarkers() {
             fillColor: '#888',
         });
 
-        marker.bindPopup('', { maxWidth: 340, className: 'termik-popup' });
+        marker.bindPopup('', { maxWidth: 360, maxHeight: 480, className: 'termik-popup' });
 
         // Store reference to airfield on marker for popup updates
         marker._airfieldData = af;
@@ -489,6 +489,10 @@ function updateMarkerColors() {
 }
 
 // === Popup ===
+// Redesign 2026-08-26: prioriteret hierarki. Ring + termikvindue, tekst,
+// dagsforl\u00F8b, tre heltetal, og sektionerne Termik (h\u00F8jdeakse + lapse-
+// m\u00E5ler), Temperatur (spread-termometer), Vind (kompas + s\u00F8jler i knob)
+// og Himmel og sol (skylag-bj\u00E6lker). Alt bygger p\u00E5 eksisterende felter.
 function createPopupContent(airfield) {
     const hourData = getPointAtTime(airfield, currentDay, currentHour);
     if (!hourData) {
@@ -496,57 +500,274 @@ function createPopupContent(airfield) {
     }
 
     const d = hourData.data;
-    const windArrow = getWindArrow(d.wind_dir);
-    const stars = buildScoreStars(hourData.score);
-    const dayChart = buildDayChart(airfield);
 
     return '<div class="popup-content">'
         + '<h3>' + escapeHtml(airfield.name) + '</h3>'
-        + '<div class="popup-score">'
-        +   stars
-        +   '<span class="score-value">' + hourData.score + '/10</span>'
-        +   '<span class="score-label">' + escapeHtml(hourData.label) + '</span>'
-        + '</div>'
+        + buildScoreHeader(airfield, hourData)
         + '<p class="popup-comment">' + escapeHtml(hourData.comment) + '</p>'
-        + '<div class="popup-grid">'
-        +   popupItem('Temp', d.temp + '\u00B0C', 'Temperatur ved jordoverfladen (2m)')
-        +   popupItem('Spread', d.spread + '\u00B0C', 'Forskellen mellem temperatur og dugpunkt. Optimalt 8\u201315\u00B0C for cumulus.')
-        +   popupItem('Skybase', d.skybase_m + 'm (' + d.skybase_ft + ' ft)', 'Estimeret skybase (Henning-formel: spread \u00D7 125m)')
-        +   popupItem('Vind', windArrow + ' ' + d.wind_dir + '\u00B0/' + Math.round(d.wind_speed_kt) + ' kt', 'Vindretning og -hastighed i 10m h\u00F8jde (jordniveau)')
-        +   popupItem('Lapse rate', d.lapse_rate + '\u00B0C/100m', 'Temperaturfaldet pr. 100m stigning. H\u00F8jere = mere ustabil luft = bedre termik.')
-        +   popupItem('Vindst\u00F8d', Math.round(d.wind_gusts_kt) + ' kt (eff. ' + Math.round(d.wind_speed_kt + d.wind_gusts_kt / 2) + ')', 'Vindst\u00F8d i kt. Eff. = vind+(gust/2). Over 25 = nedsat, over 30 = kun erfarne.')
-        + (d.wind_speed_80m_kt != null
-            ? popupItem('Vind 80m', Math.round(d.wind_speed_80m_kt) + ' kt', 'Vindhastighed i 80m h\u00F8jde \u2014 t\u00E6ttere p\u00E5 flyveh\u00F8jde end 10m')
-            : '')
-        + (d.wind_speed_180m_kt != null
-            ? popupItem('Vind 180m', Math.round(d.wind_speed_180m_kt) + ' kt', 'Vindhastighed i 180m h\u00F8jde')
-            : '')
-        + (d.surface_lapse_rate != null
-            ? popupItem('Overfladelag', d.surface_lapse_rate + '\u00B0C/100m', 'Lapse rate 2m\u2192180m. Over 0.98 = termik starter. Under 0.5 = ingen initiering.')
-            : '')
-        + (d.thermal_top_m != null
-            ? popupItem('Termik-toph\u00F8jde', d.thermal_top_m + 'm', 'Beregnet maks. brugbar termikh\u00F8jde (parcel-teori: TI=0 cap\'d med LCL, minus Hcrit-margin)')
-            : '')
-        + (d.boundary_layer_height != null
-            ? popupItem('Blandingslag', Math.round(d.boundary_layer_height) + 'm', 'Modellens r\u00E5e blandingslag (sammenlign med Termik-top)')
-            : '')
-        +   popupItem('CAPE', d.cape + ' J/kg', 'Convective Available Potential Energy. H\u00F8j v\u00E6rdi = risiko for byger/overudvikling.')
-        +   popupItem('Skyd\u00E6kke', d.cloud_cover + '%', 'Samlet skyd\u00E6kke. Over 87% blokerer solinstr\u00E5ling og dr\u00E6ber termik.')
-        +   popupItem('Fugtighed', d.relative_humidity + '%', 'Relativ luftfugtighed ved jordoverfladen')
+        + '<div class="popup-seclabel first">Dagsforl\u00F8b</div>'
+        + buildDayChart(airfield)
+        + buildHeroes(d)
+        + '<div class="popup-seclabel" title="Beregnet brugbar termikh\u00F8jde (parcel-teori), skybase og blandingslag p\u00E5 samme akse">Termik</div>'
+        + buildTermikSection(d)
+        + '<div class="popup-seclabel" title="B\u00E5ndet g\u00E5r fra dugpunkt til temperatur; l\u00E6ngden er spread, som s\u00E6tter skybasen">Temperatur (\u00B0C)</div>'
+        + buildTempBar(d)
+        + '<div class="popup-seclabel" title="Pilene peger med vinden. M\u00F8rk pil: 10 m; lysere: 80 og 180 m. R\u00F8dt m\u00E6rke: dagens st\u00F8d">Vind (knob)</div>'
+        + buildWindSection(d)
+        + '<div class="popup-seclabel">Himmel og sol</div>'
+        + buildSkySection(d)
+        + '</div>';
+}
+
+function buildScoreHeader(airfield, hourData) {
+    const score = hourData.score;
+    const color = scoreToColor(score);
+    const deg = Math.round(Math.max(0, Math.min(10, score)) / 10 * 360);
+    const windowText = computeThermalWindow(airfield);
+    return '<div class="popup-bigscore">'
+        + '<div class="popup-ring" style="background:conic-gradient(' + color + ' 0 ' + deg + 'deg, #e5e7eb ' + deg + 'deg 360deg)">'
+        +   '<i style="background:' + color + '">' + score + '</i>'
         + '</div>'
-        + '<div class="popup-chart-section">'
-        +   '<h4>Dagsforl\u00F8b</h4>'
-        +   dayChart
+        + '<div class="popup-window">' + windowText
+        +   '<small>' + escapeHtml(hourData.label) + ' \u00B7 kl. ' + String(currentHour).padStart(2, '0') + '</small>'
         + '</div>'
         + '</div>';
 }
 
-function popupItem(key, val, tooltip) {
-    var titleAttr = tooltip ? ' title="' + escapeHtml(tooltip) + '"' : '';
-    return '<div class="popup-item"' + titleAttr + '>'
-        + '<span class="popup-key">' + key + '</span>'
-        + '<span class="popup-val">' + val + '</span>'
+// Termikvinduet afl\u00E6ses af dagens timer: f\u00F8rste og sidste time med
+// score >= 5, og "bedst"-intervallet er timerne med score >= 8.5.
+function computeThermalWindow(airfield) {
+    let first = null, last = null, bestFirst = null, bestLast = null;
+    for (let h = 6; h <= 21; h++) {
+        const hd = getPointAtTime(airfield, currentDay, h);
+        if (!hd) continue;
+        if (hd.score >= 5) {
+            if (first === null) first = h;
+            last = h;
+        }
+        if (hd.score >= 8.5) {
+            if (bestFirst === null) bestFirst = h;
+            bestLast = h;
+        }
+    }
+    if (first === null) return 'Ingen brugbar termik i dag';
+    let text = 'Termik ca. ' + first + ' til ' + last;
+    if (bestFirst !== null && (bestFirst !== first || bestLast !== last)) {
+        text += bestFirst === bestLast
+            ? ', bedst kl. ' + bestFirst
+            : ', bedst ' + bestFirst + ' til ' + bestLast;
+    }
+    return text;
+}
+
+function limitedByDa(limitedBy) {
+    switch (limitedBy) {
+        case 'lcl': return 'base-begr\u00E6nset';
+        case 'ti_zero': return 'temp-begr\u00E6nset';
+        case 'inversion': return 'jordinversion';
+        case 'weak_solar': return 'svag sol';
+        case 'margin_collapse': return 'svag sol';
+        case 'saturated': return 'm\u00E6ttet luft';
+        case 'cap': return 'dyb konvektion';
+        default: return '';
+    }
+}
+
+function compassLetter(deg) {
+    const dirs = ['N', 'N\u00D8', '\u00D8', 'S\u00D8', 'S', 'SV', 'V', 'NV'];
+    return dirs[Math.round(deg / 45) % 8];
+}
+
+function buildHeroes(d) {
+    const topCell = d.thermal_top_m != null
+        ? '<b>' + d.thermal_top_m + ' m</b><small>' + limitedByDa(d.thermal_top_limited_by) + '</small>'
+        : '<b>\u2013</b><small>ingen data</small>';
+    return '<div class="popup-heroes">'
+        + '<div class="popup-hero" title="Beregnet maks. brugbar termikh\u00F8jde"><span>Termiktop</span>' + topCell + '</div>'
+        + '<div class="popup-hero" title="Estimeret skybase (spread \u00D7 125 m)"><span>Skybase</span><b>' + d.skybase_m + ' m</b><small>' + d.skybase_ft + ' ft</small></div>'
+        + '<div class="popup-hero" title="Vind i 10 m; pilen peger med vinden"><span>Vind</span><b>' + getWindArrow(d.wind_dir) + ' ' + Math.round(d.wind_speed_kt) + ' kt</b><small>' + compassLetter(d.wind_dir) + ' \u00B7 st\u00F8d ' + Math.round(d.wind_gusts_kt) + '</small></div>'
         + '</div>';
+}
+
+function buildTermikSection(d) {
+    return '<div class="popup-termgrid">'
+        + buildAltAxis(d)
+        + '<div class="popup-termside">'
+        +   buildLapseGauge(d.lapse_rate)
+        +   (d.boundary_layer_height != null
+            ? '<div class="popup-kv"><span>Blandingslag</span><span>' + Math.round(d.boundary_layer_height) + ' m</span></div>'
+            : '')
+        +   (d.thermal_top_limited_by && limitedByDa(d.thermal_top_limited_by)
+            ? '<div class="popup-kv"><span>Begr\u00E6nses af</span><span>' + limitedByDa(d.thermal_top_limited_by).replace('-begr\u00E6nset', 'n') + '</span></div>'
+            : '')
+        + '</div>'
+        + '</div>';
+}
+
+function buildAltAxis(d) {
+    const top = d.thermal_top_m;
+    const base = d.lcl_m != null ? d.lcl_m : d.skybase_m;
+    const bl = d.boundary_layer_height;
+    const maxVal = Math.max(top || 0, base || 0, bl || 0, 1300);
+    const axisMax = Math.ceil((maxVal + 250) / 400) * 400;
+    const pct = (m) => Math.max(0, Math.min(100, m / axisMax * 100));
+
+    let html = '<div class="popup-alt">';
+    const step = axisMax / 4;
+    for (let i = 0; i <= 4; i++) {
+        html += '<span class="alt-tick" style="bottom:' + (i * 25) + '%">' + Math.round(i * step) + '</span>';
+    }
+    if (d.cloud_cover_high != null && d.cloud_cover_high >= 20) {
+        html += '<div class="alt-cloudband" style="opacity:' + (0.35 + d.cloud_cover_high / 200) + '"></div>'
+            + '<span class="alt-lab cirrus">cirrus ' + Math.round(d.cloud_cover_high) + ' %</span>';
+    }
+    if (top != null && top > 0) {
+        html += '<div class="alt-thermcol" style="height:' + pct(top) + '%"></div>'
+            + '<span class="alt-lab top" style="bottom:' + Math.min(pct(top) + 2.5, 88) + '%">top ' + top + '</span>';
+    }
+    if (base != null) {
+        html += '<div class="alt-hline base" style="bottom:' + pct(base) + '%"></div>'
+            + '<span class="alt-lab base" style="bottom:' + Math.min(pct(base) + 2.5, 94) + '%">base ' + Math.round(base) + '</span>';
+    }
+    if (bl != null) {
+        html += '<div class="alt-hline bl" style="bottom:' + pct(bl) + '%"></div>'
+            + '<span class="alt-lab bl" style="bottom:' + Math.max(pct(bl) - 8, 2) + '%">bl.lag ' + Math.round(bl) + '</span>';
+    }
+    html += '</div>';
+    return html;
+}
+
+function buildLapseGauge(lapse) {
+    // Zonegr\u00E6nserne er scoringens egne t\u00E6rskler: 0.65 / 0.8 / 1.0
+    const t = Math.max(0, Math.min(1, (lapse - 0.4) / 0.9));
+    return '<div class="popup-gauge" title="Zoner: stabil < 0.65, svagt labil, betinget labil, labil \u2265 1.0">'
+        + '<div class="gauge-lab"><span>Lapse rate</span><b>' + lapse + '\u00B0/100m</b></div>'
+        + '<div class="gauge-track">'
+        +   '<i style="width:27.8%;background:#b9c6d1"></i>'
+        +   '<i style="width:16.7%;background:#e5c95b"></i>'
+        +   '<i style="width:22.2%;background:#e8a13f"></i>'
+        +   '<i style="width:33.3%;background:#ce4a3d"></i>'
+        +   '<span class="gauge-mark" style="left:' + (t * 100).toFixed(1) + '%"></span>'
+        + '</div>'
+        + '<div class="gauge-zones"><span>stabil</span><span>labil</span></div>'
+        + '</div>';
+}
+
+function buildTempBar(d) {
+    const tmin = Math.min(0, Math.floor(d.dewpoint));
+    const tmax = Math.max(30, Math.ceil(d.temp));
+    const range = tmax - tmin;
+    const pct = (v) => ((v - tmin) / range * 100);
+    const dewPct = pct(d.dewpoint);
+    const tmpPct = pct(d.temp);
+    let ticks = '';
+    for (let i = 0; i <= 3; i++) {
+        ticks += '<span>' + Math.round(tmin + range * i / 3) + '\u00B0C</span>';
+    }
+    return '<div class="popup-temprow">'
+        + '<div class="temp-track"></div>'
+        + '<div class="temp-band" style="left:' + dewPct.toFixed(1) + '%;width:' + (tmpPct - dewPct).toFixed(1) + '%"></div>'
+        + '<span class="temp-spread" style="left:' + ((dewPct + tmpPct) / 2).toFixed(1) + '%">spread <b>' + d.spread + '\u00B0C</b></span>'
+        + '<span class="temp-pt dew" style="left:' + dewPct.toFixed(1) + '%">dug ' + d.dewpoint + '\u00B0C</span>'
+        + '<span class="temp-pt tmp" style="left:' + tmpPct.toFixed(1) + '%">' + d.temp + '\u00B0C</span>'
+        + '</div>'
+        + '<div class="temp-ticks">' + ticks + '</div>';
+}
+
+function buildWindSection(d) {
+    return '<div class="popup-windgrid">'
+        + buildCompass(d)
+        + buildWindBars(d)
+        + '</div>';
+}
+
+function buildCompass(d) {
+    // Pilene peger MED vinden (nedstr\u00F8ms): rotation = retning + 180.
+    const arrow = (dir, len, width, color, opacity, head) => {
+        const rot = ((dir + 180) % 360).toFixed(0);
+        let g = '<g transform="rotate(' + rot + ' 52 52)" opacity="' + opacity + '">'
+            + '<line x1="52" y1="52" x2="52" y2="' + (52 - len) + '" stroke="' + color + '" stroke-width="' + width + '" stroke-linecap="round"/>';
+        if (head) {
+            g += '<path d="M52 ' + (46 - len) + ' L46.5 ' + (56 - len) + ' L57.5 ' + (56 - len) + ' Z" fill="' + color + '"/>';
+        }
+        return g + '</g>';
+    };
+    let arrows = '';
+    if (d.wind_speed_180m_kt != null && d.wind_dir_180m != null) {
+        arrows += arrow(d.wind_dir_180m, 40, 2.5, '#7ba7c9', 0.55, true);
+    }
+    if (d.wind_speed_80m_kt != null && d.wind_dir_80m != null) {
+        arrows += arrow(d.wind_dir_80m, 33, 3, '#4a86b4', 0.7, false);
+    }
+    arrows += arrow(d.wind_dir, 36, 4, '#16679f', 1, true);
+    return '<svg class="popup-compass" viewBox="0 0 104 104" role="img" aria-label="Vindkompas">'
+        + '<circle cx="52" cy="52" r="44" fill="none" stroke="#e5e7eb" stroke-width="1.5"/>'
+        + '<text x="52" y="14" text-anchor="middle" class="compass-pt">N</text>'
+        + '<text x="95" y="55" text-anchor="middle" class="compass-pt">\u00D8</text>'
+        + '<text x="52" y="99" text-anchor="middle" class="compass-pt">S</text>'
+        + '<text x="9" y="55" text-anchor="middle" class="compass-pt">V</text>'
+        + arrows
+        + '<circle cx="52" cy="52" r="3.5" fill="#1e2433"/>'
+        + '</svg>';
+}
+
+function buildWindBars(d) {
+    const gust = d.wind_gusts_kt;
+    const maxKt = Math.max(20, Math.ceil(Math.max(gust || 0, d.wind_speed_180m_kt || 0, d.wind_speed_kt) + 4));
+    const w = (kt) => Math.min(96, kt / maxKt * 100);
+    const row = (label, kt) => {
+        if (kt == null) return '';
+        return '<div class="wind-row"><span class="wind-h">' + label + '</span>'
+            + '<span class="wind-bar"><i style="width:' + w(kt).toFixed(0) + '%"></i>'
+            + '<b style="left:' + (w(kt) + 2).toFixed(0) + '%">' + Math.round(kt) + ' kt</b></span></div>';
+    };
+    let groundExtra = '';
+    if (gust != null && gust > d.wind_speed_kt + 2) {
+        groundExtra = '<span class="wind-gust" style="left:' + w(gust).toFixed(0) + '%"></span>'
+            + '<span class="wind-gustlab" style="left:' + Math.min(w(gust) + 3, 84).toFixed(0) + '%">G' + Math.round(gust) + ' kt</span>';
+    }
+    const groundRow = '<div class="wind-row"><span class="wind-h">10 m</span>'
+        + '<span class="wind-bar"><i style="width:' + w(d.wind_speed_kt).toFixed(0) + '%"></i>'
+        + '<b style="left:' + (w(d.wind_speed_kt) + 2).toFixed(0) + '%">' + Math.round(d.wind_speed_kt) + ' kt</b>'
+        + groundExtra + '</span></div>';
+    let veer = '';
+    if (d.wind_dir_180m != null && Math.abs(d.wind_dir_180m - d.wind_dir) >= 5) {
+        veer = '<div class="popup-kv"><span>Drejning 10\u2192180 m</span><span>' + Math.round(d.wind_dir) + '\u00B0 \u2192 ' + Math.round(d.wind_dir_180m) + '\u00B0</span></div>';
+    }
+    return '<div class="wind-rows">'
+        + row('180 m', d.wind_speed_180m_kt)
+        + row('80 m', d.wind_speed_80m_kt)
+        + groundRow
+        + veer
+        + '</div>';
+}
+
+function buildSkySection(d) {
+    let bars = '';
+    if (d.cloud_cover_low != null && d.cloud_cover_mid != null && d.cloud_cover_high != null) {
+        const row = (label, pctVal, color) =>
+            '<div class="cloud-row"><span class="cloud-lab">' + label + '</span>'
+            + '<span class="cloud-bar"><i style="width:' + Math.round(pctVal) + '%;background:' + color + '"></i></span>'
+            + '<span class="cloud-pct">' + Math.round(pctVal) + ' %</span></div>';
+        bars = row('H\u00F8j', d.cloud_cover_high, '#c7d8e8')
+            + row('Mellem', d.cloud_cover_mid, '#9fb8ce')
+            + row('Lav', d.cloud_cover_low, '#7d99b4');
+    } else {
+        bars = '<div class="cloud-row"><span class="cloud-lab">Sky</span>'
+            + '<span class="cloud-bar"><i style="width:' + Math.round(d.cloud_cover) + '%;background:#9fb8ce"></i></span>'
+            + '<span class="cloud-pct">' + Math.round(d.cloud_cover) + ' %</span></div>';
+    }
+    let extras = '';
+    if (d.direct_radiation != null) {
+        extras += '<div class="popup-kv" title="Direkte solindstr\u00E5ling: det der driver opvarmningen af jorden"><span>Direkte sol</span><span>' + Math.round(d.direct_radiation) + ' W/m\u00B2</span></div>';
+    }
+    if (d.cape >= 300) {
+        extras += '<div class="popup-kv" title="H\u00F8j CAPE = risiko for byger/overudvikling"><span>CAPE</span><span>' + Math.round(d.cape) + ' J/kg</span></div>';
+    }
+    if (d.precipitation > 0) {
+        extras += '<div class="popup-kv"><span>Nedb\u00F8r</span><span>' + d.precipitation + ' mm</span></div>';
+    }
+    return '<div class="popup-sky">' + bars + extras + '</div>';
 }
 
 function escapeHtml(text) {
@@ -554,17 +775,6 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.appendChild(document.createTextNode(text));
     return div.innerHTML;
-}
-
-function buildScoreStars(score) {
-    let html = '<div class="stars">';
-    for (let i = 1; i <= 10; i++) {
-        const filled = i <= Math.round(score);
-        const color = filled ? scoreToColor(score) : '#ddd';
-        html += '<span class="star" style="background:' + color + '"></span>';
-    }
-    html += '</div>';
-    return html;
 }
 
 function buildDayChart(airfield) {

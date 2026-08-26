@@ -359,6 +359,10 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         score=result["score"],
         wind_shear_kt=wind_shear_for_comment,
         boundary_layer_height=bl_height,
+        thermal_top_m=thermal_top["thermal_top_m"],
+        thermal_top_limited_by=thermal_top["limited_by"],
+        cloud_cover_high=cloud_cover_high,
+        wind_speed_180m_kt=wind_speed_180m,
     )
 
     return {
