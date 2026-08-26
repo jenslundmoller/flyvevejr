@@ -4,6 +4,8 @@ on:
   schedule:
     # Run every 3 hours
     - cron: '15 */3 * * *'
+  # Manuel start, fx efter en kode-ændring der skal ud i dataene med det samme
+  workflow_dispatch:
   workflow_dispatch: # Allow manual trigger
 
 permissions:
