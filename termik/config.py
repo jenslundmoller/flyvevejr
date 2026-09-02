@@ -6,6 +6,14 @@ API_BATCH_SIZE = 10  # Max locations per request (low to avoid 429s)
 FORECAST_DAYS = 7
 TIMEZONE = "Europe/Berlin"
 
+# Mindste andel af gitterpunkterne der skal hjem, før et resultat må skrives.
+# Flyvepladserne har ingen tolerance: de ligger samlet i de første batches, så
+# én fejlet batch koster 10 klubber, og frontenden viser et tomt favoritpanel
+# uden fejlmeddelelse. Gitteret tåler ét hul, fordi kortet interpolerer.
+# Under grænsen afvises output, så den forrige komplette prognose bliver
+# liggende og rerun-workflowet får lov at prøve igen.
+GRID_COVERAGE_FLOOR = 0.95
+
 # Hourly parameters to fetch
 HOURLY_PARAMS = [
     "temperature_2m",

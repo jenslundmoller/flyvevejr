@@ -1,7 +1,10 @@
+import json
 from datetime import datetime, timedelta
 
 import pytest
+import requests
 
+import termik.fetch_weather as fetch_weather
 from termik.config import HOURLY_PARAMS
 from termik.fetch_weather import (
     build_api_url,
@@ -543,3 +546,293 @@ def test_process_point_hour_gate_keeps_memory_when_the_sky_stays_clear():
 
     result = process_point_hour(_test_point(), hourly_data, 3, month=8)
     assert result["score"] > 5
+
+
+# --- Netværksfejl: tomme/ikke-JSON svar fra Open-Meteo ------------------------
+# Open-Meteo svarer lejlighedsvis 200 OK med et tomt body. response.json()
+# kaster da requests.exceptions.JSONDecodeError, som hverken er HTTPError,
+# ConnectionError eller Timeout. Den skal behandles som en transient fejl
+# på linje med et read-timeout, ikke som noget der vælter hele kørslen.
+
+class _FakeResponse:
+    """Minimal stand-in for requests.Response.
+
+    payload=None modellerer et tomt body (response.json() kaster);
+    status>=400 modellerer at raise_for_status() kaster som den rigtige gør.
+    """
+
+    def __init__(self, payload=None, status=200):
+        self._payload = payload
+        self.status_code = status
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.exceptions.HTTPError(str(self.status_code), response=self)
+
+    def json(self):
+        if self._payload is None:
+            raise requests.exceptions.JSONDecodeError("Expecting value", "", 0)
+        return self._payload
+
+
+def _silence_backoff(monkeypatch):
+    """Retry-backoffen er 15/30/60 s; tests skal ikke vente på den."""
+    monkeypatch.setattr(fetch_weather.time, "sleep", lambda _seconds: None)
+
+
+def test_fetch_batch_retries_when_response_body_is_not_json(monkeypatch):
+    """Et tomt 200-svar skal udløse et genforsøg, ikke en undtagelse."""
+    _silence_backoff(monkeypatch)
+    payload = {"hourly": _minimal_hourly_data()}
+    responses = [_FakeResponse(None), _FakeResponse(payload)]
+    calls = []
+
+    def fake_get(url, timeout):
+        calls.append(url)
+        return responses[len(calls) - 1]
+
+    monkeypatch.setattr(fetch_weather.requests, "get", fake_get)
+
+    result = fetch_weather.fetch_batch([_test_point()])
+
+    assert result == [payload]
+    assert len(calls) == 2
+
+
+def test_fetch_batch_raises_when_every_response_is_not_json(monkeypatch):
+    """Holder svaret op med at være JSON i alle forsøg, skal fejlen boble op."""
+    _silence_backoff(monkeypatch)
+    calls = []
+
+    def fake_get(url, timeout):
+        calls.append(url)
+        return _FakeResponse(None)
+
+    monkeypatch.setattr(fetch_weather.requests, "get", fake_get)
+
+    with pytest.raises(requests.exceptions.JSONDecodeError):
+        fetch_weather.fetch_batch([_test_point()])
+
+    assert len(calls) == 4  # første forsøg + 3 genforsøg
+
+
+def test_process_all_points_tolerates_a_batch_that_never_returns_json(monkeypatch):
+    """En batch der fejler permanent må koste sine punkter, ikke hele kørslen."""
+    _silence_backoff(monkeypatch)
+    points = [_test_point(id="doomed"), _test_point(id="fine")]
+    monkeypatch.setattr(fetch_weather, "ALL_POINTS", points)
+    monkeypatch.setattr(fetch_weather, "API_BATCH_SIZE", 1)
+
+    def fake_fetch_batch(batch_points):
+        if batch_points[0]["id"] == "doomed":
+            raise requests.exceptions.JSONDecodeError("Expecting value", "", 0)
+        return [{"hourly": _minimal_hourly_data()}]
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    data = fetch_weather.process_all_points()
+
+    assert [p["id"] for p in data["points"]] == ["fine"]
+
+
+def _replies(monkeypatch, *responses):
+    """Lad requests.get svare med responses i rækkefølge; returnér kald-listen."""
+    calls = []
+
+    def fake_get(url, timeout):
+        calls.append(url)
+        reply = responses[min(len(calls) - 1, len(responses) - 1)]
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
+
+    monkeypatch.setattr(fetch_weather.requests, "get", fake_get)
+    return calls
+
+
+def _ok_payload(n: int = 1) -> list:
+    return [{"hourly": _minimal_hourly_data()} for _ in range(n)]
+
+
+# --- Transient vs. permanent: retry-klassificeringen --------------------------
+
+def test_fetch_batch_retries_a_truncated_body(monkeypatch):
+    """Forbindelsen lukket midt i et chunked body er lige så transient som et
+    read-timeout, og må ikke vælte kørslen."""
+    _silence_backoff(monkeypatch)
+    calls = _replies(
+        monkeypatch,
+        requests.exceptions.ChunkedEncodingError("connection broken"),
+        _FakeResponse(_ok_payload()),
+    )
+
+    assert fetch_weather.fetch_batch([_test_point()]) == _ok_payload()
+    assert len(calls) == 2
+
+
+def test_fetch_batch_retries_a_server_error(monkeypatch):
+    """5xx er transient: Open-Meteo har travlt, ikke vi der spørger forkert."""
+    _silence_backoff(monkeypatch)
+    calls = _replies(monkeypatch, _FakeResponse(status=503), _FakeResponse(_ok_payload()))
+
+    assert fetch_weather.fetch_batch([_test_point()]) == _ok_payload()
+    assert len(calls) == 2
+
+
+def test_fetch_batch_retries_when_rate_limited(monkeypatch):
+    """429 skal vente og prøve igen, ikke give op."""
+    _silence_backoff(monkeypatch)
+    calls = _replies(monkeypatch, _FakeResponse(status=429), _FakeResponse(_ok_payload()))
+
+    assert fetch_weather.fetch_batch([_test_point()]) == _ok_payload()
+    assert len(calls) == 2
+
+
+def test_fetch_batch_does_not_retry_a_client_error(monkeypatch):
+    """400 betyder at forespørgslen er forkert; genforsøg ville give samme svar."""
+    _silence_backoff(monkeypatch)
+    calls = _replies(monkeypatch, _FakeResponse(status=400))
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        fetch_weather.fetch_batch([_test_point()])
+    assert len(calls) == 1
+
+
+def test_fetch_batch_does_not_retry_a_malformed_url(monkeypatch):
+    """En forkert API_BASE_URL er en programmeringsfejl. Uden denne grænse ville
+    27 batches brænde 105 s backoff hver, altså ~47 minutter, på et svar der
+    aldrig bliver bedre."""
+    _silence_backoff(monkeypatch)
+    calls = _replies(monkeypatch, requests.exceptions.MissingSchema("no schema"))
+
+    with pytest.raises(requests.exceptions.MissingSchema):
+        fetch_weather.fetch_batch([_test_point()])
+    assert len(calls) == 1
+
+
+# --- Gyldig JSON i forkert form ----------------------------------------------
+
+def test_fetch_batch_retries_an_error_payload(monkeypatch):
+    """Open-Meteos fejlsvar {"error": true, ...} er gyldig JSON, men uden
+    "hourly". Det skal give genforsøg, ikke KeyError længere nede."""
+    _silence_backoff(monkeypatch)
+    calls = _replies(
+        monkeypatch,
+        _FakeResponse({"error": True, "reason": "Cannot initialize"}),
+        _FakeResponse(_ok_payload()),
+    )
+
+    assert fetch_weather.fetch_batch([_test_point()]) == _ok_payload()
+    assert len(calls) == 2
+
+
+def test_fetch_batch_retries_a_short_response(monkeypatch):
+    """Færre svar end punkter i batchen tabte før punkter tavst i zip()."""
+    _silence_backoff(monkeypatch)
+    points = [_test_point(id=f"p{i}") for i in range(3)]
+    calls = _replies(
+        monkeypatch,
+        _FakeResponse(_ok_payload(1)),
+        _FakeResponse(_ok_payload(3)),
+    )
+
+    assert len(fetch_weather.fetch_batch(points)) == 3
+    assert len(calls) == 2
+
+
+def test_fetch_batch_retries_a_null_body(monkeypatch):
+    """JSON null gav før TypeError i zip(); nu er det bare et dårligt svar."""
+    _silence_backoff(monkeypatch)
+    calls = _replies(monkeypatch, _FakeResponse(payload=[None]), _FakeResponse(_ok_payload()))
+
+    assert fetch_weather.fetch_batch([_test_point()]) == _ok_payload()
+    assert len(calls) == 2
+
+
+# --- Dækningsgrænsen: delvis data må ikke overskrive komplet data ------------
+
+def _coverage_data(airfields: int, grid: int) -> dict:
+    points = [{"id": f"a{i}", "type": "airfield", "hours": []} for i in range(airfields)]
+    points += [{"id": f"g{i}", "type": "grid", "hours": []} for i in range(grid)]
+    return {"points": points}
+
+
+def test_check_coverage_accepts_a_complete_run():
+    fetch_weather.check_coverage(
+        _coverage_data(len(fetch_weather.AIRFIELDS), _grid_total())
+    )
+
+
+def _grid_total() -> int:
+    return len(fetch_weather.ALL_POINTS) - len(fetch_weather.AIRFIELDS)
+
+
+def test_check_coverage_rejects_a_single_missing_airfield(capsys):
+    """Flyvepladserne ligger i batch 1-3, så én fejlet batch koster 10 klubber.
+    En bruger hvis klub mangler ser et tomt panel uden fejlmeddelelse."""
+    with pytest.raises(SystemExit) as exc:
+        fetch_weather.check_coverage(
+            _coverage_data(len(fetch_weather.AIRFIELDS) - 1, _grid_total())
+        )
+    assert exc.value.code == 1
+    assert "::error::" in capsys.readouterr().out
+
+
+def test_check_coverage_rejects_grid_below_the_floor(capsys):
+    """Under 95 % gitter afvises, så den forrige komplette prognose bliver
+    liggende i stedet for at blive overskrevet med huller."""
+    grid = _grid_total()
+    with pytest.raises(SystemExit) as exc:
+        fetch_weather.check_coverage(
+            _coverage_data(len(fetch_weather.AIRFIELDS), int(grid * 0.90))
+        )
+    assert exc.value.code == 1
+    assert "::error::" in capsys.readouterr().out
+
+
+def test_check_coverage_rejects_an_empty_run(capsys):
+    with pytest.raises(SystemExit):
+        fetch_weather.check_coverage(_coverage_data(0, 0))
+    assert "::error::" in capsys.readouterr().out
+
+
+def test_check_coverage_warns_visibly_on_a_tolerated_gap(capsys):
+    """Lige over grænsen skrives der, men kørslen skal efterlade et spor i
+    Actions, ellers er en delvis prognose usynlig for ejeren."""
+    grid = _grid_total()
+    fetch_weather.check_coverage(
+        _coverage_data(len(fetch_weather.AIRFIELDS), grid - 1)
+    )
+    assert "::warning::" in capsys.readouterr().out
+
+
+# --- process_all_points og meta.json -----------------------------------------
+
+def test_process_all_points_slims_grid_points_but_not_airfields(monkeypatch):
+    """Gitterpunkter bærer kun time+score+top; flyvepladser bærer alt."""
+    _silence_backoff(monkeypatch)
+    airfield = _test_point(id="EKXX")
+    grid = {"id": "g1", "lat": 55.5, "lon": 9.5,
+            "coast_distance_km": 40, "coast_direction_deg": 90}
+    monkeypatch.setattr(fetch_weather, "ALL_POINTS", [airfield, grid])
+    monkeypatch.setattr(fetch_weather, "API_BATCH_SIZE", 1)
+    monkeypatch.setattr(fetch_weather, "fetch_batch", lambda pts: _ok_payload(1))
+
+    by_id = {p["id"]: p for p in fetch_weather.process_all_points()["points"]}
+
+    assert by_id["EKXX"]["type"] == "airfield"
+    assert set(by_id["g1"]["hours"][0]) == {"time", "score", "thermal_top_m"}
+    assert "data" in by_id["EKXX"]["hours"][0]
+
+
+def test_write_output_records_the_expected_point_count(tmp_path, monkeypatch):
+    """meta.json skal kunne afsløre en delvis kørsel bagefter."""
+    monkeypatch.setattr(fetch_weather, "DATA_DIR", str(tmp_path))
+    data = {"generated": "2026-09-02T10:00:00+00:00", "forecast_days": 7,
+            "points": [{"id": "a0", "type": "airfield", "hours": [{}]}]}
+
+    fetch_weather.write_output(data)
+
+    meta = json.loads((tmp_path / "meta.json").read_text(encoding="utf-8"))
+    assert meta["point_count"] == 1
+    assert meta["expected_point_count"] == len(fetch_weather.ALL_POINTS)

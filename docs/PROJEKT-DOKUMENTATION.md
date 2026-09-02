@@ -68,8 +68,9 @@ Open-Meteo API (gratis, ingen nøgle)
 ### Dataflow
 
 1. GitHub Actions kører `python -m termik` hver 3. time (kl. XX:15)
-2. Scriptet henter vejrdata fra Open-Meteo for 79 punkter (2 batch-kald)
-3. For hvert punkt beregnes termik-score for hver time, 3 dage frem (72 timer)
+2. Scriptet henter vejrdata fra Open-Meteo for 262 punkter, 30 flyvepladser
+   og 232 gitterpunkter, i 27 batch-kald a 10 punkter
+3. For hvert punkt beregnes termik-score for hver time, 7 dage frem
 4. Resultatet skrives som JSON-filer
 5. GitHub Actions committer de opdaterede JSON-filer og pusher
 6. Push trigger GitHub Pages deploy

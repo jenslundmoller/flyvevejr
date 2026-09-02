@@ -13,6 +13,11 @@ permissions:
 jobs:
   update-forecast:
     runs-on: ubuntu-latest
+    # Normale kørsler tager 7-25 min. Et vedvarende API-udfald koster nu
+    # 105 s backoff plus op til 4 x 30 s timeout pr. batch, altså op mod
+    # 100 min for alle 27 batches. Uden loft kunne en syg kørsel æde sig ind
+    # i næste cron-slot 3 timer senere.
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@v4

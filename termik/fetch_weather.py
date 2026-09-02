@@ -10,6 +10,7 @@ from termik.config import (
     API_BASE_URL,
     API_BATCH_SIZE,
     FORECAST_DAYS,
+    GRID_COVERAGE_FLOOR,
     TIMEZONE,
     HOURLY_PARAMS,
     DATA_DIR,
@@ -50,6 +51,43 @@ def parse_api_response(raw) -> list[dict]:
     return raw
 
 
+# Åbenlyse programmeringsfejl, fx en forkert API_BASE_URL i config. De bliver
+# ikke bedre af at vente, og uden denne grænse ville hver af de 27 batches
+# brænde 105 s backoff af på dem, altså ~47 minutters spildt runner-tid.
+FATAL_REQUEST_ERRORS = (
+    requests.exceptions.MissingSchema,
+    requests.exceptions.InvalidSchema,
+    requests.exceptions.InvalidURL,
+)
+
+
+def validate_batch_response(parsed, expected: int) -> list[dict]:
+    """Afvis et 200-svar der ikke har den form resten af pipelinen regner med.
+
+    To former slap før igennem som gyldig JSON:
+      - Open-Meteos eget fejlsvar, {"error": true, "reason": ...}, som ikke har
+        nogen "hourly" og derfor gav KeyError længere nede og væltede kørslen.
+      - Et svar med færre lokationer end punkter i batchen, som zip() i
+        process_all_points trunkerede tavst, så punkter forsvandt ud af
+        prognosen uden at blive talt som fejlede.
+
+    Begge bliver her til en InvalidJSONError, som retry-loopet behandler som
+    transient på linje med et timeout.
+    """
+    if not isinstance(parsed, list) or len(parsed) != expected:
+        got = len(parsed) if isinstance(parsed, list) else type(parsed).__name__
+        raise requests.exceptions.InvalidJSONError(
+            f"forventede {expected} lokationer i svaret, fik {got}"
+        )
+    for entry in parsed:
+        hourly = entry.get("hourly") if isinstance(entry, dict) else None
+        if not hourly or not hourly.get("time"):
+            raise requests.exceptions.InvalidJSONError(
+                f"svar uden hourly-data: {str(entry)[:200]}"
+            )
+    return parsed
+
+
 def fetch_batch(points: list[dict], max_retries: int = 3) -> list[dict]:
     """Call the Open-Meteo API for a batch of points and return parsed data.
 
@@ -61,9 +99,16 @@ def fetch_batch(points: list[dict], max_retries: int = 3) -> list[dict]:
         try:
             response = requests.get(url, timeout=30)
             response.raise_for_status()
-            return parse_api_response(response.json())
-        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError,
-                requests.exceptions.Timeout) as e:
+            return validate_batch_response(
+                parse_api_response(response.json()), len(points)
+            )
+        # Hele RequestException-familien, ikke kun HTTPError/ConnectionError/
+        # Timeout. Et tomt 200-svar (JSONDecodeError), et body der klippes over
+        # midtvejs (ChunkedEncodingError) og en defekt gzip (ContentDecodingError)
+        # er alle den samme ustabilitet hos Open-Meteo, set fra hver sin side af
+        # en timing-grænse, men ingen af dem er en af de tre gamle typer. De slap
+        # derfor uden om både retry og batch-tolerance og væltede hele kørslen.
+        except requests.exceptions.RequestException as e:
             is_server_error = (
                 isinstance(e, requests.exceptions.HTTPError)
                 and e.response is not None
@@ -74,7 +119,14 @@ def fetch_batch(points: list[dict], max_retries: int = 3) -> list[dict]:
                 and e.response is not None
                 and e.response.status_code == 429
             )
-            is_transient = is_server_error or is_rate_limited or not isinstance(e, requests.exceptions.HTTPError)
+            # 4xx bortset fra 429: vi spørger forkert, samme spørgsmål giver
+            # samme svar. Alt andet er transient, undtagen de rene URL-fejl.
+            is_client_error = (
+                isinstance(e, requests.exceptions.HTTPError)
+                and not is_server_error
+                and not is_rate_limited
+            )
+            is_transient = not is_client_error and not isinstance(e, FATAL_REQUEST_ERRORS)
             if not is_transient or attempt == max_retries:
                 raise
             wait = 2 ** attempt * 15  # 15s, 30s, 60s
@@ -432,8 +484,7 @@ def process_all_points() -> dict:
         batch_points = ALL_POINTS[i : i + API_BATCH_SIZE]
         try:
             batch_data = fetch_batch(batch_points)
-        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError,
-                requests.exceptions.Timeout) as e:
+        except requests.exceptions.RequestException as e:
             failed_batches += 1
             print(f"Batch {batch_num + 1}/{total_batches} failed permanently: {e}")
             continue
@@ -512,19 +563,54 @@ def write_output(data: dict):
     meta = {
         "generated": data["generated"],
         "point_count": len(data["points"]),
+        "expected_point_count": len(ALL_POINTS),
         "hour_count": hour_count,
     }
     with open(os.path.join(DATA_DIR, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
 
 
+def check_coverage(data: dict):
+    """Afvis at skrive en prognose med for store huller.
+
+    En delvis kørsel er farligere end en fejlet. Kortet interpolerer nærmeste
+    nabo uden afstandsgrænse, så manglende gitterpunkter ikke giver et synligt
+    hul, men naboens score smurt ud over et helt område. Og fordi de 30
+    flyvepladser ligger samlet i de første batches, koster én fejlet batch 10
+    klubber, hvis brugere så møder et tomt favoritpanel og en forsvundet
+    markør, under et friskt "Opdateret"-tidsstempel.
+
+    Afvises output, bliver den forrige komplette prognose liggende, jobbet
+    bliver rødt, og rerun-workflowet prøver igen efter 60 s. Gammel komplet
+    data slår ny data med huller for en 7-døgns prognose.
+    """
+    airfields_wanted = len(AIRFIELDS)
+    grid_wanted = len(ALL_POINTS) - airfields_wanted
+    airfields_got = sum(1 for p in data["points"] if p["type"] == "airfield")
+    grid_got = len(data["points"]) - airfields_got
+    grid_share = grid_got / grid_wanted if grid_wanted else 1.0
+
+    if airfields_got < airfields_wanted or grid_share < GRID_COVERAGE_FLOOR:
+        print(
+            f"::error::Ufuldstændig prognose: {airfields_got}/{airfields_wanted} "
+            f"flyvepladser og {grid_got}/{grid_wanted} gitterpunkter "
+            f"({grid_share:.0%}, grænse {GRID_COVERAGE_FLOOR:.0%}). "
+            f"Output afvises, den forrige prognose bliver liggende."
+        )
+        raise SystemExit(1)
+
+    if grid_got < grid_wanted:
+        print(
+            f"::warning::Delvis kørsel: {grid_got}/{grid_wanted} gitterpunkter "
+            f"hentet, alle {airfields_wanted} flyvepladser er med."
+        )
+
+
 def main():
     print(f"Termik forecast starting at {datetime.now().isoformat()}")
     start = time.time()
     data = process_all_points()
-    if not data["points"]:
-        print("ERROR: All batches failed, no data to write.")
-        raise SystemExit(1)
+    check_coverage(data)
     write_output(data)
     elapsed = time.time() - start
     print(f"Done. {len(data['points'])} points processed in {elapsed:.1f}s")
