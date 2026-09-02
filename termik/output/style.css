@@ -48,7 +48,8 @@ html, body {
     flex-wrap: wrap;
 }
 
-#uncertainty-note {
+#uncertainty-note,
+#coverage-note {
     font-size: 11px;
     color: #b45309;
     background: #fef3c7;

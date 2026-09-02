@@ -530,6 +530,10 @@ def process_all_points() -> dict:
     return {
         "generated": datetime.now(timezone.utc).isoformat(),
         "forecast_days": FORECAST_DAYS,
+        # Tallet rejser med de data det beskriver, så frontenden kan se en
+        # delvis prognose uden en ekstra hentning, og uden at de to kan komme
+        # i utakt i browserens cache.
+        "expected_point_count": len(ALL_POINTS),
         "points": all_results,
     }
 

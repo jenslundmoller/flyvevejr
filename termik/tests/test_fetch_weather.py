@@ -836,3 +836,25 @@ def test_write_output_records_the_expected_point_count(tmp_path, monkeypatch):
     meta = json.loads((tmp_path / "meta.json").read_text(encoding="utf-8"))
     assert meta["point_count"] == 1
     assert meta["expected_point_count"] == len(fetch_weather.ALL_POINTS)
+
+
+def test_process_all_points_reports_the_expected_point_count(monkeypatch):
+    """current.json bærer selv det forventede antal, så frontenden kan se en
+    delvis prognose uden en ekstra netværkshentning, og uden at tallet kan
+    komme i utakt med de data det beskriver."""
+    _silence_backoff(monkeypatch)
+    monkeypatch.setattr(fetch_weather, "ALL_POINTS",
+                        [_test_point(id="a"), _test_point(id="b")])
+    monkeypatch.setattr(fetch_weather, "API_BATCH_SIZE", 1)
+
+    def fake_fetch_batch(pts):
+        if pts[0]["id"] == "b":
+            raise requests.exceptions.Timeout("timeout")
+        return _ok_payload(1)
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    data = fetch_weather.process_all_points()
+
+    assert data["expected_point_count"] == 2
+    assert len(data["points"]) == 1

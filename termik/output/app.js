@@ -1190,6 +1190,31 @@ function applyGeneratedTimestamp() {
     const genDate = new Date(forecastData.generated);
     const info = document.getElementById('update-info');
     if (info) info.textContent = 'Opdateret: ' + genDate.toLocaleString('da-DK');
+    applyCoverageNote();
+}
+
+// Kørslen afviser output med store huller, men et enkelt tabt gitter-batch
+// slipper igennem. Kortet interpolerer nærmeste nabo uden afstandsgrænse, så
+// et hul ses ikke som et hul, men som naboens score smurt ud over området.
+// Uden denne linje ville brugeren ikke kunne se forskel, og "Opdateret"-
+// tidsstemplet lige ovenfor ville se lige så friskt ud som altid.
+function applyCoverageNote() {
+    const note = document.getElementById('coverage-note');
+    if (!note) return;
+    const expected = forecastData.expected_point_count;
+    const got = forecastData.points ? forecastData.points.length : 0;
+    // Datafiler fra før feltet fandtes: intet at sige noget om.
+    if (!expected || got >= expected) {
+        note.style.display = 'none';
+        note.textContent = '';
+        return;
+    }
+    const missing = expected - got;
+    note.textContent = 'Delvis prognose: ' + missing + ' af ' + expected
+        + ' m\u00E5lepunkter mangler i denne opdatering. Kortet udfylder '
+        + 'hullerne med n\u00E6rmeste nabo, s\u00E5 scoren kan v\u00E6re '
+        + 'up\u00E5lidelig i enkelte omr\u00E5der.';
+    note.style.display = '';
 }
 
 async function refreshForecastData() {
