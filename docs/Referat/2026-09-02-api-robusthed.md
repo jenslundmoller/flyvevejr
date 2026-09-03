@@ -1,9 +1,10 @@
-# Sessionsrapport 2. september 2026: robusthed mod dårlige API-svar
+# Sessionsrapport 2.-3. september 2026: robusthed mod dårlige API-svar
 
 Sessionen begyndte med "de seneste kørsler i GitHub har fejlet" og endte med
-fire lag forsvar mod ustabilitet hos Open-Meteo, verificeret i en rigtig
+fem lag forsvar mod ustabilitet hos Open-Meteo, verificeret i en rigtig
 hændelse under to timer efter udrulningen. Undervejs blev det klart at den
-oplagte rettelse på egen hånd ville have gjort tingene værre. En designet
+oplagte rettelse på egen hånd ville have gjort tingene værre. Femte lag,
+redningsrunden, blev bygget dagen efter som svar på netop den hændelse. En designet
 udgave findes som Claude-artifact (privat link hos Jens):
 https://claude.ai/code/artifact/52372bb8-ea3c-43db-9808-a7094df96221
 
@@ -78,7 +79,10 @@ gitterpunkter.** Flyvepladserne har nul tolerance fordi de rammer brugeren
 hårdest pr. tabt punkt; gitteret tåler ét hul fordi kortet interpolerer.
 Konstanten står som `GRID_COVERAGE_FLOOR` i `termik/config.py`.
 
-## Det færdige forsvar i fire lag
+## Det færdige forsvar i fem lag
+
+Lagene står i den rækkefølge de rammer en dårlig kørsel. Lag 1-3 og 5 blev
+bygget 2/9, lag 4 dagen efter.
 
 1. **Genforsøg** (`fetch_batch`). Fanger nu hele `RequestException`-familien i
    stedet for tre håndplukkede typer, så tomt body, afklippet body og defekt
@@ -92,7 +96,11 @@ Konstanten står som `GRID_COVERAGE_FLOOR` i `termik/config.py`.
 3. **Batch-tolerance** (`process_all_points`). Uændret i princippet, men nu med
    den brede fangst, så en enkelt død batch koster sine punkter og logges,
    frem for at vælte kørslen.
-4. **Dækningsgrænse** (`check_coverage`). Afviser at skrive under grænsen.
+4. **Redningsrunde** (`retry_failed_batches`, bygget 3/9). De batches der
+   faldt undervejs prøves igen når alle øvrige er hentet, altså efter de
+   ~20 minutter en kørsel tager. Se afsnittet nedenfor for hvorfor ventetiden
+   er hele pointen, og for de tre grænser der holder prisen nede.
+5. **Dækningsgrænse** (`check_coverage`). Afviser at skrive under grænsen.
    Jobbet bliver rødt, den forrige komplette prognose bliver liggende, og
    vagthunden prøver igen. Gammel komplet data slår ny data med huller for en
    7-døgns prognose.
@@ -158,6 +166,69 @@ sidebaren når `points.length < expected_point_count`. Tallet ligger i
 `current.json` frem for `meta.json`, så de to ikke kan komme i utakt i
 browserens cache, og frontenden slipper for en ekstra hentning.
 
+## Efterspil 3/9: redningsrunden
+
+Hændelsen kl. 12:38 gjorde noget tydeligt. Kørslen tabte én batch ud af 27,
+og alle 232 gitterpunkter kom hjem. Den ene tabte batch var bare en
+flyveplads-batch, og de tåler ingen huller. Den efterfølgende rerun hentede
+nøjagtig de samme data uden problemer, hvilket viser at API'et for længst
+havde rettet sig. Vi smed altså en brugbar prognose væk og brugte en hel
+cyklus på at hente den igen.
+
+`retry_failed_batches` prøver de fejlede batches igen når alle øvrige er
+hentet. **Ventetiden er hele pointen:** en kørsel tager ~20 min, så et
+Open-Meteo der bare vaklede, er som regel kommet sig længe inden. De
+genforsøg `fetch_batch` allerede laver, sker inden for få minutter og stiller
+den samme syge server det samme spørgsmål igen.
+
+Tre grænser holder prisen nede, alle i `termik/config.py`:
+
+| Konstant | Værdi | Hvorfor |
+|---|---|---|
+| `RECOVERY_MAX_BATCHES` | 5 | Er flere faldet, er API'et nede snarere end ustabilt. Så kan runden ikke redde kørslen og ville kun brænde tid af mod job-timeouten. |
+| `RECOVERY_MAX_RETRIES` | 1 | Batchen har allerede haft det fulde budget én gang. Er API'et kommet sig, lykkes første forsøg; er det stadig nede, opdages det billigt. |
+| `RECOVERY_PAUSE_SECONDS` | 30 | Så en batch der fejler til allersidst også får en pause. |
+
+Tidsbudget mod job-timeouten på 60 min: 21 min uden fejl, 26 med én fejl,
+43 i værste tilfælde hvor runden faktisk kører. Ved 6 eller flere fejlede
+batches springes runden over, og opførslen er uændret.
+
+Per-batch-behandlingen er trukket ud i `build_batch_entries`, så reddede
+punkter får nøjagtig samme behandling som de øvrige, gitter-slankningen
+inklusive.
+
+**To ting fundet undervejs.** Loggen løj om antallet af reddede batches:
+tallet blev udledt af punkttallet divideret med `API_BATCH_SIZE`, men den
+sidste batch er en rest-batch med kun 2 punkter, så `2 // 10 = 0` gav
+"0 recovered" i præcis det tilfælde hvor runden lige havde reddet den. Fanget
+med en test, nu talt i batches. Og tre ældre teststubs efterlignede
+`fetch_batch` uden `max_retries`, hvilket ikke betød noget før runden
+begyndte at bruge parameteren; rettet til den rigtige signatur.
+
+Testsuiten står nu på 384. Hændelsen kl. 12:38 er simuleret igennem med den
+nye kode og ender på exit 0 med 262/262.
+
+## Driftsnoter
+
+Tre ting der forvirrede under sessionen og vil forvirre igen:
+
+- **Et rødt kryds er nu et forventet udfald.** Når dækningsgrænsen afviser en
+  prognose, fejler jobbet med vilje, for det er sådan vagthunden udløses og
+  den gamle komplette data bevares. Skelnen: står der
+  `::error::Ufuldstændig prognose:` i loggen, gør systemet sit arbejde, og
+  hvis et senere forsøg lykkes, er alt som det skal være. Alt andet, og
+  særligt tre fejlede forsøg i træk, kræver et kig.
+- **`::error::Failed to trigger deploy after 3 attempts` i loggen er ikke en
+  fejl.** GitHub Actions ekkoer hele shell-scriptets kildetekst ind i loggen,
+  også grene der aldrig blev taget. Tjek trinnets `conclusion` i stedet for
+  at læse loggen.
+- **GitHub viser tidspunkter i din lokale tid, ikke UTC.** En "fejlet kørsel
+  kl. 15:20" er 13:20 UTC. Det kostede en fejlsøgning efter en kørsel der
+  ikke fandtes. Dertil forsinker GitHub planlagte kørsler rutinemæssigt,
+  målt mellem 8 og 89 minutter i døgnet efter udrulningen, så det reelle
+  mellemrum svinger fra 2,0 til 3,7 timer. Prognosen kan altså være op mod
+  fire timer gammel uden at noget er galt.
+
 ## Commits
 
 | Commit | Indhold |
@@ -165,6 +236,9 @@ browserens cache, og frontenden slipper for en ekstra hentning.
 | `0307ee5` | `fix:` dårlige API-svar må hverken vælte eller udvande prognosen |
 | `7777d61` | `ci:` opgrader actions væk fra Node 20 |
 | `0e98927` | `web:` sig det når prognosen er delvis |
+| `4076aa6` | `docs:` referat af robusthedssessionen |
+| `9049710` | `fix:` giv fejlede batches et sidste forsøg før dækningen bedømmes |
+| `edafade` | `docs:` markér redningsrunden som bygget |
 
 ## Opdaterede dokumenter
 
@@ -174,15 +248,9 @@ browserens cache, og frontenden slipper for en ekstra hentning.
 
 ## Åbne punkter
 
-- **Genforsøg på fejlede batches til sidst** i `process_all_points`, før
-  dækningen bedømmes. Kørslen kl. 12:38 tabte kun én batch ud af 27, men fordi
-  flyvepladserne ligger samlet i batch 1-3, er der reelt tre batches hvor et
-  enkelt uheld koster hele kørslen. Ét ekstra forsøg ville formentlig have
-  reddet første forsøg og sparet en hel cyklus. **Bygget 3/9** som
-  `retry_failed_batches` (commit `c9f89de`): runden kører når alle øvrige
-  batches er hentet, springes over hvis mere end 5 batches er faldet (så er
-  API'et nede, ikke ustabilt), og bruger et kortere retry-budget. Hændelsen
-  kl. 12:38 er simuleret igennem og ender nu på exit 0 med 262/262.
+- **Redningsrunden har ikke kørt i produktion endnu.** Den blev pushet 3/9 kl.
+  08:40 UTC. Den viser sig kun i loggen hvis en batch faktisk fejler, så den
+  er stadig kun verificeret ved simulering og tests.
 - **Banneret er ikke set i en browser.** Chrome-udvidelsen var ikke forbundet
   under sessionen. Logikken er kørt igennem i node for komplet, delvis, tom og
   gammel datafil uden feltet, og noten deler CSS-regel med den eksisterende
