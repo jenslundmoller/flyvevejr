@@ -178,7 +178,11 @@ browserens cache, og frontenden slipper for en ekstra hentning.
   dækningen bedømmes. Kørslen kl. 12:38 tabte kun én batch ud af 27, men fordi
   flyvepladserne ligger samlet i batch 1-3, er der reelt tre batches hvor et
   enkelt uheld koster hele kørslen. Ét ekstra forsøg ville formentlig have
-  reddet første forsøg og sparet en hel cyklus. Foreslået, ikke bygget.
+  reddet første forsøg og sparet en hel cyklus. **Bygget 3/9** som
+  `retry_failed_batches` (commit `c9f89de`): runden kører når alle øvrige
+  batches er hentet, springes over hvis mere end 5 batches er faldet (så er
+  API'et nede, ikke ustabilt), og bruger et kortere retry-budget. Hændelsen
+  kl. 12:38 er simuleret igennem og ender nu på exit 0 med 262/262.
 - **Banneret er ikke set i en browser.** Chrome-udvidelsen var ikke forbundet
   under sessionen. Logikken er kørt igennem i node for komplet, delvis, tom og
   gammel datafil uden feltet, og noten deler CSS-regel med den eksisterende
