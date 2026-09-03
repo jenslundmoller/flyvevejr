@@ -623,7 +623,7 @@ def test_process_all_points_tolerates_a_batch_that_never_returns_json(monkeypatc
     monkeypatch.setattr(fetch_weather, "ALL_POINTS", points)
     monkeypatch.setattr(fetch_weather, "API_BATCH_SIZE", 1)
 
-    def fake_fetch_batch(batch_points):
+    def fake_fetch_batch(batch_points, max_retries=3):
         if batch_points[0]["id"] == "doomed":
             raise requests.exceptions.JSONDecodeError("Expecting value", "", 0)
         return [{"hourly": _minimal_hourly_data()}]
@@ -816,7 +816,8 @@ def test_process_all_points_slims_grid_points_but_not_airfields(monkeypatch):
             "coast_distance_km": 40, "coast_direction_deg": 90}
     monkeypatch.setattr(fetch_weather, "ALL_POINTS", [airfield, grid])
     monkeypatch.setattr(fetch_weather, "API_BATCH_SIZE", 1)
-    monkeypatch.setattr(fetch_weather, "fetch_batch", lambda pts: _ok_payload(1))
+    monkeypatch.setattr(fetch_weather, "fetch_batch",
+                        lambda pts, max_retries=3: _ok_payload(1))
 
     by_id = {p["id"]: p for p in fetch_weather.process_all_points()["points"]}
 
@@ -847,7 +848,7 @@ def test_process_all_points_reports_the_expected_point_count(monkeypatch):
                         [_test_point(id="a"), _test_point(id="b")])
     monkeypatch.setattr(fetch_weather, "API_BATCH_SIZE", 1)
 
-    def fake_fetch_batch(pts):
+    def fake_fetch_batch(pts, max_retries=3):
         if pts[0]["id"] == "b":
             raise requests.exceptions.Timeout("timeout")
         return _ok_payload(1)
@@ -858,3 +859,174 @@ def test_process_all_points_reports_the_expected_point_count(monkeypatch):
 
     assert data["expected_point_count"] == 2
     assert len(data["points"]) == 1
+
+
+# --- Redningsrunde: et sidste forsøg på de fejlede batches -------------------
+# Batch 1-3 er flyvepladser, og dækningsgrænsen tåler ingen tabte flyvepladser.
+# Et enkelt uheld tidligt i kørslen kostede derfor hele prognosen, selv om
+# API'et typisk er kommet sig længe inden de sidste 24 batches er hentet.
+
+def _sweep_setup(monkeypatch, points, batch_size=1):
+    monkeypatch.setattr(fetch_weather, "ALL_POINTS", points)
+    monkeypatch.setattr(fetch_weather, "API_BATCH_SIZE", batch_size)
+
+
+def test_process_all_points_saves_a_batch_that_recovers(monkeypatch):
+    """En batch der fejler først, men svarer i redningsrunden, tæller med."""
+    _silence_backoff(monkeypatch)
+    _sweep_setup(monkeypatch, [_test_point(id="a"), _test_point(id="b")])
+    seen = []
+
+    def fake_fetch_batch(pts, max_retries=3):
+        seen.append(pts[0]["id"])
+        if pts[0]["id"] == "a" and seen.count("a") == 1:
+            raise requests.exceptions.Timeout("timeout")
+        return _ok_payload(1)
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    data = fetch_weather.process_all_points()
+
+    assert sorted(p["id"] for p in data["points"]) == ["a", "b"]
+
+
+def test_recovery_sweep_runs_after_every_other_batch(monkeypatch):
+    """Pointen er ventetiden: den fejlede batch prøves først når resten er
+    hentet, så API'et har haft de ~20 minutter en kørsel tager til at komme
+    sig. Prøves den igen med det samme, fejler den bare igen."""
+    _silence_backoff(monkeypatch)
+    _sweep_setup(monkeypatch, [_test_point(id=n) for n in ("a", "b", "c")])
+    seen = []
+
+    def fake_fetch_batch(pts, max_retries=3):
+        seen.append(pts[0]["id"])
+        if pts[0]["id"] == "a" and seen.count("a") == 1:
+            raise requests.exceptions.Timeout("timeout")
+        return _ok_payload(1)
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    fetch_weather.process_all_points()
+
+    assert seen == ["a", "b", "c", "a"]
+
+
+def test_recovery_sweep_slims_grid_points_like_the_first_pass(monkeypatch):
+    """Reddede gitterpunkter skal bære samme slanke payload som de øvrige."""
+    _silence_backoff(monkeypatch)
+    grid = {"id": "g1", "lat": 55.5, "lon": 9.5,
+            "coast_distance_km": 40, "coast_direction_deg": 90}
+    _sweep_setup(monkeypatch, [grid])
+    seen = []
+
+    def fake_fetch_batch(pts, max_retries=3):
+        seen.append(pts[0]["id"])
+        if len(seen) == 1:
+            raise requests.exceptions.Timeout("timeout")
+        return _ok_payload(1)
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    data = fetch_weather.process_all_points()
+
+    assert set(data["points"][0]["hours"][0]) == {"time", "score", "thermal_top_m"}
+
+
+def test_recovery_sweep_is_skipped_when_the_api_is_down(monkeypatch):
+    """Er mange batches faldet, er API'et nede, ikke ustabilt. Så kan runden
+    ikke redde kørslen, og den ville kun brænde runner-tid af mod
+    job-timeouten."""
+    _silence_backoff(monkeypatch)
+    n = fetch_weather.RECOVERY_MAX_BATCHES + 1
+    _sweep_setup(monkeypatch, [_test_point(id=f"p{i}") for i in range(n)])
+    seen = []
+
+    def fake_fetch_batch(pts, max_retries=3):
+        seen.append(pts[0]["id"])
+        raise requests.exceptions.Timeout("timeout")
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    data = fetch_weather.process_all_points()
+
+    assert data["points"] == []
+    assert len(seen) == n  # ingen ekstra runde
+
+
+def test_recovery_sweep_uses_a_short_retry_budget(monkeypatch):
+    """Batchen har allerede haft det fulde budget én gang. Er API'et stadig
+    nede, skal runden opdage det billigt frem for at bruge 105 s backoff
+    pr. batch oveni."""
+    _silence_backoff(monkeypatch)
+    _sweep_setup(monkeypatch, [_test_point(id="a")])
+    budgets = []
+
+    def fake_fetch_batch(pts, max_retries=3):
+        budgets.append(max_retries)
+        raise requests.exceptions.Timeout("timeout")
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    fetch_weather.process_all_points()
+
+    assert budgets == [3, fetch_weather.RECOVERY_MAX_RETRIES]
+    assert fetch_weather.RECOVERY_MAX_RETRIES < 3
+
+
+def test_recovery_sweep_pauses_before_retrying(monkeypatch):
+    """En batch der fejler til allersidst får ellers ingen pause overhovedet."""
+    _sweep_setup(monkeypatch, [_test_point(id="a")])
+    slept = []
+    monkeypatch.setattr(fetch_weather.time, "sleep", lambda s: slept.append(s))
+
+    def fake_fetch_batch(pts, max_retries=3):
+        raise requests.exceptions.Timeout("timeout")
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    fetch_weather.process_all_points()
+
+    assert fetch_weather.RECOVERY_PAUSE_SECONDS in slept
+
+
+def test_a_batch_that_fails_twice_stays_failed(monkeypatch):
+    """Runden er et ekstra forsøg, ikke en garanti. Dækningsgrænsen skal
+    stadig kunne se hullet."""
+    _silence_backoff(monkeypatch)
+    _sweep_setup(monkeypatch, [_test_point(id="a"), _test_point(id="b")])
+
+    def fake_fetch_batch(pts, max_retries=3):
+        if pts[0]["id"] == "a":
+            raise requests.exceptions.Timeout("timeout")
+        return _ok_payload(1)
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    data = fetch_weather.process_all_points()
+
+    assert [p["id"] for p in data["points"]] == ["b"]
+
+
+def test_recovery_count_in_the_warning_is_batches_not_points(monkeypatch, capsys):
+    """Sidste batch er en rest-batch med færre punkter end API_BATCH_SIZE.
+    Udledes antallet af reddede batches af punkttallet, rapporterer loggen
+    nul reddede selv om runden lige har reddet en."""
+    _silence_backoff(monkeypatch)
+    points = [_test_point(id=f"p{i}") for i in range(4)]
+    _sweep_setup(monkeypatch, points, batch_size=3)   # batches: 3 punkter + 1 punkt
+    seen = []
+
+    def fake_fetch_batch(pts, max_retries=3):
+        ids = [p["id"] for p in pts]
+        seen.append(tuple(ids))
+        if ids == ["p0", "p1", "p2"]:
+            raise requests.exceptions.Timeout("bliver aldrig god")
+        if ids == ["p3"] and seen.count(("p3",)) == 1:
+            raise requests.exceptions.Timeout("kommer sig")
+        return _ok_payload(len(pts))
+
+    monkeypatch.setattr(fetch_weather, "fetch_batch", fake_fetch_batch)
+
+    fetch_weather.process_all_points()
+
+    assert "(1 recovered on the sweep)" in capsys.readouterr().out

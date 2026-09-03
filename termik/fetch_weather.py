@@ -11,6 +11,9 @@ from termik.config import (
     API_BATCH_SIZE,
     FORECAST_DAYS,
     GRID_COVERAGE_FLOOR,
+    RECOVERY_MAX_BATCHES,
+    RECOVERY_PAUSE_SECONDS,
+    RECOVERY_MAX_RETRIES,
     TIMEZONE,
     HOURLY_PARAMS,
     DATA_DIR,
@@ -467,14 +470,92 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     }
 
 
+def build_batch_entries(batch_points: list[dict], batch_data: list[dict]) -> list[dict]:
+    """Turn one batch's API response into output entries, one per point."""
+    entries = []
+    for point, hourly_response in zip(batch_points, batch_data):
+        hourly_data = hourly_response["hourly"]
+        num_hours = len(hourly_data["time"])
+        is_airfield = "name" in point
+
+        hours = []
+        for h in range(num_hours):
+            # Derive month from the forecast hour timestamp
+            time_str = hourly_data["time"][h]
+            month = int(time_str[5:7])
+            hour_result = process_point_hour(point, hourly_data, h, month)
+            # Grid points only feed the heat-map: keep just time + score so
+            # the JSON payload stays small. Airfields keep the full payload
+            # for their popup display.
+            if not is_airfield:
+                hour_result = {
+                    "time": hour_result["time"],
+                    "score": hour_result["score"],
+                    "thermal_top_m": hour_result["data"].get("thermal_top_m"),
+                }
+            hours.append(hour_result)
+
+        entry = {
+            "id": point["id"],
+            "type": "airfield" if is_airfield else "grid",
+            "lat": point["lat"],
+            "lon": point["lon"],
+            "hours": hours,
+        }
+        if is_airfield:
+            entry["name"] = point.get("name", "")
+            entry["region"] = point.get("region", "")
+        entries.append(entry)
+    return entries
+
+
+def retry_failed_batches(failed: list[tuple], total_batches: int) -> tuple[list, list]:
+    """Give the batches that fell over one last chance, and return
+    (recovered entries, batches still missing).
+
+    The waiting is the whole point. A full run takes ~20 minutes, so by the
+    time the last batch is in, an Open-Meteo that was merely wobbling has
+    usually recovered. Retrying immediately, as fetch_batch already does,
+    only asks the same sick server the same question again.
+
+    This matters because the 30 airfields sit together in the first three
+    batches, and check_coverage tolerates no missing airfield. Without this
+    sweep a single early hiccup, ~40 seconds of bad luck, threw away a
+    forecast whose remaining 24 batches were perfectly good.
+    """
+    if not failed:
+        return [], []
+    if len(failed) > RECOVERY_MAX_BATCHES:
+        print(f"Skipping recovery sweep: {len(failed)} batches failed, "
+              f"which means an outage rather than a wobble.")
+        return [], failed
+
+    print(f"Recovery sweep: retrying {len(failed)} batch(es) "
+          f"after {RECOVERY_PAUSE_SECONDS}s.")
+    time.sleep(RECOVERY_PAUSE_SECONDS)
+
+    recovered, still_failed = [], []
+    for batch_num, batch_points in failed:
+        try:
+            batch_data = fetch_batch(batch_points, max_retries=RECOVERY_MAX_RETRIES)
+        except requests.exceptions.RequestException as e:
+            still_failed.append((batch_num, batch_points))
+            print(f"Batch {batch_num + 1}/{total_batches} failed the sweep too: {e}")
+            continue
+        recovered.extend(build_batch_entries(batch_points, batch_data))
+        print(f"Batch {batch_num + 1}/{total_batches} recovered on the sweep.")
+    return recovered, still_failed
+
+
 def process_all_points() -> dict:
     """Fetch weather for all points and compute thermal scores.
 
     Batches ALL_POINTS into groups of API_BATCH_SIZE, calls fetch_batch
-    for each group, processes every hour, and returns the full output dict.
+    for each group, retries whatever fell over once every other batch is in,
+    and returns the full output dict.
     """
     all_results = []
-    failed_batches = 0
+    failed = []
     total_batches = (len(ALL_POINTS) + API_BATCH_SIZE - 1) // API_BATCH_SIZE
 
     # Batch points
@@ -485,46 +566,25 @@ def process_all_points() -> dict:
         try:
             batch_data = fetch_batch(batch_points)
         except requests.exceptions.RequestException as e:
-            failed_batches += 1
+            failed.append((batch_num, batch_points))
             print(f"Batch {batch_num + 1}/{total_batches} failed permanently: {e}")
             continue
+        all_results.extend(build_batch_entries(batch_points, batch_data))
 
-        for point, hourly_response in zip(batch_points, batch_data):
-            hourly_data = hourly_response["hourly"]
-            num_hours = len(hourly_data["time"])
-            is_airfield = "name" in point
+    # Tælles i batches, ikke i punkter: den sidste batch er en rest-batch med
+    # færre end API_BATCH_SIZE punkter, så en udregning ud fra punkttallet
+    # rapporterer nul reddede netop når det er den der blev reddet.
+    failed_before = len(failed)
+    recovered, failed = retry_failed_batches(failed, total_batches)
+    recovered_batches = failed_before - len(failed)
+    all_results.extend(recovered)
 
-            hours = []
-            for h in range(num_hours):
-                # Derive month from the forecast hour timestamp
-                time_str = hourly_data["time"][h]
-                month = int(time_str[5:7])
-                hour_result = process_point_hour(point, hourly_data, h, month)
-                # Grid points only feed the heat-map: keep just time + score so
-                # the JSON payload stays small. Airfields keep the full payload
-                # for their popup display.
-                if not is_airfield:
-                    hour_result = {
-                        "time": hour_result["time"],
-                        "score": hour_result["score"],
-                        "thermal_top_m": hour_result["data"].get("thermal_top_m"),
-                    }
-                hours.append(hour_result)
-
-            entry = {
-                "id": point["id"],
-                "type": "airfield" if is_airfield else "grid",
-                "lat": point["lat"],
-                "lon": point["lon"],
-                "hours": hours,
-            }
-            if is_airfield:
-                entry["name"] = point.get("name", "")
-                entry["region"] = point.get("region", "")
-            all_results.append(entry)
-
-    if failed_batches:
-        print(f"WARNING: {failed_batches}/{total_batches} batches failed. "
+    if failed:
+        note = f" ({recovered_batches} recovered on the sweep)" if recovered_batches else ""
+        print(f"WARNING: {len(failed)}/{total_batches} batches failed{note}. "
+              f"Output contains {len(all_results)} of {len(ALL_POINTS)} points.")
+    elif recovered_batches:
+        print(f"Recovery sweep saved all {recovered_batches} failed batch(es). "
               f"Output contains {len(all_results)} of {len(ALL_POINTS)} points.")
 
     return {

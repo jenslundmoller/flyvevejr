@@ -14,6 +14,17 @@ TIMEZONE = "Europe/Berlin"
 # liggende og rerun-workflowet får lov at prøve igen.
 GRID_COVERAGE_FLOOR = 0.95
 
+# Redningsrunde: et sidste forsøg på de batches der fejlede undervejs, kørt
+# når alle øvrige er hentet. Ventetiden er hele pointen, for en kørsel tager
+# ~20 min, og et ustabilt Open-Meteo er som regel kommet sig længe inden da.
+# Er flere end MAX_BATCHES faldet, er API'et nede snarere end ustabilt: så
+# kan runden ikke redde kørslen og ville kun brænde tid af mod job-timeouten.
+# Retry-budgettet er lavere end det normale, fordi batchen allerede har haft
+# det fulde budget én gang; er API'et stadig nede, skal det opdages billigt.
+RECOVERY_MAX_BATCHES = 5
+RECOVERY_PAUSE_SECONDS = 30
+RECOVERY_MAX_RETRIES = 1
+
 # Hourly parameters to fetch
 HOURLY_PARAMS = [
     "temperature_2m",
