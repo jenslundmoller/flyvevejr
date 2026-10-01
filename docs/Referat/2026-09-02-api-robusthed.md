@@ -261,3 +261,37 @@ Tre ting der forvirrede under sessionen og vil forvirre igen:
   fejlfangst og formvalidering som produktionsstien manglede. Værd at holde
   for øje om flere sådanne uoverensstemmelser findes mellem dev-værktøj og
   cron.
+
+---
+
+## Opfølgning 1/10: timeouts kommer fra GitHub-runnerne, ikke fra Open-Meteo generelt
+
+**Problem.** Fejlmails 29/9 og 30/9: første forsøg afvist med 91 % gitterdækning
+(grænse 95 %), rerun-workflowet reddede det, men mailen var allerede sendt.
+
+**Fund.**
+- Timeouts er ikke undtagelsen, men normalen. Kørsler der lykkedes i første
+  forsøg havde 11-25 read-timeouts hver (fx 1/10 03:39: 20 timeouts, 20 min).
+  Næsten hele de "normale" ~20 min er timeout-ventetid, ikke arbejde.
+- Samme kald hjemmefra (rigtige punkter og 8 batches med tilfældige,
+  ucachede koordinater) svarer på 0,1-0,2 s uden en eneste timeout.
+  Antagelse: GitHub-runnernes delte IP'er bliver drosslet/nedprioriteret
+  hos Open-Meteos gratis API. Ikke bevist, men konsistent med alt i loggene.
+- Uden timeouts ville en kørsel tage ~2,5 min (27 batches x 5 s pause).
+
+**Ændret.**
+| Hvad | Før | Nu | Hvorfor |
+|---|---|---|---|
+| `RECOVERY_PAUSE_SECONDS` | 30 | 180 | Timeouts kommer i bølger; 30/9 overlevede 2 af 5 batches ikke en kort pause. |
+| `RECOVERY_MAX_RETRIES` | 1 | 2 | Redder kørslen inden for samme forsøg, så der ikke sendes fejlmail. |
+| `timeout-minutes` | 60 | 75 | 30/9 tog første forsøg 40 min; runden kan nu koste ~14 min oveni (180 s + 5 x 135 s). |
+| `PYTHONUNBUFFERED=1` i "Run forecast" | - | ja | Før fik alle loglinjer samme tidsstempel. |
+| Varighed i loggen | - | pr. batch og pr. fejlet forsøg | Viser om de langsomme kald svarer lidt over 30 s (så hjælper højere timeout) eller hænger. |
+
+Rerun-workflowet er bevaret som sikkerhedsnet.
+
+**Næste skridt.** Efter nogle dages kørsler: læs `Batch n/27 ok in X s`-linjerne.
+Ligger mange vellykkede kald tæt på 30 s, kan timeouten hæves. Hænger de,
+er den egentlige løsning at flytte kaldene væk fra GitHub-hostede runnere:
+self-hosted runner hjemme, betalt Open-Meteo API-nøgle, eller en anden
+platform (Cloudflare Worker cron / VPS).

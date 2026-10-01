@@ -16,8 +16,10 @@ jobs:
     # Normale kørsler tager 7-25 min. Et vedvarende API-udfald koster nu
     # 105 s backoff plus op til 4 x 30 s timeout pr. batch, altså op mod
     # 100 min for alle 27 batches. Uden loft kunne en syg kørsel æde sig ind
-    # i næste cron-slot 3 timer senere.
-    timeout-minutes: 60
+    # i næste cron-slot 3 timer senere. 75 og ikke 60: 30/9 tog første forsøg
+    # 40 min, og redningsrunden kan nu koste op til ~14 min oveni (180 s pause
+    # + 5 batches x 3 forsøg).
+    timeout-minutes: 75
 
     steps:
       - uses: actions/checkout@v5
@@ -31,6 +33,10 @@ jobs:
         run: pip install -r termik/requirements.txt
 
       - name: Run forecast
+        # Ubufferet, så hver linje får sit eget tidsstempel i loggen. Ellers
+        # lander hele outputtet med samme tid, når processen slutter.
+        env:
+          PYTHONUNBUFFERED: '1'
         run: python -m termik
 
       - name: Commit and push updated data

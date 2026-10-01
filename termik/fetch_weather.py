@@ -99,6 +99,7 @@ def fetch_batch(points: list[dict], max_retries: int = 3) -> list[dict]:
     """
     url = build_api_url(points)
     for attempt in range(max_retries + 1):
+        started = time.monotonic()
         try:
             response = requests.get(url, timeout=30)
             response.raise_for_status()
@@ -133,7 +134,8 @@ def fetch_batch(points: list[dict], max_retries: int = 3) -> list[dict]:
             if not is_transient or attempt == max_retries:
                 raise
             wait = 2 ** attempt * 15  # 15s, 30s, 60s
-            print(f"API request failed ({e}), retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
+            elapsed = time.monotonic() - started
+            print(f"API request failed after {elapsed:.1f}s ({e}), retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
             time.sleep(wait)
 
 
@@ -536,6 +538,7 @@ def retry_failed_batches(failed: list[tuple], total_batches: int) -> tuple[list,
 
     recovered, still_failed = [], []
     for batch_num, batch_points in failed:
+        started = time.monotonic()
         try:
             batch_data = fetch_batch(batch_points, max_retries=RECOVERY_MAX_RETRIES)
         except requests.exceptions.RequestException as e:
@@ -543,7 +546,8 @@ def retry_failed_batches(failed: list[tuple], total_batches: int) -> tuple[list,
             print(f"Batch {batch_num + 1}/{total_batches} failed the sweep too: {e}")
             continue
         recovered.extend(build_batch_entries(batch_points, batch_data))
-        print(f"Batch {batch_num + 1}/{total_batches} recovered on the sweep.")
+        print(f"Batch {batch_num + 1}/{total_batches} recovered on the sweep "
+              f"in {time.monotonic() - started:.1f}s.")
     return recovered, still_failed
 
 
@@ -563,12 +567,17 @@ def process_all_points() -> dict:
         if batch_num > 0:
             time.sleep(5)  # Avoid rate limiting between batches
         batch_points = ALL_POINTS[i : i + API_BATCH_SIZE]
+        started = time.monotonic()
         try:
             batch_data = fetch_batch(batch_points)
         except requests.exceptions.RequestException as e:
             failed.append((batch_num, batch_points))
             print(f"Batch {batch_num + 1}/{total_batches} failed permanently: {e}")
             continue
+        # Varigheden pr. batch inkl. genforsøg. Lokalt svarer Open-Meteo på
+        # 0,1-0,2 s, fra GitHub-runnerne timer mange kald ud. Fordelingen af de
+        # vellykkede kald viser, om et højere timeout ville redde de langsomme.
+        print(f"Batch {batch_num + 1}/{total_batches} ok in {time.monotonic() - started:.1f}s.")
         all_results.extend(build_batch_entries(batch_points, batch_data))
 
     # Tælles i batches, ikke i punkter: den sidste batch er en rest-batch med

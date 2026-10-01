@@ -21,9 +21,13 @@ GRID_COVERAGE_FLOOR = 0.95
 # kan runden ikke redde kørslen og ville kun brænde tid af mod job-timeouten.
 # Retry-budgettet er lavere end det normale, fordi batchen allerede har haft
 # det fulde budget én gang; er API'et stadig nede, skal det opdages billigt.
+# Pausen er 3 min og ikke 30 s: timeouts fra GitHub-runnerne kommer i bølger
+# (30/9 overlevede 2 af 5 batches ikke en 30 s-pause med ét forsøg), og en
+# reddet kørsel her betyder ingen fejlmail, mens rerun-workflowet først
+# redder sagen efter at første forsøg allerede har sendt mailen.
 RECOVERY_MAX_BATCHES = 5
-RECOVERY_PAUSE_SECONDS = 30
-RECOVERY_MAX_RETRIES = 1
+RECOVERY_PAUSE_SECONDS = 180
+RECOVERY_MAX_RETRIES = 2
 
 # Hourly parameters to fetch
 HOURLY_PARAMS = [
