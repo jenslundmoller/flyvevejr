@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flyvevejr Analytics Implemented</title>
+<style>
+  :root {
+    --bg: #fafaf9; --fg: #1c1917; --muted: #57534e; --card: #ffffff;
+    --border: #e7e5e4; --accent: #0f766e; --code-bg: #f5f5f4;
+    --fill-bg: #fef3c7; --fill-fg: #78350f;
+    --ok-bg: #dcfce7; --ok-fg: #14532d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1917; --fg: #f5f5f4; --muted: #a8a29e; --card: #292524;
+      --border: #44403c; --accent: #5eead4; --code-bg: #1c1917;
+      --fill-bg: #422006; --fill-fg: #fde68a;
+      --ok-bg: #052e16; --ok-fg: #bbf7d0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 1.8rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); margin: 0 0 28px; }
+  h2 { font-size: 1.15rem; margin: 28px 0 10px; color: var(--accent); }
+  section {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 4px 20px 16px; margin-bottom: 16px;
+  }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  table.kv th { width: 38%; }
+  code, pre { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .88em; }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; overflow-x: auto; white-space: pre;
+  }
+  .fill { background: var(--fill-bg); color: var(--fill-fg); padding: 1px 6px; border-radius: 4px; }
+  .ok { background: var(--ok-bg); color: var(--ok-fg); padding: 1px 6px; border-radius: 4px; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Analytics Implemented: Flyvevejr</h1>
+  <p class="meta">Reply to <code>handover-flyvevejr.html</code>. Implemented and deployed 1 October 2026.</p>
+
+  <section>
+    <h2>Status</h2>
+    <table class="kv">
+      <tr><th>Website</th><td>flyvevejr.dk</td></tr>
+      <tr><th>Umami host</th><td>https://mature-echidna.pikapod.net</td></tr>
+      <tr><th>Website ID</th><td><code>2246cd06-a205-4fdc-b6f7-4d612da2bb18</code></td></tr>
+      <tr><th>Script / endpoint</th><td><code>stats.js</code> / <code>/api/collect</code> (unchanged, as requested)</td></tr>
+      <tr><th>Live on production</th><td><span class="ok">Yes</span>. Jens confirmed data arriving in Umami.</td></tr>
+      <tr><th>Cookie banner</th><td>None added.</td></tr>
+      <tr><th>CSP</th><td>Updated on both pages (see section 1).</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>1. Where the script is installed</h2>
+    <p>The site is static HTML on GitHub Pages. The files live in <code>termik/output/</code> in the Flyvevejr repo.</p>
+    <table>
+      <tr><th>Page</th><th>Tracked</th></tr>
+      <tr><td><code>/</code> (forecast map, <code>index.html</code>)</td><td>Yes</td></tr>
+      <tr><td><code>/om.html</code> (about page)</td><td>Yes</td></tr>
+    </table>
+    <p>The snippet is the one from the handover with one extra attribute:</p>
+<pre>&lt;script defer src="https://mature-echidna.pikapod.net/stats.js"
+        data-website-id="2246cd06-a205-4fdc-b6f7-4d612da2bb18"
+        data-domains="flyvevejr.dk,www.flyvevejr.dk"
+        data-exclude-hash="true"&gt;&lt;/script&gt;</pre>
+    <p><strong>Why <code>data-exclude-hash="true"</code> is required:</strong> the map writes its
+    state into the URL hash (<code>#day=2&amp;hour=15&amp;lat=55.45&amp;lon=11.65&amp;zoom=9</code>) with
+    <code>history.replaceState</code> every time someone pans, zooms, or changes day or time. Umami
+    counts every URL change as a new pageview. The first version went live without the attribute
+    and logged a pageview for every zoom. It was added an hour later in commit <code>a0e581c</code>.
+    <span class="fill">Do not remove the attribute.</span></p>
+    <p>The downside is that the hash is not visible in Umami, so pageviews show as <code>/</code> and
+    <code>/om.html</code> only. Day and time are still captured by the events below.</p>
+
+    <p><strong>Content Security Policy:</strong> both pages have a CSP in a
+    <code>&lt;meta http-equiv&gt;</code> tag. The Umami host was added to <code>script-src</code> and
+    <code>connect-src</code> on both. <code>om.html</code> had no <code>script-src</code> before, so
+    one was added (<code>'self'</code> + the Umami host).</p>
+
+    <p><strong>Service worker:</strong> <code>sw.js</code> serves <code>index.html</code> cache-first,
+    so the cache version was bumped (v18 to v19 for the script, v20 for the hash fix). Without that,
+    returning visitors keep the old HTML. Remember to bump <code>CACHE_VERSION</code> whenever
+    the snippet changes. The tracking requests are POST, which the service worker ignores.</p>
+  </section>
+
+  <section>
+    <h2>2. Custom events</h2>
+    <p>All events are on the forecast map (<code>/</code>) and were agreed with Jens. They only fire on a
+    user's own actions. Settings restored from localStorage or the URL on page load are not counted.</p>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Event</th><th>Properties</th><th>When</th></tr>
+      <tr><td><code>Dag valgt</code></td><td><code>dag</code></td>
+          <td>A day button is clicked. <code>dag</code> is the button text, e.g. <code>I morgen</code> or <code>+3 dage</code>.</td></tr>
+      <tr><td><code>Tidspunkt valgt</code></td><td><code>kl</code></td>
+          <td>The time slider is released, e.g. <code>15:00</code>. Logged once on release, not on every step while dragging.</td></tr>
+      <tr><td><code>Favorit valgt</code></td><td><code>flyveplads</code></td>
+          <td>A favorite airfield is picked in the dropdown. <code>(ingen)</code> when cleared.</td></tr>
+      <tr><td><code>Favorit-dag klikket</code></td><td><code>flyveplads</code>, <code>dag</code></td>
+          <td>A day row in the favorite forecast is clicked (jumps to that day and airfield).</td></tr>
+      <tr><td><code>Kortlag skiftet</code></td><td><code>lag</code></td>
+          <td>The map layer is switched. Values: <code>score</code>, <code>thermal-top</code>.</td></tr>
+      <tr><td><code>Opdater klikket</code></td><td>none</td>
+          <td>The "Opdater" button is clicked.</td></tr>
+      <tr><td><code>Sidepanel åbnet</code> / <code>Sidepanel lukket</code></td><td>none</td>
+          <td>The sidebar is opened or closed, by click or by swiping the handle on mobile.</td></tr>
+      <tr><td><code>Om-siden åbnet</code></td><td>none</td>
+          <td>The "Om denne side" link is clicked.</td></tr>
+    </table>
+    </div>
+    <p><strong>No double counting:</strong> a favorite day row triggers the day button with a
+    programmatic click. The day button only logs <code>Dag valgt</code> for real clicks
+    (<code>event.isTrusted</code>), so the row click is counted once, as <code>Favorit-dag klikket</code>.</p>
+    <p><strong>Viewing properties in Umami:</strong> go to Events, open an event, and break it down by
+    property, for example <code>Favorit valgt</code> by <code>flyveplads</code> or <code>Dag valgt</code> by <code>dag</code>.</p>
+    <p><strong>Not tracked (by choice):</strong> clicks on airfield markers on the map, and map pan/zoom.</p>
+  </section>
+
+  <section>
+    <h2>3. Implementation notes</h2>
+    <ul>
+      <li>Events are sent with a small helper, <code>track(name, data)</code>, at the top of
+      <code>app.js</code>, called from the existing handlers. It does nothing if the script is
+      blocked, for example by an ad blocker, and swallows errors so analytics can never break the page.</li>
+      <li>The one exception is the "Om denne side" link, which uses the <code>data-umami-event</code>
+      attribute. It is a normal same-tab link, so Umami's built-in navigation handling is fine there.</li>
+      <li>Thanks to <code>data-domains</code>, local development (<code>localhost</code>) sends nothing.</li>
+      <li>The forecast pipeline (GitHub Actions) only writes <code>termik/output/data/*.json</code>,
+      so it never overwrites the HTML with the snippet.</li>
+      <li>Commits on <code>main</code>: <code>bf96e98</code> (script, CSP, events),
+      <code>a0e581c</code> (<code>data-exclude-hash</code>).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4. Verification</h2>
+    <ul>
+      <li>Both deploys to GitHub Pages succeeded, and the live <code>index.html</code> contains the
+      snippet with <code>data-exclude-hash</code>. <code>stats.js</code> returns 200.</li>
+      <li>The existing test suite (384 tests) passes and <code>app.js</code> passes a syntax check.</li>
+      <li>Jens confirmed pageviews arriving from the live site, and that map zooms stopped
+      counting as pageviews after <code>a0e581c</code>.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. Open items</h2>
+    <ul>
+      <li><span class="fill">Not yet verified one by one:</span> the events were not tested in a
+      browser before deploy (the browser tool was unavailable). Check in Umami's Events view that
+      each event and its properties show up as described above.</li>
+      <li>Pageviews recorded before <code>a0e581c</code> include URLs with
+      <code>#day=…&amp;zoom=…</code>. They stay in Umami; filter them out or let them age.</li>
+      <li>Visitors with the old cached page (service worker v19) may send a few hash pageviews until
+      their browser picks up v20, usually on the next visit.</li>
+      <li>Possible later addition: clicks on airfield markers (which airfield was opened).</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
