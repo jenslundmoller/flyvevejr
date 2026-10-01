@@ -14,6 +14,17 @@ let baseDate = null; // Date object for day 0 (parsed from generated timestamp)
 let activeLayer = 'score';  // 'score' | 'thermal-top'
 const LAYER_KEY = 'termik-active-layer';
 
+// === Statistik (Umami) ===
+// Sender en hændelse til Umami. Gør ingenting hvis scriptet er blokeret
+// (adblocker) eller ikke indlæst (fx på localhost).
+function track(name, data) {
+    try {
+        if (window.umami && typeof window.umami.track === 'function') {
+            window.umami.track(name, data);
+        }
+    } catch (e) { /* statistik må aldrig bryde siden */ }
+}
+
 // === URL hash parameters ===
 function parseHash() {
     var params = {};
@@ -443,6 +454,7 @@ function setupLayerControls() {
             activeLayer = this.value;
             try { localStorage.setItem(LAYER_KEY, activeLayer); } catch (e) { /* private */ }
             updateHeatmap();
+            track('Kortlag skiftet', { lag: activeLayer });
         });
     }
 }
@@ -893,6 +905,8 @@ function populateFavoriteSelect() {
         }
         updateFavoriteForecast();
         updateWeatherWidget();
+        const opt = select.options[select.selectedIndex];
+        track('Favorit valgt', { flyveplads: select.value ? opt.textContent : '(ingen)' });
     });
 }
 
@@ -931,6 +945,7 @@ function updateFavoriteForecast() {
     el.querySelectorAll('.fav-row').forEach(function(row) {
         row.addEventListener('click', function() {
             const day = parseInt(row.dataset.day, 10);
+            track('Favorit-dag klikket', { flyveplads: airfield.name, dag: getDayLabel(day) });
             const btn = document.querySelector('.day-btn[data-day="' + day + '"]');
             if (btn) btn.click();
             updateHash();
@@ -1106,7 +1121,9 @@ function setupControls() {
     // Day buttons
     var uncertaintyNote = document.getElementById('uncertainty-note');
     document.querySelectorAll('.day-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            // Kun rigtige klik; favorit-rækkerne klikker knappen programmatisk
+            if (e.isTrusted) track('Dag valgt', { dag: btn.textContent });
             document.querySelector('.day-btn.active').classList.remove('active');
             btn.classList.add('active');
             currentDay = parseInt(btn.dataset.day, 10);
@@ -1130,6 +1147,10 @@ function setupControls() {
         updateAll();
         updateHash();
     });
+    // 'change' fyrer først når slideren slippes, så vi ikke logger hvert trin
+    slider.addEventListener('change', function() {
+        track('Tidspunkt valgt', { kl: display.textContent });
+    });
 
     // Sidebar toggle — desktop collapses right, mobile toggles expanded (shows favorites)
     const sidebar = document.getElementById('sidebar');
@@ -1137,11 +1158,13 @@ function setupControls() {
     const isMobile = function() { return window.matchMedia('(max-width: 768px)').matches; };
 
     toggle.addEventListener('click', function() {
+        let open;
         if (isMobile()) {
-            sidebar.classList.toggle('expanded');
+            open = sidebar.classList.toggle('expanded');
         } else {
-            sidebar.classList.toggle('collapsed');
+            open = !sidebar.classList.toggle('collapsed');
         }
+        track('Sidepanel ' + (open ? 'åbnet' : 'lukket'));
     });
 
     // Mobile swipe up/down on the handle to expand/collapse favorites
@@ -1154,13 +1177,15 @@ function setupControls() {
         const dy = e.changedTouches[0].clientY - touchStartY;
         touchStartY = null;
         if (Math.abs(dy) > 20) {
-            if (dy < 0) sidebar.classList.add('expanded');
-            else sidebar.classList.remove('expanded');
+            const open = dy < 0;
+            sidebar.classList.toggle('expanded', open);
+            track('Sidepanel ' + (open ? 'åbnet' : 'lukket'));
         }
     });
 
     // Opdater-knappen henter nyeste data uden at lukke appen
     document.getElementById('refresh-btn').addEventListener('click', function() {
+        track('Opdater klikket');
         refreshForecastData();
     });
 }
