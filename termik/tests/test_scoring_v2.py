@@ -353,3 +353,217 @@ def test_process_point_hour_respects_scoring_version(monkeypatch):
     for result in (v1_result, v2_result):
         assert "thermal_top_m" in result["data"]
         assert result["label"]
+
+
+# --- Sæsonskaleret stråling (startlist 2026-10-03/04, se Referat 2026-10-05) ---
+#
+# Strålingstærsklerne er absolutte W/m² kalibreret i august. I oktober når
+# solen knap 400 W/m² ved middag, så gaten cappede hele den stærke søndag
+# 4/10 (Slaglille 228 min, Kalundborg 326 min) på 5. Tærsklerne skaleres
+# med middagssolens højde i forhold til kalibreringsdagen 8/8.
+
+from termik.scoring_v2 import (
+    radiation_season_factor,
+    apply_dealbreakers_v2,
+)
+from termik.config import RADIATION_SEASON_MIN_FACTOR
+
+
+def test_season_factor_is_one_at_calibration_day():
+    assert radiation_season_factor(55.5, 220) == pytest.approx(1.0)
+
+
+def test_season_factor_never_exceeds_one_in_high_summer():
+    # Maj-august er kalibreret og valideret; de må ikke flytte sig
+    for doy in (135, 172, 200):
+        assert radiation_season_factor(55.5, doy) == 1.0
+
+
+def test_season_factor_early_october():
+    # 4/10 (doy 277): middagssol ~30° mod ~51° 8/8
+    assert radiation_season_factor(55.5, 277) == pytest.approx(0.63, abs=0.02)
+
+
+def test_season_factor_is_floored_in_winter():
+    assert radiation_season_factor(55.5, 355) == RADIATION_SEASON_MIN_FACTOR
+
+
+def _gate_only(sw, scale, trailing=None):
+    """Kun strålings-gaten: alt andet er sat så intet andet cap rammer."""
+    return apply_dealbreakers_v2(
+        10.0, 1.0, 30.0, 0.0, 8.0, 12.0, 15.0,
+        shortwave_radiation=sw, trailing_radiation=trailing,
+        radiation_scale=scale,
+    )
+
+
+def test_radiation_gate_unchanged_at_full_scale():
+    assert _gate_only(350.0, 1.0) == 5
+
+
+def test_radiation_gate_scales_with_season():
+    # 343 W/m² var Slaglilles bedste søndagstime; i oktober er det en god sol
+    assert _gate_only(343.0, 0.63) == 10.0
+    # og tierne følger med ned: 200 er under 0.63 x 400, 120 under 0.63 x 250
+    assert _gate_only(200.0, 0.63) == 5
+    assert _gate_only(120.0, 0.63) == 3
+
+
+def test_memory_floor_scales_with_the_gate():
+    # Gulvet er bevidst lig gatens nederste tærskel og skal følge den:
+    # 80 W/m² en oktobereftermiddag er stadig over det skalerede gulv (63)
+    assert effective_radiation_v2(80.0, [300.0], radiation_scale=0.63) > 80.0
+    assert effective_radiation_v2(80.0, [300.0]) == 80.0
+
+
+def test_solar_score_full_direct_credit_scales():
+    full = score_solar_v2(10.0, 400.0, 10.0, 0.0, 0.0, direct_radiation=600.0)
+    october = score_solar_v2(10.0, 300.0, 10.0, 0.0, 0.0,
+                             direct_radiation=380.0, radiation_scale=0.63)
+    assert october == pytest.approx(full)
+
+
+def test_low_base_cap_fires_in_october_sun():
+    # SW 300 er fuld sol i oktober; en base på 400 m AGL er stadig svag termik
+    assert thermal_top_adjustment_v2(400, "lcl", 300.0) == (0.0, None)
+    assert thermal_top_adjustment_v2(400, "lcl", 300.0, radiation_scale=0.63) == (0.0, 4)
+
+
+def test_convective_october_hour_no_longer_capped_at_5():
+    # Slaglille 2026-10-04 kl. 14 (publiceret 08:36Z): SW 343, direkte 168,
+    # 70 % sky, base ~730 m AGL; fløjet 228 min. Lapse er her sat til
+    # blandingslagets 1.06 (2 m -> 925 hPa). Med den publicerede 0.72
+    # (2 m -> 850 hPa, over inversionen) er det lapse-scoren og ikke
+    # strålingen der holder timen nede; det er fix 3 i referatet, ikke
+    # implementeret.
+    kwargs = base_kwargs(
+        temp_2m=15.9, dewpoint_2m=9.8, temp_850hpa=15.9 - 15 * 1.06,
+        cloud_cover=70.0, cloud_cover_low=13.0, cloud_cover_high=24.0,
+        shortwave_radiation=343.0, direct_radiation=168.0,
+        wind_speed_kt=8.0, wind_gusts_kt=14.8, wind_dir=284.0,
+        cape=0.0, month=10, coast_distance_km=33.0, coast_direction_deg=239.0,
+        trailing_radiation=[264.0, 284.0, 340.0],
+        thermal_base_agl_m=730, thermal_top_limited_by="lcl",
+    )
+    assert compute_thermal_score_v2(**kwargs)["score"] == 5.0
+    assert compute_thermal_score_v2(**kwargs, radiation_scale=0.63)["score"] > 6.0
+
+
+def test_process_point_hour_applies_season_from_timestamp():
+    from termik.fetch_weather import process_point_hour
+
+    june = _synthetic_hourly()
+    october = dict(june, time=["2026-10-04T13:00"],
+                   shortwave_radiation=[340.0], direct_radiation=[300.0])
+    june_dim = dict(october, time=["2026-06-15T13:00"])
+    # Samme svage sol: cappes i juni, ikke i oktober
+    assert process_point_hour(_inland_point(), june_dim, 0, month=6)["score"] <= 5.0
+    assert process_point_hour(_inland_point(), october, 0, month=10)["score"] > 5.0
+
+
+# --- Fix 3: blandingslagets lapse (Referat 2026-10-05) ---
+#
+# 2 m -> 850 hPa måler hen over inversionen når den ligger under 850 hPa.
+# Søndag 4/10 var laget fra jorden til 925 hPa tør-adiabatisk (radiosonde
+# Schleswig og modellen enige), men 850-lapse sagde 0.57-0.73 = "stabil".
+# Blandingslagets lapse må kun løfte scoren når laget også er dybt nok til
+# at flyve i; ellers ville en tynd overophedet bund om morgenen tælle som
+# en god dag.
+
+from termik.scoring_v2 import mixed_layer_lapse_v2, effective_lapse_v2
+from termik.config import MIXED_LAYER_LAPSE_MIN, MIXED_LAYER_MIN_DEPTH_M
+
+
+def test_mixed_layer_lapse_from_925():
+    # Slaglille 4/10 kl. 12: 14.6 grader i 33 m, 6.1 grader i 876 m
+    assert mixed_layer_lapse_v2(14.6, 6.1, 876.0, 33) == pytest.approx(1.01, abs=0.01)
+
+
+def test_mixed_layer_lapse_needs_a_real_layer():
+    # 925 hPa under/tæt på terrænet (højtryk over høj grund) giver intet mål
+    assert mixed_layer_lapse_v2(14.6, 6.1, 300.0, 98) is None
+    assert mixed_layer_lapse_v2(14.6, None, 876.0, 33) is None
+    assert mixed_layer_lapse_v2(14.6, 6.1, None, 33) is None
+
+
+@pytest.mark.parametrize("bulk, ml, depth, expected", [
+    (0.72, 1.06, 1075.0, 1.06),   # søndag: konvektivt og dybt -> blandingslaget
+    (0.72, 1.06, 735.0, 0.72),    # for lavt lag -> 850-målet står
+    (0.72, 0.90, 1200.0, 0.72),   # ikke tydeligt konvektivt -> 850-målet står
+    (1.10, 1.00, 1200.0, 1.10),   # 850-målet er allerede højest
+    (0.72, None, 1200.0, 0.72),   # ingen 925-data
+    (0.72, 1.06, None, 0.72),     # ingen dybde -> ingen lempelse
+])
+def test_effective_lapse_v2(bulk, ml, depth, expected):
+    assert effective_lapse_v2(bulk, ml, depth) == expected
+
+
+def test_effective_lapse_thresholds_are_the_configured_ones():
+    just = MIXED_LAYER_LAPSE_MIN
+    assert effective_lapse_v2(0.7, just, MIXED_LAYER_MIN_DEPTH_M) == just
+    assert effective_lapse_v2(0.7, just - 0.01, MIXED_LAYER_MIN_DEPTH_M) == 0.7
+    assert effective_lapse_v2(0.7, just, MIXED_LAYER_MIN_DEPTH_M - 1) == 0.7
+
+
+def _slaglille_sunday_14(**overrides):
+    # Publiceret 2026-10-04 08:36Z, Slaglille kl. 14 med modellens 925 hPa.
+    kwargs = base_kwargs(
+        temp_2m=15.9, dewpoint_2m=9.8, temp_850hpa=5.1,      # 850-lapse 0.72
+        cloud_cover=70.0, cloud_cover_low=13.0, cloud_cover_high=24.0,
+        shortwave_radiation=343.0, direct_radiation=168.0,
+        wind_speed_kt=8.0, wind_gusts_kt=14.8, wind_dir=284.0,
+        cape=0.0, month=10, coast_distance_km=33.0, coast_direction_deg=239.0,
+        trailing_radiation=[264.0, 284.0, 340.0],
+        thermal_base_agl_m=730, thermal_top_limited_by="lcl",
+        boundary_layer_height=1065.0,
+        temp_925hpa=6.3, height_925hpa_m=875.0, surface_elevation_m=33,
+        radiation_scale=0.63,
+    )
+    kwargs.update(overrides)
+    return kwargs
+
+
+def test_slaglille_sunday_scores_as_flown():
+    # 10 flyvninger over 2 t. Publiceret 4.8 (cap 5). Resten op til facit
+    # (staerk, 7.5+) er søbrise-straffen (1.8 i vestenvind 33 km inde), som
+    # ligger uden for denne rettelse; se referatets åbne punkter.
+    result = compute_thermal_score_v2(**_slaglille_sunday_14())
+    assert result["score"] >= 6.0
+    assert result["seabreeze_penalty"] > 1.5
+    assert result["lapse_rate"] > 1.0          # den lapse der blev scoret
+    assert result["lapse_rate_850"] == 0.72    # revisionsspor
+
+
+def test_fix_2_and_3_need_each_other():
+    without_ml = _slaglille_sunday_14(temp_925hpa=None)
+    without_season = _slaglille_sunday_14(radiation_scale=1.0)
+    assert compute_thermal_score_v2(**without_ml)["score"] <= 5.0
+    assert compute_thermal_score_v2(**without_season)["score"] <= 5.0
+
+
+def test_shallow_morning_layer_is_not_lifted():
+    # Samme time, men laget er kun 735 m dybt (lørdag kl. 12 på Slaglille)
+    result = compute_thermal_score_v2(**_slaglille_sunday_14(boundary_layer_height=735.0))
+    assert result["lapse_rate"] == 0.72
+    assert result["score"] <= 5.0
+
+
+def test_process_point_hour_feeds_the_925_level():
+    from termik.fetch_weather import process_point_hour
+
+    hourly = dict(
+        _synthetic_hourly(),
+        time=["2026-10-04T14:00"],
+        temperature_2m=[15.9], dewpoint_2m=[9.8],
+        temperature_850hPa=[5.1], temperature_925hPa=[6.3],
+        geopotential_height_850hPa=[1566.0], geopotential_height_925hPa=[875.0],
+        boundary_layer_height=[1065.0],
+        shortwave_radiation=[343.0], direct_radiation=[168.0],
+        cloud_cover=[40.0], cloud_cover_low=[30.0],
+        wind_speed_10m=[8.0], wind_gusts_10m=[14.8],
+    )
+    point = dict(_inland_point(), elevation_m=33)
+    result = process_point_hour(point, hourly, 0, month=10)
+    assert result["data"]["lapse_rate"] > 1.0
+    assert result["data"]["lapse_rate_850"] == 0.72
+    assert result["score"] > 6.0

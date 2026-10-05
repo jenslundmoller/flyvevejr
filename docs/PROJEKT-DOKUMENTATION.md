@@ -136,6 +136,12 @@ publiceret time bærer `scoring_version` som revisionsspor. Se
 6. **Varmehukommelsen forlænges** ved koldluftsadvektion (faktor 0.65 → 0.75); ingen spejlvendt varme-malus (modbevist på referencedagen 8/8).
 7. **Temperaturvægt sænket** (kold luftmasse behøver ikke høje temperaturer).
 
+Tilføjet 2026-10-05 efter startlist-weekenden 3.-4. oktober (se [Referat 2026-10-05](Referat/2026-10-05-startlist-weekend-oktober.md)):
+
+8. **Sæsonskaleret stråling**: alle absolutte W/m²-tærskler (strålings-gaten, varmehukommelsens gulv, solscorens 600 W/m² og basehøjde-cappets SW-krav) ganges med sin(middagssol i dag) / sin(middagssol 8/8), klampet til [0.5, 1.0]. Maj-juli er uændret; 4/10 er faktoren 0.63.
+9. **Blandingslagets lapse**: er 2 m -> 925 hPa >= 0.95 og grænselaget >= 900 m, scores og cappes på den største af 850- og 925-lapse. Fanger dage hvor inversionen ligger under 850 hPa over et fuldt blandet lag. `lapse_rate` er den scorede værdi, `lapse_rate_850` revisionssporet.
+10. **Terrænhøjde**: alle punkter har `elevation_m` (hardcodet for flyvepladser, `termik/grid_elevations.json` for griddet, hentet én gang med `termik/tools/fetch_elevations.py`), så parcel-beregningen starter i den rigtige højde.
+
 ### Basis-scorer (vægtet sum, v2)
 
 | Faktor | Vægt | Score 10 | Score 0 |
@@ -164,7 +170,7 @@ publiceret time bærer `scoring_version` som revisionsspor. Se
 | Lapse rate <0.50 | 1 | Stærk inversion — ingen termik mulig |
 | Lapse rate <0.65 | 3 | Stabil atmosfære — meget begrænset termik |
 | Skydække ≥87% | 2 | Sol blokeret — ingen opvarmning. Læser den **rå** total, ikke lagvægtet, se nedenfor |
-| Effektiv stråling <400 / <250 / <100 W/m² | 5 / 3 / 1 | For lidt opvarmning til konvektion |
+| Effektiv stråling <400 / <250 / <100 W/m² (v2: sæsonskaleret) | 5 / 3 / 1 | For lidt opvarmning til konvektion |
 | Grænselagshøjde <900 m | 5 | For tyndt arbejdslag til at blive oppe i |
 | Høj sky ≥85% nu og i de sidste 3 timer | 3 | Optisk tykt cirrus-skjold lukker jorden ned |
 | Mellemhøj sky ≥85% | 2 | Solidt altostratus-dække |
@@ -208,6 +214,8 @@ Danmark er meget kystnært, og søbrisen er en af de vigtigste termik-dræbere. 
 ### Validering
 
 Ud over de syntetiske scenarier ([scoring-scenarios.md](scoring-scenarios.md), v1-reference) er v2 valideret mod **virkelige flyvninger fra startlist.club**: 18 dage maj-august 2026, 88 plads-dage med facit (skolefly frafiltreret: samme fly med 3+ forskellige forsædepiloter samme dag tæller ikke). Resultat: v2 rammer 61/88 forventede bånd mod v1's 57/88, samlet afvigelse 51.6 mod 55.0, største enkeltfejl 1.6 mod 3.3. Se [sæson-valideringen](Referat/2026-08-25-startlist-saeson-validering.md) og [pålandsvinds-studiet](Referat/2026-08-25-paalandsvind-studie.md) (4180 plads-dage scannet).
+
+Efterårsvalidering 2026-10-05 (3.-4. oktober, 24 plads-dage, plus regression mod sommerens 58): punkt 8-10 tager oktobers afvigelse fra 23.1 til 14.1 og største fejl fra 4.3 til 2.4, mens sommeren er uændret i bånd (37/58, afvigelse 85.3 -> 86.1). Adskillelsen mellem fløjne og svage dage stiger i begge sæsoner. Se [Referat 2026-10-05](Referat/2026-10-05-startlist-weekend-oktober.md).
 
 ### Kommentargenerering
 
@@ -253,7 +261,7 @@ wind_speed_850hPa, wind_direction_850hPa
 | Spread | temperature_2m - dewpoint_2m |
 | Skybase (m) | spread × 125 |
 | Skybase (ft) | spread × 400 |
-| Lapse rate | (temperature_2m - temperature_850hPa) / 15 |
+| Lapse rate | (temperature_2m - temperature_850hPa) / 15; i v2 erstattet af 2 m -> 925 hPa når det lag er konvektivt (>= 0.95) og grænselaget >= 900 m |
 | Tryktendens | Delta surface_pressure over 3 timer |
 | Nedbør seneste 6t | Sum af precipitation for foregående 6 timer |
 | Termik-tophøjde | TI=0 via tør-adiabatisk parcel-løft på multilevel-sondering (DALR = 9.8 K/km), cap'd med LCL (Bolton 1980 eq. 22), minus Hcrit-margin (200-500 m, lineært skaleret med shortwave_radiation). Se Referat 2026-05-28. |

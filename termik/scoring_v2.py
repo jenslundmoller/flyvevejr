@@ -36,7 +36,14 @@ from termik.config import (
     THERMAL_TOP_CAP_MIN_SW,
     MEMORY_FACTOR_COLD_BONUS,
     MEMORY_FACTOR_MAX,
+    RADIATION_SEASON_REF_DOY,
+    RADIATION_SEASON_MIN_FACTOR,
+    MIXED_LAYER_LAPSE_MIN,
+    MIXED_LAYER_MIN_DEPTH_M,
+    MIXED_LAYER_MIN_THICKNESS_M,
 )
+import math
+
 from termik.scoring import (
     score_lapse_rate,
     score_surface_lapse_rate,
@@ -54,6 +61,61 @@ from termik.scoring import (
 # Koldluftsadvektion regnes fra samme tærskel som v1's destabiliserings-bonus
 # i calculate_modifiers: 850 hPa faldet mindst 1 grad på 3 timer.
 COLD_ADVECTION_TREND = -1.0
+
+
+def _noon_sun_sine(lat: float, day_of_year: int) -> float:
+    """sin(solhøjden ved sand middag); deklination efter Cooper (1969)."""
+    declination = 23.44 * math.sin(math.radians(360 / 365 * (day_of_year - 81)))
+    return math.sin(math.radians(90 - lat + declination))
+
+
+def radiation_season_factor(lat: float, day_of_year: int) -> float:
+    """Hvor meget strålingstærsklerne lempes i lavsol-sæsonen.
+
+    Forholdet mellem middagssolens højde i dag og på kalibreringsdagen 8/8,
+    klampet til [RADIATION_SEASON_MIN_FACTOR, 1.0]. Se noten i config.
+    Breddegraden er punktets egen og indgår i både tæller og nævner, så
+    faktoren er næsten ens over Danmark.
+    """
+    ratio = _noon_sun_sine(lat, day_of_year) / _noon_sun_sine(lat, RADIATION_SEASON_REF_DOY)
+    return max(RADIATION_SEASON_MIN_FACTOR, min(1.0, ratio))
+
+
+def mixed_layer_lapse_v2(
+    temp_2m: float,
+    temp_925hpa: float | None,
+    height_925hpa_m: float | None,
+    surface_elevation_m: float,
+) -> float | None:
+    """Lapse 2 m -> 925 hPa i grader pr. 100 m, eller None uden et reelt lag.
+
+    925 hPa er det eneste niveau under 850 hPa som best_match leverer
+    (ECMWF-niveauerne; 950/900 hPa er tomme). Geopotentialhøjden er MSL,
+    derfor terrænhøjden fra.
+    """
+    if temp_925hpa is None or height_925hpa_m is None:
+        return None
+    thickness = height_925hpa_m - surface_elevation_m
+    if thickness < MIXED_LAYER_MIN_THICKNESS_M:
+        return None
+    return (temp_2m - temp_925hpa) / (thickness / 100)
+
+
+def effective_lapse_v2(
+    lapse_850: float,
+    mixed_layer_lapse: float | None,
+    mixed_layer_depth_m: float | None,
+) -> float:
+    """Den lapse scoren og caps bruger: 850-målet, medmindre blandingslaget
+    er tydeligt konvektivt og dybt nok til at flyve i. Se noten i config."""
+    if (
+        mixed_layer_lapse is not None
+        and mixed_layer_depth_m is not None
+        and mixed_layer_lapse >= MIXED_LAYER_LAPSE_MIN
+        and mixed_layer_depth_m >= MIXED_LAYER_MIN_DEPTH_M
+    ):
+        return max(lapse_850, mixed_layer_lapse)
+    return lapse_850
 
 
 def score_wind_v2(wind_kt: float, cold_advection: bool = False) -> int:
@@ -90,6 +152,7 @@ def score_solar_v2(
     cloud_cover_mid: float | None = None,
     cloud_cover_high: float | None = None,
     direct_radiation: float | None = None,
+    radiation_scale: float = 1.0,
 ) -> float:
     """Punkt 2: lav cumulus i hæftets optimale mængde koster ikke solscore.
 
@@ -111,9 +174,9 @@ def score_solar_v2(
     cloud_factor = max(0.0, (100 - effective) / 100)
 
     if direct_radiation is not None:
-        radiation_factor = min(direct_radiation / 600, 1.0)
+        radiation_factor = min(direct_radiation / (600 * radiation_scale), 1.0)
     else:
-        radiation_factor = min(shortwave_radiation / 800, 1.0)
+        radiation_factor = min(shortwave_radiation / (800 * radiation_scale), 1.0)
     return (cloud_factor * 0.4 + radiation_factor * 0.6) * 10
 
 
@@ -223,13 +286,16 @@ def effective_radiation_v2(
     cloud_cover: float | None = None,
     trailing_cloud_cover: list[float] | None = None,
     temp_850hpa_trend: float = 0.0,
+    radiation_scale: float = 1.0,
 ) -> float:
     """Som v1's effective_radiation, men med luftmasse-skaleret faktor.
 
-    Gulv og deck-arrival-blokering er uændrede; kun hvor meget af det seneste
-    stråleniveau der krediteres afhænger nu af 850 hPa-trenden.
+    Deck-arrival-blokeringen er uændret; kun hvor meget af det seneste
+    stråleniveau der krediteres afhænger nu af 850 hPa-trenden. Gulvet
+    sæsonskaleres sammen med gaten, som det er bundet til (noten ved
+    RADIATION_MEMORY_FLOOR).
     """
-    if not trailing or current < RADIATION_MEMORY_FLOOR:
+    if not trailing or current < RADIATION_MEMORY_FLOOR * radiation_scale:
         return current
     if cloud_deck_arrived(cloud_cover, trailing_cloud_cover):
         return current
@@ -240,6 +306,7 @@ def thermal_top_adjustment_v2(
     thermal_base_agl_m: float | None,
     limited_by: str | None,
     shortwave_radiation: float | None = None,
+    radiation_scale: float = 1.0,
 ) -> tuple[float, int | None]:
     """Punkt 4: kobl scoren til termikkens basehøjde.
 
@@ -255,7 +322,8 @@ def thermal_top_adjustment_v2(
 
     Cappet gælder kun mens solen driver konvektionen (SW >= 400 W/m²): om
     aftenen kollapser parcel-toppen pr. definition, men varmehukommelsen
-    holder termikken i live, målt 2026-08-08 kl. 18-19.
+    holder termikken i live, målt 2026-08-08 kl. 18-19. Sol-tærsklen
+    sæsonskaleres; uden det kunne cappet slet ikke ramme fra oktober.
 
     Cappet kræver desuden at parcel-beregningen POSITIVT har fundet en lav
     base ("lcl" eller "ti_zero"). En "inversion"-dom fra de grove
@@ -271,7 +339,7 @@ def thermal_top_adjustment_v2(
         thermal_base_agl_m < THERMAL_TOP_WEAK_AGL_M
         and limited_by in ("lcl", "ti_zero")
         and shortwave_radiation is not None
-        and shortwave_radiation >= THERMAL_TOP_CAP_MIN_SW
+        and shortwave_radiation >= THERMAL_TOP_CAP_MIN_SW * radiation_scale
     ):
         return 0.0, THERMAL_TOP_WEAK_MAX_SCORE
     return 0.0, None
@@ -297,13 +365,15 @@ def apply_dealbreakers_v2(
     trailing_cirrus: list[float] | None = None,
     temp_850hpa_trend: float = 0.0,
     thermal_top_cap: int | None = None,
+    radiation_scale: float = 1.0,
 ) -> float:
     """v1's hårde caps plus termiktop-loftet og den skalerede varmehukommelse.
 
     Forket fra scoring.apply_dealbreakers med to ændringer: strålings-gaten
     tester mod effective_radiation_v2 (punkt 6), og punkt 4's cap på lav
     termiktop anvendes til sidst. Alle kalibrerede tærskler er identiske
-    med v1's.
+    med v1's; strålings-gatens W/m² ganges dog med radiation_scale (1.0 fra
+    maj til 8/8, se radiation_season_factor).
     """
     max_score = 10.0
     if shortwave_radiation is not None:
@@ -313,9 +383,10 @@ def apply_dealbreakers_v2(
             cloud_cover=cloud_cover,
             trailing_cloud_cover=trailing_cloud_cover,
             temp_850hpa_trend=temp_850hpa_trend,
+            radiation_scale=radiation_scale,
         )
         for threshold, cap in RADIATION_GATE:
-            if eff < threshold:
+            if eff < threshold * radiation_scale:
                 max_score = min(max_score, cap)
     if (
         boundary_layer_height is not None
@@ -401,12 +472,21 @@ def compute_thermal_score_v2(
     trailing_cirrus: list[float] | None = None,
     thermal_base_agl_m: float | None = None,
     thermal_top_limited_by: str | None = None,
+    radiation_scale: float = 1.0,
+    temp_925hpa: float | None = None,
+    height_925hpa_m: float | None = None,
+    surface_elevation_m: float = 0,
 ) -> dict:
     """Den samlede v2-score. Samme signatur og resultatform som v1 plus
     termiktoppen (punkt 4), så fetch_weather kan bruge de to i flæng.
     """
     spread = temp_2m - dewpoint_2m
-    lapse_rate = (temp_2m - temp_850hpa) / 15.0
+    lapse_rate_850 = (temp_2m - temp_850hpa) / 15.0
+    lapse_rate = effective_lapse_v2(
+        lapse_rate_850,
+        mixed_layer_lapse_v2(temp_2m, temp_925hpa, height_925hpa_m, surface_elevation_m),
+        boundary_layer_height,
+    )
     skybase_m = round(spread * 125)
     skybase_ft = round(skybase_m * 3.281)
 
@@ -425,6 +505,7 @@ def compute_thermal_score_v2(
             cloud_cover_mid=cloud_cover_mid,
             cloud_cover_high=cloud_cover_high,
             direct_radiation=direct_radiation,
+            radiation_scale=radiation_scale,
         ),
         "spread": score_spread(spread),
         "wind": score_wind_v2(wind_speed_kt, cold_advection=cold_advection),
@@ -458,7 +539,8 @@ def compute_thermal_score_v2(
         total += bl_mixing_mod
 
     top_bonus, top_cap = thermal_top_adjustment_v2(
-        thermal_base_agl_m, thermal_top_limited_by, shortwave_radiation
+        thermal_base_agl_m, thermal_top_limited_by, shortwave_radiation,
+        radiation_scale=radiation_scale,
     )
     total += top_bonus
 
@@ -477,6 +559,7 @@ def compute_thermal_score_v2(
         trailing_cirrus=trailing_cirrus,
         temp_850hpa_trend=temp_850hpa_trend,
         thermal_top_cap=top_cap,
+        radiation_scale=radiation_scale,
     )
 
     total = round(max(0, min(10, total)), 1)
@@ -489,6 +572,7 @@ def compute_thermal_score_v2(
         "skybase_m": skybase_m,
         "skybase_ft": skybase_ft,
         "lapse_rate": round(lapse_rate, 2),
+        "lapse_rate_850": round(lapse_rate_850, 2),
         "seabreeze_penalty": seabreeze_penalty,
         "cirrus_penalty": cirrus_penalty,
         "thermal_top_bonus": top_bonus,

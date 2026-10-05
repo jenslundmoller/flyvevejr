@@ -345,6 +345,37 @@ THERMAL_TOP_CAP_MIN_SW = 400
 MEMORY_FACTOR_COLD_BONUS = 0.10
 MEMORY_FACTOR_MAX = 0.75
 
+# Sæsonskaleret stråling (v2). Alle absolutte W/m²-tærskler ovenfor
+# (RADIATION_GATE, RADIATION_MEMORY_FLOOR, THERMAL_TOP_CAP_MIN_SW og solscorens
+# 600 W/m² for fuld direkte sol) er kalibreret på augustdage. I oktober når
+# middagssolen knap 400 W/m², så gaten cappede hele den stærke søndag
+# 2026-10-04 på 5 (Slaglille 10 flyvninger over 2 t, Kalundborg 326 min,
+# publiceret 3.1-3.6). Tærsklerne ganges derfor med
+# sin(middagssolhøjde i dag) / sin(middagssolhøjde på kalibreringsdagen 8/8).
+# Faktoren klampes til 1.0 når solen står højere end 8/8 (ca. 5/5 til 8/8),
+# så maj-juli er uændret og resten af august lempes højst ~7 %. Gulvet 0.5
+# (nås i starten af november og igen i starten af februar) holder
+# skaleringen tæt på det målte: under det er der ingen facit-dage.
+# Se Referat 2026-10-05.
+RADIATION_SEASON_REF_DOY = 220   # 2026-08-08, strålings-gatens referencedag
+RADIATION_SEASON_MIN_FACTOR = 0.5
+
+# Blandingslagets lapse (v2). Lapse måles 2 m -> 850 hPa (~1500 m), og
+# ligger inversionen under 850 hPa, måler den hen over den: 2026-10-04 var
+# laget fra jorden til 925 hPa tør-adiabatisk (radiosonde Schleswig og
+# modellen enige, cumulus 1000-1250 m), mens 850-lapse sagde 0.57-0.73 og
+# cappede dagen på 3-5. Hvor 2 m -> 925 hPa er tydeligt konvektivt OG
+# grænselaget er dybt nok til at flyve i, scores i stedet blandingslagets
+# lapse (den største af de to). Dybdekravet er det samme som BL-gatens
+# 900 m: et tyndere lag capper alligevel på 5, og uden kravet ville en
+# overophedet morgenbund tælle som en god dag. 0.95 ligger lige under den
+# tør-adiabatiske 0.98, så kun reelt blandede lag lemper. Kræver mindst
+# 300 m mellem terræn og 925 hPa for at være en måling og ikke støj.
+# Se Referat 2026-10-05.
+MIXED_LAYER_LAPSE_MIN = 0.95
+MIXED_LAYER_MIN_DEPTH_M = 900
+MIXED_LAYER_MIN_THICKNESS_M = 300
+
 # Punkt 5b: stabil havluft i pålandsvind. Kryds-plads-studiet 2026-08-25
 # (24 påland-facitdage, 10 pladser, 3 somre) viste at det afgørende for om
 # pålandsvind dræber termikken ikke er land/hav-forskellen men om selve

@@ -22,7 +22,7 @@ from termik.config import (
 )
 import termik.config as config_module
 from termik.scoring import compute_thermal_score, compute_thermal_top, THERMAL_TOP_LEVELS_HPA
-from termik.scoring_v2 import compute_thermal_score_v2
+from termik.scoring_v2 import compute_thermal_score_v2, radiation_season_factor
 from termik.comments import generate_comment
 from termik.locations import ALL_POINTS, AIRFIELDS
 
@@ -245,8 +245,11 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         p: hourly_data.get(f"geopotential_height_{p}hPa", [None] * (hour_index + 1))[hour_index]
         for p in THERMAL_TOP_LEVELS_HPA
     }
-    # Default 0m surface elevation is fine for flat Denmark (highest airfield
-    # ~76m, lowest ~0m). The Hcrit margin (200-500m) dwarfs the error.
+    # Every point carries elevation_m (see locations.py). The old 0 m default
+    # was not harmless: geopotential heights are MSL, so starting the parcel
+    # at 0 m on 98 m terrain cools it ~1 K too much by the first level and
+    # turned a well-mixed day into "inversion" (Christianshede 2026-10-04,
+    # 171 min flown). The fallback only covers points without the field.
     surface_elevation_m = point.get("elevation_m", 0)
 
     # Check for critical None values
@@ -280,6 +283,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
                 "wind_dir": wind_dir,
                 "wind_gusts_kt": wind_gusts,
                 "lapse_rate": None,
+                "lapse_rate_850": None,
                 "cape": cape,
                 "precipitation": precipitation,
                 "pressure": pressure,
@@ -389,10 +393,24 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         thermal_base_agl = (
             min(base_candidates) - surface_elevation_m if base_candidates else None
         )
+        # Strålingstærsklerne følger årstiden (Referat 2026-10-05). Datoen
+        # læses af timens eget tidsstempel; uden det (syntetiske testdata)
+        # bruges de kalibrerede augusttærskler uændret.
+        timestamps = hourly_data.get("time")
+        radiation_scale = 1.0
+        if timestamps:
+            day_of_year = datetime.fromisoformat(timestamps[hour_index][:10]).timetuple().tm_yday
+            radiation_scale = radiation_season_factor(point["lat"], day_of_year)
         result = compute_thermal_score_v2(
             **score_kwargs,
             thermal_base_agl_m=thermal_base_agl,
             thermal_top_limited_by=thermal_top["limited_by"],
+            radiation_scale=radiation_scale,
+            # Blandingslagets lapse (Referat 2026-10-05): 925 hPa er det
+            # eneste niveau under 850 som best_match leverer.
+            temp_925hpa=level_temps_c.get(925),
+            height_925hpa_m=level_heights_m.get(925),
+            surface_elevation_m=surface_elevation_m,
         )
     else:
         result = compute_thermal_score(**score_kwargs)
@@ -449,6 +467,8 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             "wind_dir": wind_dir,
             "wind_gusts_kt": wind_gusts,
             "lapse_rate": result["lapse_rate"],
+            # 2 m -> 850 hPa uanset blandingslaget; kun v2 leverer det
+            "lapse_rate_850": result.get("lapse_rate_850"),
             "cape": cape,
             "precipitation": precipitation,
             "pressure": pressure,
