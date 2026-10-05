@@ -1,0 +1,42 @@
+name: Forecast Fallback
+
+# Forecast-kørslerne går på den selvhostede runner derhjemme. Er maskinen
+# slukket, står jobbet i kø i op til et døgn, og kortet viser en gammel
+# prognose. Denne vagthund kører på en GitHub-hostet runner hver halve time:
+# har en kørsel stået i kø i mindst 15 min, aflyses den og erstattes af én
+# kørsel på ubuntu-latest (langsom pga. droslingen, men den lykkes).
+# Logikken og testene står i termik/tools/forecast_watchdog.py.
+
+on:
+  schedule:
+    - cron: '5,35 * * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  fallback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Move stuck forecast runs to a GitHub-hosted runner
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          stuck=$(gh run list --workflow update-forecast.yml --limit 20 \
+            --json databaseId,status,createdAt,displayTitle \
+            | python3 -m termik.tools.forecast_watchdog)
+          if [ -z "$stuck" ]; then
+            echo "Ingen hængende kørsler."
+            exit 0
+          fi
+          for id in $stuck; do
+            echo "Aflyser $id (i kø for længe, runneren derhjemme er nede?)"
+            gh run cancel "$id"
+          done
+          gh workflow run update-forecast.yml -f runner=ubuntu-latest
+          echo "::warning::Selvhostet runner svarede ikke; forecast kører på ubuntu-latest."

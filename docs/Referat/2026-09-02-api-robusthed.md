@@ -366,3 +366,14 @@ genforsøg og redningsrunden (36 af 36 grønne 1-5/10), så problemet er
 køretid (12-43 min) og en sjælden fejlmail, ikke manglende data. Den
 egentlige løsning er at flytte kaldene væk fra GitHub-runnerne; hjemmefra
 hænger intet (6 af 6 og 1 af 1 i dag).
+
+### Besluttet 5/10: selvhostet runner med GitHub som reserve
+
+`update-forecast.yml` kører nu på en selvhostet runner på maskinen
+derhjemme (tændt døgnet rundt), labels `self-hosted` + `flyvevejr`, som en
+separat bruger `gh-runner` uden adgang til hjemmemappen. Reposet er
+offentligt, så ingen workflow må få en `pull_request`-trigger (en fork kunne
+ellers køre kode på maskinen). `forecast-fallback.yml` flytter en kørsel der
+har stået 15 min i kø til `ubuntu-latest`, så en slukket maskine giver en
+langsom kørsel, aldrig en manglende. Genforsøg og redningsrunde er uændrede
+som sikkerhedsnet.

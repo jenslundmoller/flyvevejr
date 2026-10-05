@@ -302,6 +302,7 @@ flyvevejr/
 │   └── workflows/
 │       ├── update-forecast.yml    # Henter vejrdata hver 3. time
 │       ├── rerun-failed-forecast.yml # Genstarter en fejlet forecast-kørsel
+│       ├── forecast-fallback.yml  # Flytter kørslen til GitHub hvis runneren derhjemme er nede
 │       ├── probe-throttle.yml     # Manuel måling af Open-Meteos drosling
 │       └── deploy-pages.yml       # Deployer til GitHub Pages
 ├── .gitignore
@@ -323,7 +324,7 @@ flyvevejr/
 │   ├── fetch_weather.py           # Open-Meteo API + databehandling
 │   ├── tools/                     # Håndværktøjer: replay_day, compare_scores,
 │   │                              #   fetch_reference_day, fetch_elevations,
-│   │                              #   fetch_sea_points, probe_throttle
+│   │                              #   fetch_sea_points, probe_throttle, forecast_watchdog
 │   ├── cron_setup.sh              # Hjælpescript til lokal cron
 │   ├── requirements.txt           # Python: requests, pytest
 │   ├── output/
@@ -335,7 +336,7 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/                     # 495 tests (2026-10-05)
+│   └── tests/                     # 502 tests (2026-10-05)
 │       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
 │       ├── test_locations.py
 │       ├── test_scoring.py        # v1 + termiktop
@@ -343,7 +344,8 @@ flyvevejr/
 │       ├── test_reference_days.py # 8/8 og 9/8 med bagte timedata
 │       ├── test_comments.py
 │       ├── test_fetch_weather.py
-│       └── test_probe_throttle.py # Probe-logikken med falsk klokke
+│       ├── test_probe_throttle.py # Probe-logikken med falsk klokke
+│       └── test_forecast_watchdog.py # Hvornår en kørsel flyttes til GitHub
 ```
 
 ---
@@ -419,14 +421,19 @@ Desktop: sidepanel til højre. Mobil (<768px): sidepanel som bund-panel.
 
 ### update-forecast.yml
 
-- **Trigger**: Cron `15 */3 * * *` (hver 3. time kl. XX:15) + manuel dispatch
-- **Kører**: Python 3.12, installerer requests, kører `python -m termik`
+- **Trigger**: Cron `15 */3 * * *` (hver 3. time kl. XX:15) + manuel dispatch (valg af runner)
+- **Runner** (siden 2026-10-05): selvhostet på maskinen derhjemme (labels `self-hosted`, `flyvevejr`, kører som brugeren `gh-runner`). Open-Meteo drosler GitHub-runnerne: halvdelen af kaldene hang 30 s derfra, hjemmefra intet ([Referat 2026-09-02, opfølgning 5/10](Referat/2026-09-02-api-robusthed.md)). Manuel dispatch med `runner=ubuntu-latest` kører på GitHub som reserve.
+- **Kører**: Python 3.12 (selvhostet: maskinens egen i en venv; GitHub: setup-python), installerer requests, kører `python -m termik`
 - **Committer**: Opdaterede JSON-filer til repo'et med bot-bruger
 - **Push med rebase-retry** (siden 2026-08-26): kørslen tager ~20 min fra checkout til push, så et kode-push i det vindue flyttede main og fik datapushet afvist. Push-trinnet prøver nu op til 3 gange med `git pull --rebase` imellem; datacommits rører kun `termik/output/data/`, så rebasen er altid ren.
 
 ### rerun-failed-forecast.yml
 
 Vagthund: trigges når en forecast-kørsel slutter. Fejlede den (og attempt < 3), ventes 60 s og de fejlede jobs genstartes. Bemærk to ting: listen i Actions viser én (oftest "skipped") kørsel pr. datakørsel, det er GitHubs workflow_run-mekanik og harmløst; og en genstart kører på det oprindelige commit-SHA, så den kan aldrig reparere en push-race (det gør rebase-retry ovenfor), kun transiente fejl som API-nedetid og runner-nedbrud.
+
+### forecast-fallback.yml
+
+Vagthund for den selvhostede runner, kører på GitHub hver halve time (`5,35 * * * *`). Har en forecast-kørsel stået i kø i mindst 15 min (en online runner tager den på sekunder), aflyses den og erstattes af én kørsel på `ubuntu-latest`. Reservekørsler (titel "(ubuntu-latest)") aflyses aldrig. Logikken er `termik/tools/forecast_watchdog.py` med tests. En aflyst kørsel trigger ikke rerun-workflowet, som kun reagerer på `failure`.
 
 ### probe-throttle.yml
 

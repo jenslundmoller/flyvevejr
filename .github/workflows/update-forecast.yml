@@ -1,10 +1,19 @@
 name: Update Termik Forecast
+# Titlen viser hvilken runner kørslen bad om; forecast-fallback.yml læser
+# den, så den aldrig aflyser en reservekørsel.
+run-name: Update Termik Forecast (${{ inputs.runner || 'self-hosted' }})
 
 on:
   schedule:
     # Run every 3 hours
     - cron: '15 */3 * * *'
   workflow_dispatch: # Allow manual trigger
+    inputs:
+      runner:
+        description: 'self-hosted (maskinen derhjemme) eller ubuntu-latest (reserve)'
+        default: 'self-hosted'
+        type: choice
+        options: [self-hosted, ubuntu-latest]
 
 permissions:
   contents: write
@@ -12,7 +21,11 @@ permissions:
 
 jobs:
   update-forecast:
-    runs-on: ubuntu-latest
+    # Selvhostet runner derhjemme: Open-Meteo drosler GitHub-runnerne, så
+    # halvdelen af kaldene hang 30 s derfra, mens intet hænger hjemmefra
+    # (Referat 2026-09-02, opfølgning 5/10). Er maskinen nede, flytter
+    # forecast-fallback.yml kørslen til ubuntu-latest.
+    runs-on: ${{ inputs.runner == 'ubuntu-latest' && 'ubuntu-latest' || fromJSON('["self-hosted", "flyvevejr"]') }}
     # Normale kørsler tager 7-25 min. Et vedvarende API-udfald koster nu
     # 105 s backoff plus op til 4 x 30 s timeout pr. batch, altså op mod
     # 100 min for alle 27 batches. Uden loft kunne en syg kørsel æde sig ind
@@ -24,13 +37,22 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # setup-python kender ikke Zorin OS; maskinen har selv Python 3.12.
       - name: Set up Python
+        if: runner.environment == 'github-hosted'
         uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install -r termik/requirements.txt
+        run: |
+          if [ "$RUNNER_ENVIRONMENT" = "self-hosted" ]; then
+            python3 -m venv "$RUNNER_TEMP/venv"
+            echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
+            "$RUNNER_TEMP/venv/bin/pip" install -q -r termik/requirements.txt
+          else
+            pip install -r termik/requirements.txt
+          fi
 
       - name: Run forecast
         # Ubufferet, så hver linje får sit eget tidsstempel i loggen. Ellers
