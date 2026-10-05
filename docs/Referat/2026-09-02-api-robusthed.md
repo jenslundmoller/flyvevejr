@@ -295,3 +295,50 @@ Ligger mange vellykkede kald tæt på 30 s, kan timeouten hæves. Hænger de,
 er den egentlige løsning at flytte kaldene væk fra GitHub-hostede runnere:
 self-hosted runner hjemme, betalt Open-Meteo API-nøgle, eller en anden
 platform (Cloudflare Worker cron / VPS).
+
+---
+
+## Opfølgning 5/10: kaldene hænger, og det afhænger af tætheden
+
+Læst fra 33 update-forecast-kørsler 1-5/10 med
+[`2026-10-05-analyse/actions_timing.py`](2026-10-05-analyse/actions_timing.py).
+Alle 36 kørsler i perioden lykkedes, men hver kørsel havde timeouts.
+
+**Højere timeout hjælper ikke.** De vellykkede forsøg (genforsøg og backoff
+fratrukket) tager median 0,8 s og p90 1,5 s; kun 9 af 876 lå på 25-60 s.
+730 af 738 fejlede forsøg sluttede på præcis 30,0-30,5 s uden svar: de
+hænger, de er ikke langsomme.
+
+**Men det er ikke tilfældige hæng.** Fejlraten følger tiden siden forrige
+vellykkede kald:
+
+| Tid siden forrige vellykkede kald startede | Forsøg | Fejlede |
+|---|---|---|
+| 5-10 s | 817 | 50 % |
+| 50-55 s | 413 | 61 % |
+| 110-115 s | 250 | 2 % |
+
+Derfor fejler de ulige batches (3, 5, 7, 9: 25 af 33 kørsler hver) langt
+oftere end de lige (2, 4, 6, 8: 3-10 af 33), for en lige batch kommer efter
+den ulige batchs lange genforsøg. Og derfor lykkes 3. forsøg (efter 30 s
+backoff) i 92 %, mens 2. (efter 15 s) fejler i 63 %. Samme mønster hjemmefra
+(6 rigtige batches med 5 s mellemrum) gav 6 x 200 på 0,13-0,29 s, så det er
+specifikt for GitHub-runnerne: Open-Meteo holder forbindelsen åben i stedet
+for at svare 429.
+
+**Uafklaret: hvor langt er vinduet?** Loggene kan ikke skelne mellem to
+forklaringer, fordi retry-rytmen altid kobler dem:
+
+- (a) API'et holder igen i 60-110 s efter et vellykket kald. Så hjælper kun
+  ~110 s mellem batches (~50 min pr. kørsel).
+- (b) Det afgørende er pausen efter et hængt kald (15 s: 62 % fejl, 30 s: 7 %).
+  Så er en længere første backoff nok.
+
+**Probe.** `termik/tools/probe_throttle.py`, kørt fra
+`.github/workflows/probe-throttle.yml` (kun manuel start, lige efter en
+forecast-kørsel). Den måler i blandet rækkefølge et kald 20/40/60/80/100 s
+efter et vellykket kald, og en "hang30"-arm: kald 5 s efter succes, og hænger
+det, et nyt kald 30 s efter. Under (a) fejler det sidste (~65 s efter
+succesen), under (b) lykkes det. Resultatet afgør pausen i
+`process_all_points`; flytning væk fra GitHub-runnerne er kun nødvendig hvis
+heller ikke den rette pause holder fejlraten under ~10 %.

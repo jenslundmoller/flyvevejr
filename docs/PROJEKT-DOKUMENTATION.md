@@ -297,6 +297,8 @@ flyvevejr/
 ├── .github/
 │   └── workflows/
 │       ├── update-forecast.yml    # Henter vejrdata hver 3. time
+│       ├── rerun-failed-forecast.yml # Genstarter en fejlet forecast-kørsel
+│       ├── probe-throttle.yml     # Manuel måling af Open-Meteos drosling
 │       └── deploy-pages.yml       # Deployer til GitHub Pages
 ├── .gitignore
 ├── docs/
@@ -317,7 +319,7 @@ flyvevejr/
 │   ├── fetch_weather.py           # Open-Meteo API + databehandling
 │   ├── tools/                     # Håndværktøjer: replay_day, compare_scores,
 │   │                              #   fetch_reference_day, fetch_elevations,
-│   │                              #   fetch_sea_points
+│   │                              #   fetch_sea_points, probe_throttle
 │   ├── cron_setup.sh              # Hjælpescript til lokal cron
 │   ├── requirements.txt           # Python: requests, pytest
 │   ├── output/
@@ -329,14 +331,15 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/                     # 430 tests (2026-10-05)
+│   └── tests/                     # 439 tests (2026-10-05)
 │       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
 │       ├── test_locations.py
 │       ├── test_scoring.py        # v1 + termiktop
 │       ├── test_scoring_v2.py     # v2-punkterne inkl. 2026-10-05-rettelserne
 │       ├── test_reference_days.py # 8/8 og 9/8 med bagte timedata
 │       ├── test_comments.py
-│       └── test_fetch_weather.py
+│       ├── test_fetch_weather.py
+│       └── test_probe_throttle.py # Probe-logikken med falsk klokke
 ```
 
 ---
@@ -420,6 +423,10 @@ Desktop: sidepanel til højre. Mobil (<768px): sidepanel som bund-panel.
 ### rerun-failed-forecast.yml
 
 Vagthund: trigges når en forecast-kørsel slutter. Fejlede den (og attempt < 3), ventes 60 s og de fejlede jobs genstartes. Bemærk to ting: listen i Actions viser én (oftest "skipped") kørsel pr. datakørsel, det er GitHubs workflow_run-mekanik og harmløst; og en genstart kører på det oprindelige commit-SHA, så den kan aldrig reparere en push-race (det gør rebase-retry ovenfor), kun transiente fejl som API-nedetid og runner-nedbrud.
+
+### probe-throttle.yml
+
+Engangsmåling (kun manuel start): hvor længe Open-Meteo holder igen over for en GitHub-runner efter et vellykket kald. Loggene 1-5/10 viste at kaldene hænger (30 s uden svar) i 50-61 % af tilfældene inden for ~55 s efter et vellykket kald, men kun 2 % efter ~110 s; hjemmefra hænger intet. Start den lige efter en forecast-kørsel, så de ikke deler kvote. Se [Referat 2026-09-02, opfølgning 5/10](Referat/2026-09-02-api-robusthed.md).
 
 ### deploy-pages.yml
 

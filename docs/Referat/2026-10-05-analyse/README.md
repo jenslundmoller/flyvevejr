@@ -24,3 +24,9 @@ Rækkefølge og formål:
 Faldgruber: Open-Meteo har en minut-grænse (vent 65 s og prøv igen);
 forecast-endpointet når kun 92 dage tilbage; historical-forecast er ikke
 præcis det produktionen publicerede.
+
+Tilføjet senere samme dag (punkt 13):
+
+| Script | Gør |
+|---|---|
+| `actions_timing.py` | Varighed pr. kald og fejlrate mod tid siden forrige vellykkede kald, fra update-forecast-loggene (hentes med `gh run view --log`, se docstring) |
