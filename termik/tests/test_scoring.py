@@ -1455,3 +1455,27 @@ def test_thermal_top_with_elevation():
     # ti_zero_m must also be at least as high as base (parcel never colder
     # than the sea-level case at any given MSL altitude)
     assert high["ti_zero_m"] >= base["ti_zero_m"]
+
+
+# Christianshede (98 m) 2026-10-04 kl. 14, the published best_match values.
+# best_match only carries 925 and 850 hPa, so the first level decides whether
+# the parcel rises at all, and the start height matters by a full kelvin.
+CHRISTIANSHEDE_2026_10_04_14 = dict(
+    surface_temp_c=15.0,
+    surface_dewpoint_c=8.5,
+    surface_pressure_hpa=1005.0,
+    level_temps_c={925: 6.9, 850: 4.8},
+    level_heights_m={925: 873, 850: 1563},
+    shortwave_radiation=359.0,
+)
+
+
+def test_thermal_top_uses_terrain_elevation():
+    # Pilots flew 171 min from 13:41. At the real 98 m the layer is well mixed
+    # up to cloud base; started at 0 m the same parcel is ~1 K too cold at
+    # 925 hPa and the day reads as an inversion.
+    at_terrain = compute_thermal_top(surface_elevation_m=98, **CHRISTIANSHEDE_2026_10_04_14)
+    at_sea_level = compute_thermal_top(surface_elevation_m=0, **CHRISTIANSHEDE_2026_10_04_14)
+    assert at_sea_level["limited_by"] == "inversion"
+    assert at_terrain["limited_by"] == "lcl"
+    assert at_terrain["ti_zero_m"] > 900

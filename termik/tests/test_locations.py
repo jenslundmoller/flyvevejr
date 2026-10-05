@@ -60,3 +60,19 @@ def test_arnborg_exists():
 def test_kongsted_is_coastal():
     kongsted = next(af for af in AIRFIELDS if af["id"] == "kongsted")
     assert kongsted["coast_distance_km"] < 25
+
+
+def test_every_point_has_terrain_elevation():
+    # compute_thermal_top starts the parcel at elevation_m; geopotential heights
+    # are MSL, so a missing value silently means 0 m.
+    for p in ALL_POINTS:
+        assert isinstance(p["elevation_m"], int), p["id"]
+        assert 0 <= p["elevation_m"] <= 200, p["id"]
+
+
+def test_inland_elevations_are_real():
+    # Christianshede sits on ~98 m terrain; at 0 m the parcel ran ~1 K cold and
+    # 2026-10-04 read as "inversion" all day while pilots flew 171 min.
+    silkeborg = next(af for af in AIRFIELDS if af["id"] == "silkeborg")
+    assert 80 < silkeborg["elevation_m"] < 120
+    assert max(gp["elevation_m"] for gp in GRID_POINTS) > 50
