@@ -77,6 +77,24 @@ andel timer med 60+ min i luften pr. scorebånd 0-3 / 3-5 / 5-6.5 / 6.5-8 /
   1000/925/850 hPa under 1.6 km (950/900/800 og 80/120/180 m-temperatur er
   tomme); sommerens to studier har kun n = 26-48 pålandsdage.
 
+## Live-tjek planlagt
+
+Første live-test af ændringerne er weekenden 10.-11. oktober. En cloud-
+rutine ("Flyvevejr: compare weekend 10-11 Oct forecast with startlist",
+https://claude.ai/code/routines/trig_0169kVTawZuW676BAxeapHfV) kører én gang
+mandag 12. oktober kl. 09:00 dansk tid. Den sammenligner startlisterne for
+10. og 11. oktober (og tirsdag 6/10, hvis der blev fløjet) med den
+publicerede prognose på dags- og timeniveau, tjekker de to kendte risici
+(timer med 8.5+ under en vist top på kun ~500-650 m; fugtige dage med lav
+base som lørdag 3/10) og lægger resultatet som
+`docs/Referat/2026-10-12-startlist-weekend.md` i en PR fra grenen
+`claude/startlist-2026-10-10-11`. Den ændrer ikke scoring og pusher aldrig
+til main. Læs PR'en før næste kalibrering.
+
+Bemærk: prognosen 5/10 kl. 12:59 UTC gav tirsdag 6/10 kl. 13-16 score
+7.7-9.4 på Slaglille, Kalundborg og Christianshede med en vist top på kun
+516-631 m; det er netop risiko (a).
+
 ## Undersøgt og bevidst ikke ændret
 
 - **Cirrus-skjoldet** (cap 3 ved høj sky >= 85 %): skjold-timer bar 41 %
