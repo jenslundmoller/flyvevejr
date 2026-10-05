@@ -773,3 +773,118 @@ def test_overcast_score_is_never_negative():
         direct_radiation=5.0, temp_850hpa=12.0, precipitation=0.0,
     ))
     assert result["score"] >= 0
+
+
+# --- Begrænsende faktor (punkt 9, overdragelsen 2026-10-05) ---
+#
+# Popup'en viser hvilket loft der satte timens score. dealbreakers_v2 giver
+# scoren og koderne for de lofter der bandt; apply_dealbreakers_v2 er uændret.
+
+from termik.scoring_v2 import dealbreakers_v2
+
+_CALM = (1.0, 30.0, 0.0, 8.0, 12.0, 15.0)   # lapse, sky, regn, vind, stød, temp
+
+
+def test_no_cap_binds_on_a_good_hour():
+    assert dealbreakers_v2(8.0, *_CALM) == (8.0, [])
+
+
+def test_the_binding_cap_is_named():
+    score, limited_by = dealbreakers_v2(8.0, 1.0, 30.0, 0.0, 8.0, 12.0, 15.0,
+                                        cloud_cover_high=90.0)
+    assert score == 3
+    assert limited_by == ["cirrus"]
+
+
+def test_a_cap_above_the_score_does_not_bind():
+    # Cirrus-loftet 3 rammer timen, men scoren er allerede 2.5
+    assert dealbreakers_v2(2.5, 1.0, 30.0, 0.0, 8.0, 12.0, 15.0,
+                           cloud_cover_high=90.0) == (2.5, [])
+
+
+def test_only_the_lowest_cap_is_named():
+    # Regn (1) under cirrus (3)
+    _, limited_by = dealbreakers_v2(8.0, 1.0, 30.0, 0.5, 8.0, 12.0, 15.0,
+                                    cloud_cover_high=90.0)
+    assert limited_by == ["rain"]
+
+
+def test_tied_caps_are_all_named():
+    # Lapse 0.60 (loft 3) og cirrus (loft 3) binder lige meget
+    _, limited_by = dealbreakers_v2(8.0, 0.60, 30.0, 0.0, 8.0, 12.0, 15.0,
+                                    cloud_cover_high=90.0)
+    assert limited_by == ["stable", "cirrus"]
+
+
+def test_overcast_penalty_alone_is_not_a_binding_cap():
+    # 90 % skydække: 4.5 - 2 = 2.5, under loftet 5. Loftet satte ikke scoren.
+    assert dealbreakers_v2(4.5, 1.0, 90.0, 0.0, 8.0, 12.0, 15.0) == (2.5, [])
+    assert dealbreakers_v2(8.0, 1.0, 90.0, 0.0, 8.0, 12.0, 15.0) == (5, ["overcast"])
+
+
+@pytest.mark.parametrize("kwargs, code", [
+    (dict(shortwave_radiation=100.0), "radiation"),
+    (dict(boundary_layer_height=500.0), "shallow_bl"),
+    (dict(lapse_rate=0.45), "stable"),
+    (dict(surface_lapse_rate=0.2), "surface_stable"),
+    (dict(cloud_cover=95.0), "overcast"),
+    (dict(cloud_cover_high=90.0), "cirrus"),
+    (dict(cloud_cover_mid=90.0), "mid_cloud"),
+    (dict(precipitation=1.0), "rain"),
+    (dict(wind_gusts_kt=36.0), "wind"),
+    (dict(temp=3.0), "cold"),
+    (dict(cape=1600.0), "cape"),
+    (dict(thermal_top_cap=4), "low_top"),
+])
+def test_every_cap_has_a_code(kwargs, code):
+    args = dict(lapse_rate=1.0, cloud_cover=30.0, precipitation=0.0,
+                wind_kt=8.0, wind_gusts_kt=12.0, temp=15.0)
+    args.update(kwargs)
+    _, limited_by = dealbreakers_v2(9.5, **args)
+    assert code in limited_by
+
+
+@pytest.mark.parametrize("kwargs", [
+    {}, dict(cloud_cover_high=90.0), dict(cloud_cover=95.0),
+    dict(cloud_cover=95.0, shortwave_radiation=150.0),
+    dict(lapse_rate=0.6, boundary_layer_height=600.0, precipitation=0.2),
+    dict(wind_kt=20.0, wind_gusts_kt=28.0, cape=1200.0, temp=4.0),
+    dict(surface_lapse_rate=0.4, cloud_cover_mid=85.0, thermal_top_cap=4),
+])
+@pytest.mark.parametrize("score", [-1.0, 2.0, 4.6, 7.3, 10.0])
+def test_explained_score_equals_apply_dealbreakers(kwargs, score):
+    """Punkt 9 må ikke flytte en eneste score."""
+    args = dict(lapse_rate=1.0, cloud_cover=30.0, precipitation=0.0,
+                wind_kt=8.0, wind_gusts_kt=12.0, temp=15.0)
+    args.update(kwargs)
+    assert dealbreakers_v2(score, **args)[0] == apply_dealbreakers_v2(score, **args)
+
+
+def test_total_score_reports_what_held_it_down():
+    result = compute_thermal_score_v2(**base_kwargs(
+        cloud_cover=60.0, cloud_cover_high=90.0,
+    ))
+    assert result["limited_by"] == ["cirrus"]
+    assert compute_thermal_score_v2(**base_kwargs())["limited_by"] == []
+
+
+def test_airfield_hours_publish_limited_by(monkeypatch):
+    from termik.fetch_weather import process_point_hour
+    import termik.config as config_module
+
+    monkeypatch.setattr(config_module, "SCORING_VERSION", "v2")
+    hourly = _synthetic_hourly()
+    hourly["cloud_cover_high"] = [90.0]
+    result = process_point_hour(_inland_point(), hourly, 0, month=6)
+    assert result["data"]["limited_by"] == ["cirrus"]
+
+
+def test_v1_and_missing_data_publish_an_empty_list(monkeypatch):
+    from termik.fetch_weather import process_point_hour
+    import termik.config as config_module
+
+    monkeypatch.setattr(config_module, "SCORING_VERSION", "v1")
+    assert process_point_hour(_inland_point(), _synthetic_hourly(), 0, month=6)["data"]["limited_by"] == []
+    hourly = _synthetic_hourly()
+    hourly["temperature_2m"] = [None]
+    assert process_point_hour(_inland_point(), hourly, 0, month=6)["data"]["limited_by"] == []

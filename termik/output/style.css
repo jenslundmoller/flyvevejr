@@ -485,6 +485,15 @@ body.om-page {
     color: #111827;
 }
 
+.popup-limit {
+    font-size: 12px;
+    color: #92400e;
+    background: #fef3c7;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin: -6px 0 12px;
+}
+
 .popup-comment {
     font-size: 12px;
     color: #6b7280;

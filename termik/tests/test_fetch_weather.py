@@ -824,6 +824,7 @@ def test_process_all_points_slims_grid_points_but_not_airfields(monkeypatch):
     assert by_id["EKXX"]["type"] == "airfield"
     assert set(by_id["g1"]["hours"][0]) == {"time", "score", "thermal_top_m"}
     assert "data" in by_id["EKXX"]["hours"][0]
+    assert "limited_by" in by_id["EKXX"]["hours"][0]["data"]
 
 
 def test_write_output_records_the_expected_point_count(tmp_path, monkeypatch):

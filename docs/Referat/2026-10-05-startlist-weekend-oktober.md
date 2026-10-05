@@ -370,3 +370,44 @@ monoton (højere score betyder altid større chance), træfsikkerheden stiger
 
 Forbehold: timedata fra historical-forecast (ikke præcis det publicerede),
 og "bar" tæller enhver time en flyvning på 60+ min rører.
+
+---
+
+## Opfølgning: begrænsende faktor i popup'en (punkt 9)
+
+**Målt først.** 986 timer kl. 11-17 på 19 startlist-dage, nuværende kode,
+[`limit9.py`](2026-10-05-analyse/limit9.py). `caps.py` var forældet: den
+manglede lapse 2-180 m og CAPE og havde overskyet som cap 2.
+
+Et loft satte scoren i 451 timer (46 %), og i 447 af de 518 timer under 6.5:
+
+| Loft der satte scoren | Timer | Bar / kort |
+|---|---|---|
+| Cirrus-skjold (3) | 131 | 54 / 56 |
+| Mellemhøj sky (2) | 70 | 18 / 38 |
+| Overskyet (5) | 59 | 33 / 14 |
+| Stråling | 39 | 16 / 21 |
+| Grænselag < 900 m | 38 | 22 / 11 |
+| Stråling + overskyet | 27 | 17 / 9 |
+| Stabil luft | 27 | 2 / 20 |
+| Vind/stød | 20 | 9 / 11 |
+| Resten (termiktop, regn, CAPE, kombinationer) | 40 | |
+
+50 timer har to eller tre lige lofter. De 71 lave timer uden loft skyldes den
+vægtede sum (svag sol 41, svag lapse 30); efter aftale vises kun lofter.
+
+**Implementeret.** `dealbreaker_caps_v2` (alle lofter som kode og værdi) og
+`dealbreakers_v2` (score plus de bindende koder); `apply_dealbreakers_v2`
+er nu en tynd indpakning med uændret returværdi. `compute_thermal_score_v2`
+giver `limited_by`, publiceret som `data.limited_by` for flyvepladserne.
+Popup'en viser en gul linje under kommentaren: "Holdes nede af for meget
+vind eller stød (højst 4)."
+
+**Kontrol.** Ingen score flyttet: 35 parametriserede tests sammenligner
+med den gamle funktion, og produktionsstien gav samme score og samme koder
+som analysen i alle 986 timer. `airfields.json` vokser 1 % gzippet (401 ->
+406 KB); gitterpunkterne er uændrede (eksisterende test låser deres nøgler).
+
+**Bemærket undervejs.** Mellemhøj sky-cappet (2) har den dårligste
+træfsikkerhed af de hyppige lofter: 18 af 56 timer med facit bar alligevel.
+Kandidat til samme time-for-time-forsøg som cirrus-skjoldet.

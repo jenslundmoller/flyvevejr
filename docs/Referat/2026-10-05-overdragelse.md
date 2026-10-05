@@ -135,8 +135,8 @@ Data:
 
 UI:
 
-9. **Vis den begrænsende faktor** ("hvad holder scoren nede") i popup'en.
-   Ønsket i tre referater siden maj; data findes.
+9. ~~**Vis den begrænsende faktor** i popup'en.~~ Løst 5/10: `data.limited_by`
+   og en linje i popup'en (startlist-referatet, sidste afsnit).
 10. Vis cirrus særskilt i popup'en ("Skydække 50 %, heraf cirrus 80 %").
 11. Felt for dagens maksimale termiktop.
 12. Vejr-widget: brug Open-Meteos `apparent_temperature` og `weathercode`.
@@ -144,6 +144,8 @@ UI:
 Drift:
 
 13. **Læs `Batch n/27 ok in X s`-linjerne i GitHub Actions-loggene**
+    (5/10: læst, kaldene hænger tæt efter et vellykket kald; probe startet, se
+    `2026-09-02-api-robusthed.md`, opfølgning 5/10)
     (`2026-09-02-api-robusthed.md`, opfølgning 1/10). Ligger mange
     vellykkede kald tæt på 30 s: hæv timeouten. Hænger de: flyt kaldene
     væk fra GitHub-runnerne (self-hosted runner, betalt API-nøgle eller

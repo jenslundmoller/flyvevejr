@@ -342,6 +342,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
                 "lapse_rate_850": None,
                 "sea_temp": None,
                 "sea_temp_source": None,
+                "limited_by": [],
                 "cape": cape,
                 "precipitation": precipitation,
                 "pressure": pressure,
@@ -540,6 +541,9 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             "lapse_rate_850": result.get("lapse_rate_850"),
             "sea_temp": sea_temp_c,
             "sea_temp_source": sea_temp_source,
+            # Lofterne der satte scoren (scoring_v2.dealbreakers_v2), vist i
+            # popup'en. Tom liste når intet loft bandt, og altid i v1.
+            "limited_by": result.get("limited_by", []),
             "cape": cape,
             "precipitation": precipitation,
             "pressure": pressure,

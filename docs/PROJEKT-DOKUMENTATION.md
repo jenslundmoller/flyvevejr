@@ -170,22 +170,26 @@ Tilføjet 2026-10-05 efter startlist-weekenden 3.-4. oktober (se [Referat 2026-1
 
 ### Dealbreakers (hårdt loft for scoren)
 
-| Betingelse | Max score | Begrundelse |
-|-----------|-----------|------------|
-| Lapse rate <0.50 | 1 | Stærk inversion — ingen termik mulig |
-| Lapse rate <0.65 | 3 | Stabil atmosfære — meget begrænset termik |
-| Skydække ≥87% | v1: 2. v2: -2 point og loft 5 | Sol blokeret. Læser den **rå** total, ikke lagvægtet, se nedenfor. v2 bevarer rangeringen (Referat 2026-10-05) |
-| Effektiv stråling <400 / <250 / <100 W/m² (v2: sæsonskaleret) | 5 / 3 / 1 | For lidt opvarmning til konvektion |
-| Grænselagshøjde <900 m | 5 | For tyndt arbejdslag til at blive oppe i |
-| Høj sky ≥85% nu og i de sidste 3 timer | 3 | Optisk tykt cirrus-skjold lukker jorden ned |
-| Mellemhøj sky ≥85% | 2 | Solidt altostratus-dække |
-| Aktiv nedbør | 1 | Jorden afkøles |
-| Vind >35 kt | 2 | For turbulent til brugbar termik |
-| Temperatur <5°C | 3 | For koldt til konvektion |
+| Betingelse | Max score | Kode (`limited_by`) | Begrundelse |
+|-----------|-----------|------|------------|
+| Lapse rate <0.50 / <0.65 / <0.70 | 1 / 3 / 5 | `stable` | Inversion eller stabil atmosfære: meget begrænset termik |
+| Lapse 2-180 m <0.3 / <0.5 | 1 / 2 | `surface_stable` | Stabilt lag ved jorden |
+| Skydække ≥87% | v1: 2. v2: -2 point og loft 5 | `overcast` | Sol blokeret. Læser den **rå** total, ikke lagvægtet, se nedenfor. v2 bevarer rangeringen (Referat 2026-10-05) |
+| Effektiv stråling <400 / <250 / <100 W/m² (v2: sæsonskaleret) | 5 / 3 / 1 | `radiation` | For lidt opvarmning til konvektion |
+| Grænselagshøjde <900 m | 5 | `shallow_bl` | For tyndt arbejdslag til at blive oppe i |
+| Høj sky ≥85% nu og i de sidste 3 timer | 3 | `cirrus` | Optisk tykt cirrus-skjold lukker jorden ned |
+| Mellemhøj sky ≥85% | 2 | `mid_cloud` | Solidt altostratus-dække |
+| Aktiv nedbør | 1 | `rain` | Jorden afkøles |
+| Vind >35 kt, stød ≥30/≥35 kt, effektiv vind (vind + stød/2) >25/>30/>35 kt | 2; 2/1; 4/2/1 | `wind` | For turbulent til brugbar termik |
+| Temperatur <5°C | 3 | `cold` | For koldt til konvektion |
+| CAPE >1000 / >1500 J/kg | 7 / 5 | `cape` | Byge- og tordenrisiko |
+| Base under 600 m over terræn trods god sol (v2 punkt 4) | 4 | `low_top` | For lidt højde at arbejde i |
+
+**Begrænsende faktor (siden 2026-10-05).** `scoring_v2.dealbreaker_caps_v2` giver alle lofter der rammer timen, og `dealbreakers_v2` giver scoren plus koderne for de lofter der satte den: det laveste loft, når det ligger under scoren efter overskyet-straffen, og alle ved lige lofter. Overskyet-straffen alene er ikke et loft. Koderne publiceres pr. time som `data.limited_by` for flyvepladserne (tom liste når intet loft bandt, og altid i v1); gitterpunkterne får dem ikke. Målt på 986 timer kl. 11-17 med startlist-facit binder et loft i 46 %, oftest cirrus-skjoldet (131), mellemhøj sky (70) og overskyet (59). Se [Referat 2026-10-05](Referat/2026-10-05-startlist-weekend-oktober.md).
 
 Lapse rate-dealbreakeren er den vigtigste: **uden atmosfærisk instabilitet kan der ikke være termik**, uanset hvor godt de andre faktorer ser ud. Dette fanger f.eks. "Sahara-dage" med 30°C og blå himmel men stabil luft i højden.
 
-De fem nederste caps kom til i august 2026, kalibreret mod to pilot-verificerede dage. Se [Referat 2026-08-12](Referat/2026-08-12-straale-gate.md). To ting er værd at kende:
+Strålings-, grænselags-, cirrus- og mellemsky-cappene kom til i august 2026, kalibreret mod to pilot-verificerede dage. Se [Referat 2026-08-12](Referat/2026-08-12-straale-gate.md). To ting er værd at kende:
 
 - **Effektiv stråling** er ikke øjebliksstrålingen. Grænselaget holder på varmen en time eller to efter solen er begyndt at falde, så gaten krediterer en andel af de sidste tre timers højeste værdi. Den kredit bortfalder når skydækket er steget væsentligt hen over vinduet, for så blev opvarmningen skåret over af en front og ikke af solnedgang.
 - **Caps læser den rå `cloud_cover`-total, ikke lagvægtet dække**, modsat `score_solar`. Det er afprøvet og rullet tilbage: i `best_match` modsiger totalen og lagene hinanden i begge retninger, og lagvægtning læser en god dags egne termikcumulus som overtrukket. Cirrus når caps gennem de to lagspecifikke skjolde i stedet.
@@ -331,7 +335,7 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/                     # 439 tests (2026-10-05)
+│   └── tests/                     # 495 tests (2026-10-05)
 │       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
 │       ├── test_locations.py
 │       ├── test_scoring.py        # v1 + termiktop
@@ -395,7 +399,7 @@ zoom-knapperne. Viser de aktuelle forhold for den valgte favorit-plads (jf.
 Redesignet 2026-08-26 med prioriteret hierarki (design-forløbet ligger i sessionsrapporten, se [Referat 2026-08-26](Referat/2026-08-26-sessionsrapport.md)):
 
 1. **Score-ring** med dagens gennemsnit kl. 10-18 (samme tal som favorit-panelet) og **termikvinduet** ("Termik ca. 11 til 19, bedst 13 til 15"), beregnet i frontenden af dagsforløbet (timer ≥5 hhv. ≥8.5).
-2. **Kommentar** (bindende faktor + advarsler, se Kommentargenerering).
+2. **Kommentar** (bindende faktor + advarsler, se Kommentargenerering), og under den, når et loft satte timens score, en gul linje på almindeligt dansk: "Holdes nede af cirrusslør der skærmer for solen (højst 3)." Teksterne står i `LIMIT_TEXT` i `app.js`; ukendte koder springes over.
 3. **Dagsforløb** (mini-søjlediagram).
 4. **Tre heltetal**: Termiktop (med begrænsnings-årsag), Skybase (m + ft), Vind (retningspil + kt + stød).
 5. **Termik**: højdeakse med termiksøjle, base- og blandingslag-linjer og cirrusbånd, plus lapse-måler med scoringens zonegrænser.

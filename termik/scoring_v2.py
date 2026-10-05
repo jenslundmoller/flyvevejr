@@ -394,6 +394,126 @@ def thermal_top_adjustment_v2(
     return 0.0, None
 
 
+def dealbreaker_caps_v2(
+    lapse_rate: float,
+    cloud_cover: float,
+    precipitation: float,
+    wind_kt: float,
+    wind_gusts_kt: float,
+    temp: float,
+    cape: float = 0,
+    surface_lapse_rate: float | None = None,
+    shortwave_radiation: float | None = None,
+    trailing_radiation: list[float] | None = None,
+    trailing_cloud_cover: list[float] | None = None,
+    boundary_layer_height: float | None = None,
+    cloud_cover_low: float | None = None,
+    cloud_cover_mid: float | None = None,
+    cloud_cover_high: float | None = None,
+    trailing_cirrus: list[float] | None = None,
+    temp_850hpa_trend: float = 0.0,
+    thermal_top_cap: int | None = None,
+    radiation_scale: float = 1.0,
+) -> list[tuple[str, float]]:
+    """Alle lofter der rammer timen, som (kode, loft), ét pr. regel.
+
+    Koderne er det popup'en oversætter til dansk (punkt 9). Rækkefølgen er
+    reglernes, så ved lige lofter nævnes de i samme orden hver gang.
+    """
+    caps: list[tuple[str, float]] = []
+
+    def add(code: str, cap: float) -> None:
+        for i, (existing, value) in enumerate(caps):
+            if existing == code:
+                caps[i] = (code, min(value, cap))
+                return
+        caps.append((code, cap))
+
+    if shortwave_radiation is not None:
+        eff = effective_radiation_v2(
+            shortwave_radiation,
+            trailing_radiation,
+            cloud_cover=cloud_cover,
+            trailing_cloud_cover=trailing_cloud_cover,
+            temp_850hpa_trend=temp_850hpa_trend,
+            radiation_scale=radiation_scale,
+        )
+        for threshold, cap in RADIATION_GATE:
+            if eff < threshold * radiation_scale:
+                add("radiation", cap)
+    if (
+        boundary_layer_height is not None
+        and boundary_layer_height < SHALLOW_BOUNDARY_LAYER_M
+    ):
+        add("shallow_bl", SHALLOW_BOUNDARY_LAYER_MAX_SCORE)
+    if lapse_rate < 0.50:
+        add("stable", 1)
+    elif lapse_rate < 0.65:
+        add("stable", 3)
+    elif lapse_rate < 0.70:
+        add("stable", 5)
+    if surface_lapse_rate is not None:
+        if surface_lapse_rate < 0.3:
+            add("surface_stable", 1)
+        elif surface_lapse_rate < 0.5:
+            add("surface_stable", 2)
+    # Overskyet er også en straf; den trækkes fra i dealbreakers_v2.
+    if cloud_cover >= OVERCAST_COVER:
+        add("overcast", OVERCAST_MAX_SCORE)
+    if cloud_cover_high is not None and cloud_cover_high >= CIRRUS_SHIELD_PRESENT_MIN:
+        shield = max([cloud_cover_high] + list(trailing_cirrus or []))
+        if shield >= CIRRUS_SHIELD_THRESHOLD:
+            add("cirrus", CIRRUS_SHIELD_MAX_SCORE)
+    if (
+        cloud_cover_mid is not None
+        and cloud_cover_mid >= MID_LEVEL_DECK_THRESHOLD
+    ):
+        add("mid_cloud", MID_LEVEL_DECK_MAX_SCORE)
+    if precipitation > 0:
+        add("rain", 1)
+    if wind_kt > 35:
+        add("wind", 2)
+    if wind_gusts_kt >= 35:
+        add("wind", 1)
+    elif wind_gusts_kt >= 30:
+        add("wind", 2)
+    effective_wind = wind_kt + (wind_gusts_kt / 2)
+    if effective_wind > 35:
+        add("wind", 1)
+    elif effective_wind > 30:
+        add("wind", 2)
+    elif effective_wind > 25:
+        add("wind", 4)
+    if temp < 5:
+        add("cold", 3)
+    if cape > 1500:
+        add("cape", 5)
+    elif cape > 1000:
+        add("cape", 7)
+    if thermal_top_cap is not None:
+        add("low_top", thermal_top_cap)
+    return caps
+
+
+def dealbreakers_v2(score: float, *args, **kwargs) -> tuple[float, list[str]]:
+    """Scoren efter lofterne og koderne for de lofter der satte den.
+
+    Et loft "sætter" scoren når det er det laveste og ligger under scoren
+    efter overskyet-straffen; ved lige lofter nævnes alle. Overskyet-straffen
+    alene er ikke et loft: sætter den scoren under 5, er der intet at nævne.
+    Tager samme argumenter som apply_dealbreakers_v2.
+    """
+    caps = dealbreaker_caps_v2(*args, **kwargs)
+    if any(code == "overcast" for code, _ in caps):
+        score = score - OVERCAST_PENALTY
+    if not caps:
+        return score, []
+    lowest = min(cap for _, cap in caps)
+    if lowest >= score:
+        return score, []
+    return lowest, [code for code, cap in caps if cap == lowest]
+
+
 def apply_dealbreakers_v2(
     score: float,
     lapse_rate: float,
@@ -422,75 +542,26 @@ def apply_dealbreakers_v2(
     tester mod effective_radiation_v2 (punkt 6), og punkt 4's cap på lav
     termiktop anvendes til sidst. Alle kalibrerede tærskler er identiske
     med v1's; strålings-gatens W/m² ganges dog med radiation_scale (1.0 fra
-    maj til 8/8, se radiation_season_factor).
+    maj til 8/8, se radiation_season_factor). Reglerne står i
+    dealbreaker_caps_v2; dealbreakers_v2 giver også hvilke lofter der bandt.
     """
-    max_score = 10.0
-    if shortwave_radiation is not None:
-        eff = effective_radiation_v2(
-            shortwave_radiation,
-            trailing_radiation,
-            cloud_cover=cloud_cover,
-            trailing_cloud_cover=trailing_cloud_cover,
-            temp_850hpa_trend=temp_850hpa_trend,
-            radiation_scale=radiation_scale,
-        )
-        for threshold, cap in RADIATION_GATE:
-            if eff < threshold * radiation_scale:
-                max_score = min(max_score, cap)
-    if (
-        boundary_layer_height is not None
-        and boundary_layer_height < SHALLOW_BOUNDARY_LAYER_M
-    ):
-        max_score = min(max_score, SHALLOW_BOUNDARY_LAYER_MAX_SCORE)
-    if lapse_rate < 0.50:
-        max_score = min(max_score, 1)
-    elif lapse_rate < 0.65:
-        max_score = min(max_score, 3)
-    elif lapse_rate < 0.70:
-        max_score = min(max_score, 5)
-    if surface_lapse_rate is not None:
-        if surface_lapse_rate < 0.3:
-            max_score = min(max_score, 1)
-        elif surface_lapse_rate < 0.5:
-            max_score = min(max_score, 2)
-    # Overskyet: straf og loft i stedet for v1's cap 2, som kastede en
-    # stadig brugbar rangering væk (noten ved OVERCAST_COVER i config).
-    if cloud_cover >= OVERCAST_COVER:
-        score = score - OVERCAST_PENALTY
-        max_score = min(max_score, OVERCAST_MAX_SCORE)
-    if cloud_cover_high is not None and cloud_cover_high >= CIRRUS_SHIELD_PRESENT_MIN:
-        shield = max([cloud_cover_high] + list(trailing_cirrus or []))
-        if shield >= CIRRUS_SHIELD_THRESHOLD:
-            max_score = min(max_score, CIRRUS_SHIELD_MAX_SCORE)
-    if (
-        cloud_cover_mid is not None
-        and cloud_cover_mid >= MID_LEVEL_DECK_THRESHOLD
-    ):
-        max_score = min(max_score, MID_LEVEL_DECK_MAX_SCORE)
-    if precipitation > 0:
-        max_score = min(max_score, 1)
-    if wind_kt > 35:
-        max_score = min(max_score, 2)
-    if wind_gusts_kt >= 35:
-        max_score = min(max_score, 1)
-    elif wind_gusts_kt >= 30:
-        max_score = min(max_score, 2)
-    effective_wind = wind_kt + (wind_gusts_kt / 2)
-    if effective_wind > 35:
-        max_score = min(max_score, 1)
-    elif effective_wind > 30:
-        max_score = min(max_score, 2)
-    elif effective_wind > 25:
-        max_score = min(max_score, 4)
-    if temp < 5:
-        max_score = min(max_score, 3)
-    if cape > 1500:
-        max_score = min(max_score, 5)
-    elif cape > 1000:
-        max_score = min(max_score, 7)
-    if thermal_top_cap is not None:
-        max_score = min(max_score, thermal_top_cap)
-    return min(score, max_score)
+    return dealbreakers_v2(
+        score, lapse_rate, cloud_cover, precipitation,
+        wind_kt, wind_gusts_kt, temp,
+        cape=cape,
+        surface_lapse_rate=surface_lapse_rate,
+        shortwave_radiation=shortwave_radiation,
+        trailing_radiation=trailing_radiation,
+        trailing_cloud_cover=trailing_cloud_cover,
+        boundary_layer_height=boundary_layer_height,
+        cloud_cover_low=cloud_cover_low,
+        cloud_cover_mid=cloud_cover_mid,
+        cloud_cover_high=cloud_cover_high,
+        trailing_cirrus=trailing_cirrus,
+        temp_850hpa_trend=temp_850hpa_trend,
+        thermal_top_cap=thermal_top_cap,
+        radiation_scale=radiation_scale,
+    )[0]
 
 
 def compute_thermal_score_v2(
@@ -600,7 +671,7 @@ def compute_thermal_score_v2(
     )
     total += top_bonus
 
-    total = apply_dealbreakers_v2(
+    total, limited_by = dealbreakers_v2(
         total, lapse_rate, cloud_cover, precipitation,
         wind_speed_kt, wind_gusts_kt, temp_2m,
         cape=cape,
@@ -632,6 +703,7 @@ def compute_thermal_score_v2(
         "seabreeze_penalty": seabreeze_penalty,
         "cirrus_penalty": cirrus_penalty,
         "thermal_top_bonus": top_bonus,
+        "limited_by": limited_by,
     }
     if surface_lapse is not None:
         result["surface_lapse_rate"] = round(surface_lapse, 2)

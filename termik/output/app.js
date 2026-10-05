@@ -532,6 +532,7 @@ function createPopupContent(airfield) {
         + '<h3>' + escapeHtml(airfield.name) + '</h3>'
         + buildScoreHeader(airfield, hourData)
         + '<p class="popup-comment">' + escapeHtml(hourData.comment) + '</p>'
+        + buildLimitLine(hourData)
         + '<div class="popup-seclabel first">Dagsforl\u00F8b</div>'
         + buildDayChart(airfield)
         + buildHeroes(d)
@@ -544,6 +545,39 @@ function createPopupContent(airfield) {
         + '<div class="popup-seclabel">Himmel og sol</div>'
         + buildSkySection(d)
         + '</div>';
+}
+
+// Lofterne der satte timens score (scoring_v2.dealbreaker_caps_v2), p\u00E5
+// almindeligt dansk. Et loft der binder, ER scoren, s\u00E5 "h\u00F8jst" er timens
+// score. Ukendte koder springes over, s\u00E5 en ny regel i backend ikke giver
+// r\u00E5 koder i popup'en.
+const LIMIT_TEXT = {
+    radiation: 'for lidt sol til at varme jorden op',
+    shallow_bl: 'lavt blandingslag (under 900 m)',
+    stable: 'stabil luft i h\u00F8jden',
+    surface_stable: 'stabil luft n\u00E6r jorden',
+    overcast: 'overskyet himmel',
+    cirrus: 'cirrussl\u00F8r der sk\u00E6rmer for solen',
+    mid_cloud: 'mellemh\u00F8je skyer der skygger',
+    rain: 'regn',
+    wind: 'for meget vind eller st\u00F8d',
+    cold: 'koldt (under 5 \u00B0C)',
+    cape: 'risiko for byger og torden',
+    low_top: 'lav termiktop',
+};
+
+function joinDanish(items) {
+    if (items.length < 2) return items.join('');
+    return items.slice(0, -1).join(', ') + ' og ' + items[items.length - 1];
+}
+
+function buildLimitLine(hourData) {
+    const codes = (hourData.data && hourData.data.limited_by) || [];
+    const texts = codes.map(c => LIMIT_TEXT[c]).filter(Boolean);
+    if (!texts.length) return '';
+    return '<p class="popup-limit" title="Scoren er sat af et loft i modellen, ikke af summen af faktorerne">'
+        + 'Holdes nede af ' + escapeHtml(joinDanish(texts)) + ' (h\u00F8jst ' + escapeHtml(String(hourData.score)) + ').'
+        + '</p>';
 }
 
 function buildScoreHeader(airfield, hourData) {

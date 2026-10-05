@@ -30,3 +30,4 @@ Tilføjet senere samme dag (punkt 13):
 | Script | Gør |
 |---|---|
 | `actions_timing.py` | Varighed pr. kald og fejlrate mod tid siden forrige vellykkede kald, fra update-forecast-loggene (hentes med `gh run view --log`, se docstring) |
+| `limit9.py` | Punkt 9: hvilket loft der satte scoren pr. time (afløser `caps.py`, som manglede lapse 2-180 m, CAPE og havde overskyet som cap 2) -> `limit_rows.json`. Produktionens `data.limited_by` gav samme koder og scores i alle 986 timer |
