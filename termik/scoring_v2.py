@@ -27,6 +27,7 @@ from termik.config import (
     SEA_TEMP_BY_MONTH,
     SEA_TEMP_CLIMATOLOGY,
     SEABREEZE_STABLE_MARINE_INSTAB,
+    SEABREEZE_STABLE_MARINE_LAPSE,
     SEABREEZE_MAX_DISTANCE_KM,
     CU_ALLOWANCE,
     CIRRUS_BANK_LIGHT,
@@ -231,6 +232,8 @@ def calculate_seabreeze_penalty_v2(
     month: int,
     temp_850hpa: float | None = None,
     sea_temp_c: float | None = None,
+    temp_925hpa: float | None = None,
+    height_925hpa_m: float | None = None,
 ) -> float:
     """Punkt 5: søbrisens styrke følger land/hav-forskellen og vinden.
 
@@ -255,6 +258,11 @@ def calculate_seabreeze_penalty_v2(
     fetch_weather. Uden den bruges månedstabellen, som kun er tilbage for
     direkte kald; den lå 1-3 grader for koldt og havde et trin på 4 grader
     ved 1/10 (Referat 2026-10-05).
+
+    Med 925 hPa skal også det nedre lag (hav -> 925 hPa, pr. 100 m) være
+    under 5b's grænse før havluften kaldes stabil; et låg mellem 925 og
+    850 hPa skjuler ellers et ustabilt nedre lag. Uden 925-data bruges kun
+    850-testen som før.
     """
     if coast_distance_km >= SEABREEZE_MAX_DISTANCE_KM:
         return 0
@@ -279,11 +287,17 @@ def calculate_seabreeze_penalty_v2(
     else:
         drive = 0.5
 
+    lower_layer_stable = True
+    if temp_925hpa is not None and height_925hpa_m is not None and height_925hpa_m > 0:
+        lower_lapse = (sea_temp - temp_925hpa) / (height_925hpa_m / 100)
+        lower_layer_stable = lower_lapse < SEABREEZE_STABLE_MARINE_LAPSE
+
     if (
         is_onshore
         and wind_speed_kt >= 8
         and temp_850hpa is not None
         and sea_temp - temp_850hpa < SEABREEZE_STABLE_MARINE_INSTAB
+        and lower_layer_stable
     ):
         drive = 2.0
 
@@ -560,6 +574,8 @@ def compute_thermal_score_v2(
         wind_dir, wind_speed_kt, temp_2m, month,
         temp_850hpa=temp_850hpa,
         sea_temp_c=sea_temp_c,
+        temp_925hpa=temp_925hpa,
+        height_925hpa_m=height_925hpa_m,
     )
     total -= seabreeze_penalty
 

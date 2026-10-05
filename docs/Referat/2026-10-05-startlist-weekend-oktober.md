@@ -164,10 +164,7 @@ nede af søbrise-straffen i vestenvind 33 km inde.
 
 1. Gentag valideringen på flere efterårsdage (og foråret, hvor
    sæsonfaktoren også er under 1) før yderligere kalibrering.
-2. Søbrise-straffen: løst samme dag, se næste afsnit. Tilbage står at
-   5b også bruger 850 hPa-temperaturen, som har samme inversionsproblem
-   som lapse rate; pålandsstudiets data har ikke 925 hPa, så det kræver
-   en ny dataindsamling.
+2. Søbrise-straffen: løst samme dag, se de to sidste afsnit.
 3. Hent `temperature_1000hPa` og lavniveau-profil/heat flux fra
    `icon_seamless` eller `dmi_seamless` i stedet for ECMWF-niveauerne.
 4. På sigt: RASP-agtig W* (termikstyrke fra varmestrøm og BL-dybde) som
@@ -238,3 +235,47 @@ Målt og klimatologi er næsten lige gode på dette materiale; målt er valgt
 fordi årene afviger (4/10-2026 lå 0.8 over klimatologien) og fordi lokal
 opvælling ikke kan ligge i en tabel (Køge Bugt 15 grader 8/8-2026 mod
 19 i resten af farvandet).
+
+## Opfølgning: 5b's stabilitetstest i det nedre lag
+
+5b kaldte havluften stabil når hav -> 850 hPa var under 7 K. Det er samme
+inversionsproblem som lapse rate: ligger et låg mellem 925 og 850 hPa,
+ser et ustabilt nedre lag stabilt ud.
+
+**Ny dataindsamling.** 925 og 850 hPa (historical-forecast, samme kilde
+som studiet) for pålandsstudiets 8 pladser, maj-september 2024-2026, plus
+målt havtemperatur ved produktionens havceller. Stabilitet i det nedre lag
+= (hav - T925) / (z925 / 100), kl. 12-16.
+
+**Fundet.** Mekanismen findes: Slaglille 15/8-2026 faldt 925 hPa fra 18.7
+til 12.9 grader mens 850 lå på 13-15, så hav -> 850 sagde 5.9-6.8
+("stabil") og hav -> 925 0.76-0.91 grader/100 m (ustabilt). Der blev
+fløjet 158 min; det er den ene dag i studiet som 5b fejlagtigt straffer.
+På timeniveau gjaldt det samme 37 af 420 timer hvor 5b fyrede juli-oktober
+2026 (9 %).
+
+**Tærskel uden tilpasning.** 5b's egen grænse pr. 100 m: 7 K over 15 hm =
+0.47 grader/100 m. Havluften er nu kun stabil når BÅDE hav -> 850 og hav
+-> 925 er under grænsen. På de 48 aktive pålandsdage:
+
+| Regel | Stabil, fløj | Konvektiv, fløj | Fejlklassificeret |
+|---|---|---|---|
+| Kun hav -> 850 (før) | 1/7 | 27/41 | 15 |
+| Kun hav -> 925 (0.7-1.0) | 8/18 til 18/36 | | 18-22 |
+| **Begge under 0.47 (nu)** | 0/6 | 28/42 | **14** |
+
+De seks dage hvor begge lag var stabile (nedre lag 0.02-0.11) døde alle.
+Det nedre lag alene er en dårligere test end 850-målet; det virker kun som
+supplement.
+
+**Effekt på scoren: ingen målbar.** Sommerens 58 og oktobers 24 plads-dage
+er uændrede (ingen af dem har timer hvor kun det nedre lag var ustabilt).
+På Slaglille 15/8 falder søbrise-straffen 1.8 -> 0.9 kl. 14-17, men scoren
+bliver 2-3, for cirrus-skjoldet (81-95 % høj sky) capper på 3, og
+morgenens 850-lapse og et lavt grænselag holder resten nede. Rettelsen er
+en konsistens- og robusthedsrettelse, ikke en kalibrering.
+
+**Nyt åbent punkt:** Slaglille 15/8 blev fløjet 158 min under 81-95 %
+cirrus, som skjoldet dømmer til max 3. Værd at tjekke mod andre
+cirrus-dage før skjoldet ændres; det står også som fælles miss i
+sæson-referatet.

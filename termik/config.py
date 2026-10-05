@@ -387,6 +387,16 @@ MIXED_LAYER_MIN_THICKNESS_M = 300
 # 6.6) fra de målte successer (8.5 og op).
 SEABREEZE_STABLE_MARINE_INSTAB = 7.0
 
+# 5b's grænse udtrykt pr. 100 m (7 K over 15 hm, samme konvention som
+# lapse_rate), brugt på det nedre lag hav -> 925 hPa. Havluften er kun
+# stabil når BÅDE hav -> 850 og hav -> 925 er under grænsen: et låg mellem
+# 925 og 850 hPa får ellers ustabil havluft til at se stabil ud (Slaglille
+# 15/8-2026: hav -> 850 6.2, hav -> 925 0.84 grader/100 m, fløjet 158 min).
+# Genberegnet pålandsstudie med 925 hPa (48 aktive pålandsdage): de seks
+# dage hvor begge lag var under grænsen døde alle; den ene med ustabilt
+# nedre lag fløj. Se Referat 2026-10-05.
+SEABREEZE_STABLE_MARINE_LAPSE = SEABREEZE_STABLE_MARINE_INSTAB / 15
+
 # Søbrisens rækkevidde ind i landet; ud over den er straffen 0 (v2 bruger
 # den, v1 har sit eget 80-tal).
 SEABREEZE_MAX_DISTANCE_KM = 80

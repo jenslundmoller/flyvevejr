@@ -524,12 +524,15 @@ def _slaglille_sunday_14(**overrides):
 
 
 def test_slaglille_sunday_scores_as_flown():
-    # 10 flyvninger over 2 t. Publiceret 4.8 (cap 5). Resten op til facit
-    # (staerk, 7.5+) er søbrise-straffen (1.8 i vestenvind 33 km inde), som
-    # ligger uden for denne rettelse; se referatets åbne punkter.
+    # 10 flyvninger over 2 t. Publiceret 4.8 (cap 5). Uden målt havtemp
+    # bruges månedstabellens 12 grader; 5b fyrer alligevel ikke længere, for
+    # det nedre lag hav -> 925 er ustabilt (0.65). Tilbage er 0.9 fra
+    # land/hav-forskellen; med det målte hav (15.9) forsvinder også den.
     result = compute_thermal_score_v2(**_slaglille_sunday_14())
-    assert result["score"] >= 6.0
-    assert result["seabreeze_penalty"] > 1.5
+    assert result["score"] >= 6.5
+    assert result["seabreeze_penalty"] == 0.9
+    assert compute_thermal_score_v2(
+        **_slaglille_sunday_14(sea_temp_c=15.9))["seabreeze_penalty"] == 0
     assert result["lapse_rate"] > 1.0          # den lapse der blev scoret
     assert result["lapse_rate_850"] == 0.72    # revisionsspor
 
@@ -671,3 +674,61 @@ def test_fetch_sea_temps_maps_cells_and_skips_land(monkeypatch):
                                            "by_point": {}})
     monkeypatch.setattr(fw.requests, "get", lambda *a, **k: Resp())
     assert fw.fetch_sea_temps() == {0: 15.9, 2: 14.6}
+
+
+# --- 5b: havluftens stabilitet også i det nedre lag (Referat 2026-10-05) ---
+#
+# 5b testede kun hav -> 850 hPa. Ligger der et låg mellem 925 og 850 hPa,
+# ser havluften stabil ud selvom det nederste lag er ustabilt: Slaglille
+# 15/8-2026 kl. 14-17 faldt 925 hPa fra 18.7 til 12.9 mens 850 lå på 13-15,
+# hav -> 850 sagde 5.9-6.8 (< 7, "stabil"), hav -> 925 sagde 0.76-0.91
+# grader/100 m, og der blev fløjet 158 min. Havluften er nu kun stabil når
+# begge lag er under 5b's egen grænse, 7 K over 15 hm = 0.47 grader/100 m.
+
+from termik.config import SEABREEZE_STABLE_MARINE_LAPSE, SEABREEZE_STABLE_MARINE_INSTAB
+
+
+def test_marine_lapse_threshold_is_5b_own_threshold_per_100m():
+    assert SEABREEZE_STABLE_MARINE_LAPSE == pytest.approx(SEABREEZE_STABLE_MARINE_INSTAB / 15)
+
+
+# Slaglille 15/8-2026 kl. 15: 33 km, kyst mod 239, vind 290 med 12 kt
+SLAGLILLE_15_AUG = dict(
+    coast_distance_km=33.0, coast_direction_deg=239.0, wind_dir=290.0,
+    wind_speed_kt=12.1, temp_2m=22.9, month=8,
+    temp_850hpa=13.8, sea_temp_c=20.0,
+)
+
+
+def test_5b_fires_on_850_alone():
+    # Uden 925-data opfører 5b sig som før: fuld drivkraft
+    assert calculate_seabreeze_penalty_v2(**SLAGLILLE_15_AUG) == 1.8
+
+
+def test_5b_holds_off_when_lower_marine_layer_is_unstable():
+    penalty = calculate_seabreeze_penalty_v2(
+        **SLAGLILLE_15_AUG, temp_925hpa=13.5, height_925hpa_m=778.0)
+    # (20 - 13.5) / 7.78 = 0.84 grader/100 m: ikke stabil havluft. Tilbage er
+    # den almindelige pålandsrisiko fra land/hav-forskellen (2.9 grader).
+    assert penalty == 0.9
+
+
+def test_5b_still_fires_when_both_layers_are_stable():
+    # True 23/5-2026 (20 min): hav 13.7, 925 hPa 13.5, 850 hPa 9.2
+    penalty = calculate_seabreeze_penalty_v2(
+        22.0, 158.0, 170.0, 10.0, 22.0, 5,
+        temp_850hpa=9.2, sea_temp_c=13.7, temp_925hpa=13.5, height_925hpa_m=800.0)
+    assert penalty == pytest.approx(3.0 * (1 - 22 / 80), abs=0.1)
+
+
+def test_compute_v2_passes_the_925_level_to_the_sea_breeze():
+    kwargs = base_kwargs(
+        temp_2m=22.9, dewpoint_2m=14.0, temp_850hpa=13.8,
+        wind_speed_kt=12.1, wind_gusts_kt=18.0, wind_dir=290.0,
+        coast_distance_km=33.0, coast_direction_deg=239.0, month=8,
+        sea_temp_c=20.0,
+    )
+    without = compute_thermal_score_v2(**kwargs)
+    with_925 = compute_thermal_score_v2(**kwargs, temp_925hpa=13.5, height_925hpa_m=778.0)
+    assert without["seabreeze_penalty"] == 1.8
+    assert with_925["seabreeze_penalty"] == 0.9
