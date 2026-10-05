@@ -275,7 +275,54 @@ bliver 2-3, for cirrus-skjoldet (81-95 % høj sky) capper på 3, og
 morgenens 850-lapse og et lavt grænselag holder resten nede. Rettelsen er
 en konsistens- og robusthedsrettelse, ikke en kalibrering.
 
-**Nyt åbent punkt:** Slaglille 15/8 blev fløjet 158 min under 81-95 %
-cirrus, som skjoldet dømmer til max 3. Værd at tjekke mod andre
-cirrus-dage før skjoldet ændres; det står også som fælles miss i
-sæson-referatet.
+Slaglille 15/8 blev fløjet 158 min under 81-95 % cirrus, som skjoldet
+dømmer til max 3; undersøgt i næste afsnit.
+
+## Opfølgning: cirrus-skjoldet mod flyvninger time for time
+
+Spørgsmål: er skjoldet (høj sky >= 85 % inden for 3 timer og >= 50 % nu,
+cap 3) for hårdt, når Slaglille 15/8 fløj 158 min under det?
+
+**Data.** Startlister for alle 18 sæsondage plus weekenden (5467
+flyvninger med start- og landingstid) og fulde timedata fra
+historical-forecast-endpointet for 17 pladser (Hammer udeladt). For hver
+time kl. 11-17 med signalflyvninger i luften: "bar" = en flyvning på
+>= 60 min var i luften i timen, "kort" = alle flyvninger i timen < 30 min.
+986 aktive timer, 873 med entydigt facit.
+
+**Skjoldet har reelt signal:**
+
+| Timer | Bar |
+|---|---|
+| Uden skjold, høj sky < 40 % | 71 % |
+| Uden skjold, høj sky 40-85 % | ~55 % |
+| **Skjold aktivt (score 2-3)** | **41 % (61/148)** |
+| Skjold, direkte sol < 100 W/m² (sæsonskaleret) | 17 % |
+| Skjold, direkte sol >= 100 W/m² | 35-61 % |
+
+**Ingen variant slår det nuværende skjold.** Afprøvet: cap 3 kun for tyk
+cirrus (direkte < 100 W/m² eller direkte-andel < 0.3) og ellers cap 5
+eller intet cap, samt helt uden skjold:
+
+| Variant | Skjold-timer: score bar / kort | Alle timer: adskillelse | Træfsikkerhed (score >= 5 = bar) |
+|---|---|---|---|
+| **Nuværende (cap 3)** | 2.41 / 2.41 | **2.68** | **0.691** |
+| Tyk -> 3, tynd -> intet cap | 3.88 / 3.53 | 2.53 | 0.686 |
+| Tyk -> 3, tynd -> 5 | 3.17 / 3.12 | 2.57 | 0.686 |
+| Uden skjold | 3.88 / 3.58 | 2.52 | 0.685 |
+
+Inden for skjold-timerne kan scoren ikke skelne bar fra kort, hverken med
+eller uden skjold: modellens høj-sky-andel og stråling indeholder ikke
+oplysningen om, hvorvidt cirrussen i virkeligheden var tynd eller tyk.
+Direkte stråling udpeger kun de klart døde timer (< 100 W/m²), og dem
+capper strålings-gaten i forvejen for de flestes vedkommende.
+
+**Konklusion: skjoldet ændres ikke.** Slaglille 15/8 er en reel miss, men
+i en gruppe hvor 41 % af timerne kunne flyves; det er en grænse for
+prognosen, ikke en forkert tærskel. Skjoldet er netto den bedste af de
+afprøvede regler.
+
+**Nyt åbent punkt fra samme data:** timer uden skjold med score 0-3 bar
+i 49 % af tilfældene (89/181), mod 31 % ved score 3-5 og 55 % ved 5-6.5.
+De lave scores er dårligere kalibreret end skjoldet; næste undersøgelse
+bør finde hvilke caps der binder i de timer.
