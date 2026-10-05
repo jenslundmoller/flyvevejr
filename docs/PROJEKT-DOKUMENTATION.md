@@ -68,7 +68,9 @@ Open-Meteo API (gratis, ingen nøgle)
 ### Dataflow
 
 1. GitHub Actions kører `python -m termik` hver 3. time (kl. XX:15)
-2. Scriptet henter vejrdata fra Open-Meteo for 262 punkter, 30 flyvepladser
+2. Scriptet henter først den målte havtemperatur for 158 havceller fra
+   Open-Meteos marine-API (2 lette kald; fejler de, bruges klimatologien),
+   derefter vejrdata fra Open-Meteo for 262 punkter, 30 flyvepladser
    og 232 gitterpunkter, i 27 batch-kald a 10 punkter
 3. For hvert punkt beregnes termik-score for hver time, 7 dage frem
 4. Resultatet skrives som JSON-filer
@@ -86,7 +88,7 @@ Open-Meteo API (gratis, ingen nøgle)
 | Domæne | flyvevejr.dk |
 | DNS | Cloudflare (CNAME → jenslundmoller.github.io, proxy fra) |
 | SSL | GitHub Pages (Let's Encrypt) |
-| Vejrdata | Open-Meteo API (gratis, ingen nøgle) |
+| Vejrdata | Open-Meteo forecast- og marine-API (gratis, ingen nøgle) |
 
 ---
 
@@ -218,13 +220,13 @@ Danmark er meget kystnært, og søbrisen er en af de vigtigste termik-dræbere. 
 
 Ud over de syntetiske scenarier ([scoring-scenarios.md](scoring-scenarios.md), v1-reference) er v2 valideret mod **virkelige flyvninger fra startlist.club**: 18 dage maj-august 2026, 88 plads-dage med facit (skolefly frafiltreret: samme fly med 3+ forskellige forsædepiloter samme dag tæller ikke). Resultat: v2 rammer 61/88 forventede bånd mod v1's 57/88, samlet afvigelse 51.6 mod 55.0, største enkeltfejl 1.6 mod 3.3. Se [sæson-valideringen](Referat/2026-08-25-startlist-saeson-validering.md) og [pålandsvinds-studiet](Referat/2026-08-25-paalandsvind-studie.md) (4180 plads-dage scannet).
 
-Efterårsvalidering 2026-10-05 (3.-4. oktober, 24 plads-dage, plus regression mod sommerens 58): punkt 8-10 tager oktobers afvigelse fra 23.1 til 14.1 og største fejl fra 4.3 til 2.4, mens sommeren er uændret i bånd (37/58, afvigelse 85.3 -> 86.1). Adskillelsen mellem fløjne og svage dage stiger i begge sæsoner. Se [Referat 2026-10-05](Referat/2026-10-05-startlist-weekend-oktober.md).
+Efterårsvalidering 2026-10-05 (3.-4. oktober, 24 plads-dage, plus regression mod sommerens 58): punkt 8-13 tager oktobers afvigelse fra 23.1 til 12.5 og bånd-træf fra 14/24 til 16/24, mens sommeren er uændret (38/58, afvigelse 85.3 -> 85.6). Samme dag blev der indført **validering time for time**: 873 timer med flyvninger på 18 sæsondage + 3.-4. oktober, hvor en time "bar" hvis en flyvning på 60+ min var i luften. Efter punkt 13 bar 24 / 43 / 62 / 73 / 85 % af timerne i scorebåndene 0-3 / 3-5 / 5-6.5 / 6.5-8 / 8+. Se [Referat 2026-10-05](Referat/2026-10-05-startlist-weekend-oktober.md) og [overdragelsen](Referat/2026-10-05-overdragelse.md); analysescripts i `docs/Referat/2026-10-05-analyse/`.
 
 ### Kommentargenerering
 
 `termik/comments.py` genererer en kort dansk kommentar (2-3 sætninger). Struktur (siden popup-redesignet 2026-08-26): tal der står i popup'ens felter og grafik gentages ikke; sætningerne har faste roller:
 
-- **Bindende faktor** (leder, når dagen er brugbar): "Toppen begrænses af skybasen, regn med ca. 1100 m." Styret af `thermal_top_limited_by`; "inversion"- og "saturated"-domme oversættes bevidst ikke ved brugbar score (de kan være falske hen over et superadiabatisk overfladelag) — der falder teksten tilbage på stabilitetslinjen fra målt lapse rate.
+- **Bindende faktor** (leder, når dagen er brugbar): "Toppen begrænses af skybasen, regn med ca. 1100 m." Styret af `thermal_top_limited_by`; "inversion"- og "saturated"-domme oversættes bevidst ikke ved brugbar score (de kan være falske hen over et superadiabatisk overfladelag): der falder teksten tilbage på stabilitetslinjen fra målt lapse rate. Siden 2026-10-05 er `lapse_rate` den scorede værdi (blandingslagets lapse når det gælder), så teksten og popup'ens lapse-måler følger scoren; 850 hPa-værdien står i `lapse_rate_850`.
 - **Advarsler/observationer** (op til 2, prioriteret): cirrus-banker, søbrise, vindstød/effektiv vind, vind der øger i højden, Cb-risiko, bagsidevejr, tørtermik.
 - **Termikvinduet** ("Termik ca. 11 til 19") genereres i frontenden af dagsforløbet og hører ikke til her.
 
@@ -256,6 +258,23 @@ geopotential_height_950hPa til geopotential_height_600hPa
 
 **Pressure levels — vind:**
 wind_speed_850hPa, wind_direction_850hPa
+
+**Bemærk (målt 2026-10-05):** best_match henter trykniveauerne for Danmark
+fra ECMWF, som kun har 1000/925/850 hPa i de nederste 1.6 km. 950, 900 og
+800 hPa samt 80/120/180 m-temperaturen kommer derfor tomme tilbage, og har
+gjort det siden mindst juli. Parcel-beregningen og blandingslagets lapse
+bygger reelt på 925 og 850 hPa; overflade-lapse-checket (2 m -> 180 m) kører
+aldrig. `icon_seamless` og `dmi_seamless` leverer flere lavniveau-felter (se
+åbent punkt 7 i [overdragelsen](Referat/2026-10-05-overdragelse.md)).
+
+### Andre Open-Meteo-endpoints
+
+| Endpoint | Brug | Hvornår |
+|---|---|---|
+| `marine-api.open-meteo.com/v1/marine` | `current=sea_surface_temperature` for havcellerne i `termik/sea_points.json` | Hver kørsel (2 kald) |
+| `api.open-meteo.com/v1/elevation` | Terrænhøjde til `elevation_m` | Én gang, med `termik/tools/fetch_elevations.py` |
+| `marine-api` (current) | Valg af havcelle pr. kystnært punkt | Én gang, med `termik/tools/fetch_sea_points.py` |
+| `historical-forecast-api.open-meteo.com` | Kalibrering af dage ældre end 92 dage | Kun værktøjer (`compare_scores`, analyser) |
 
 ### Afledte beregninger
 
@@ -289,10 +308,16 @@ flyvevejr/
 │   ├── __init__.py
 │   ├── __main__.py                # Entry point: python -m termik
 │   ├── config.py                  # Konfiguration (API, vægte, tærskler)
-│   ├── locations.py               # 28 svæveflyvepladser + 51 grid-punkter
-│   ├── scoring.py                 # Scoringsmodel (11 funktioner)
+│   ├── locations.py               # 30 svæveflyvepladser + 232 grid-punkter
+│   ├── grid_elevations.json       # Terrænhøjde pr. gitterpunkt (fetch_elevations)
+│   ├── sea_points.json            # Havcelle pr. kystnært punkt (fetch_sea_points)
+│   ├── scoring.py                 # Scoringsmodel v1 (rollback)
+│   ├── scoring_v2.py              # Scoringsmodel v2 (produktion)
 │   ├── comments.py                # Kommentargenerering på dansk
 │   ├── fetch_weather.py           # Open-Meteo API + databehandling
+│   ├── tools/                     # Håndværktøjer: replay_day, compare_scores,
+│   │                              #   fetch_reference_day, fetch_elevations,
+│   │                              #   fetch_sea_points
 │   ├── cron_setup.sh              # Hjælpescript til lokal cron
 │   ├── requirements.txt           # Python: requests, pytest
 │   ├── output/
@@ -304,12 +329,14 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/
-│       ├── __init__.py
-│       ├── test_locations.py      # 8 tests
-│       ├── test_scoring.py        # 50 tests
-│       ├── test_comments.py       # 10 tests
-│       └── test_fetch_weather.py  # 10 tests
+│   └── tests/                     # 430 tests (2026-10-05)
+│       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
+│       ├── test_locations.py
+│       ├── test_scoring.py        # v1 + termiktop
+│       ├── test_scoring_v2.py     # v2-punkterne inkl. 2026-10-05-rettelserne
+│       ├── test_reference_days.py # 8/8 og 9/8 med bagte timedata
+│       ├── test_comments.py
+│       └── test_fetch_weather.py
 ```
 
 ---

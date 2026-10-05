@@ -615,6 +615,8 @@ def apply_dealbreakers(
     # on CLOUD_ARRIVAL_COVER: a good day's own thermal cumulus reads as
     # overcast once the layers are weighted. The total is the conservative
     # reading here, and the blunt cap has never been shown to misfire.
+    # (v1 only. v2 replaced it 2026-10-05 after an hour-by-hour check against
+    # startlist flights showed it did misfire; see OVERCAST_COVER in config.)
     #
     # Cirrus reaches the caps through the two targeted shields below instead,
     # which is what "let the caps see cirrus as score_solar does" needs to
