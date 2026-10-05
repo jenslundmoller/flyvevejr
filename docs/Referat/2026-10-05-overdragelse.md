@@ -109,9 +109,9 @@ Prioriteret forslag til næste session: **13, 9, 1, 7** (prompt nedenfor).
 
 Scoring:
 
-1. **`score_solar` tæller en god dags egne cumulus som dæmpning**
-   (`2026-08-12-straale-gate.md`). Rammer hver time; samme familie som
-   overskyet-fundet i dag (best_match-totalen læser cumulus som overskyet).
+1. ~~**`score_solar` tæller en god dags egne cumulus som dæmpning**~~
+   Undersøgt 5/10, uændret: v2's `CU_ALLOWANCE` har allerede løst 8/8 kl. 19,
+   og ingen variant slår støjen (startlist-referatet, punkt 1-afsnittet).
 2. Vindretning og luftmasse scores ikke (pilotregel: højtryk NV for
    Danmark giver god termik).
 3. Lapse-vægten (0.30, den største) er aldrig efterprøvet mod data.

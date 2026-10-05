@@ -411,3 +411,54 @@ som analysen i alle 986 timer. `airfields.json` vokser 1 % gzippet (401 ->
 **Bemærket undervejs.** Mellemhøj sky-cappet (2) har den dårligste
 træfsikkerhed af de hyppige lofter: 18 af 56 timer med facit bar alligevel.
 Kandidat til samme time-for-time-forsøg som cirrus-skjoldet.
+
+---
+
+## Opfølgning: tæller `score_solar` dagens egne cumulus som dæmpning? (punkt 1)
+
+Åbent punkt 2 i [2026-08-12-straale-gate.md](2026-08-12-straale-gate.md).
+Samme 873 timer med facit, [`solar1.py`](2026-10-05-analyse/solar1.py) og
+[`solarvar.py`](2026-10-05-analyse/solarvar.py).
+
+**v2 har allerede taget det meste.** Den oprindelige sag, 8/8 kl. 19 (v1:
+5.9 fordi 88,6 % vægtet dække var dagens egne cumulus), består i v2, fordi
+`CU_ALLOWANCE = 40` gør de første 40 procentpoint lav sky gratis.
+
+**Hvad lav sky ud over 40 % koster, og om det er fortjent.** I
+cumulus-regimet (mellemsky < 30 %, høj sky < 50 %, 477 timer) falder
+solscoren fra 7.8 til 4.4 når lav sky går fra 0 til 85 %+, og andelen bar fra
+79 % til 50-63 %. Men direkte stråling sorterer langt bedre alene (0-150
+W/m²: 48 % bar, 550-700: 89 %), og holdt fast inden for samme
+strålingsbånd giver lav sky intet entydigt signal:
+
+| Direkte stråling | Lav sky < 40 %: n, bar, solscore | Lav sky >= 40 %: n, bar, solscore |
+|---|---|---|
+| 0-150 | 58, 48 %, 4.5 | 29, 48 %, 3.2 |
+| 150-250 | 65, 60 %, 6.0 | 25, 44 %, 4.5 |
+| 250-350 | 49, 80 %, 6.9 | 24, 62 %, 5.4 |
+| 350-450 | 72, 82 %, 7.6 | 16, 94 %, 6.6 |
+| 450+ | 114, 87 %, 9.1 | 25, 68 %, 7.5 |
+
+Skydækleddet tæller altså de samme cumulus som strålingsleddet allerede
+har set, men forskellen er 1-1.5 point i solscoren, ~0.3 i slutscoren, og
+lofterne sætter alligevel scoren i 46 % af timerne.
+
+**Varianter** (time: adskillelse bar/kort og træfsikkerhed ved score >= 5;
+dage: samlet afvigelse fra facit-båndet og antal i bånd):
+
+| Variant | Sep | Træf | Sommer afv / i bånd | Okt afv / i bånd |
+|---|---|---|---|---|
+| **Nu (40 % gratis)** | **2.63** | **0.726** | **85.6 / 38 af 58** | **12.5 / 16 af 24** |
+| 60 % gratis | 2.64 | 0.726 | 86.1 / 38 | 12.2 / 16 |
+| 80 % gratis | 2.64 | 0.725 | 86.4 / 38 | 12.0 / 16 |
+| Lav sky tæller ikke | 2.64 | 0.726 | 86.5 / 38 | 12.0 / 16 |
+| Lav sky halv vægt | 2.64 | 0.726 | 86.1 / 38 | 12.2 / 16 |
+| Kun direkte sol | 2.60 | 0.721 | 85.6 / 36 | 10.0 / 16 |
+
+Referencedagene 8/8 og 9/8 og sæsonscenarierne består under alle varianter.
+
+**Konklusion: uændret.** Ingen variant flytter timeniveauet ud over støjen,
+og sommer og oktober trækker i hver sin retning med under 1 point. "Kun
+direkte sol" er den eneste med en tydelig oktober-gevinst, men koster to
+sommerdage i bånd og træfsikkerhed. Punktet kan lukkes; genåbnes hvis
+efterårs- og forårsdagene (punkt 8) viser et mønster.

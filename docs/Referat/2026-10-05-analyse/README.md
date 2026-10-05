@@ -31,3 +31,5 @@ Tilføjet senere samme dag (punkt 13):
 |---|---|
 | `actions_timing.py` | Varighed pr. kald og fejlrate mod tid siden forrige vellykkede kald, fra update-forecast-loggene (hentes med `gh run view --log`, se docstring) |
 | `limit9.py` | Punkt 9: hvilket loft der satte scoren pr. time (afløser `caps.py`, som manglede lapse 2-180 m, CAPE og havde overskyet som cap 2) -> `limit_rows.json`. Produktionens `data.limited_by` gav samme koder og scores i alle 986 timer |
+| `solar1.py` | Punkt 1: solscore og flyvninger mod lav sky og direkte stråling i cumulus-regimet (kræver `limit_rows.json` fra `limit9.py`) -> `solar_rows.json` |
+| `solarvar.py` | Punkt 1: varianter af `score_solar_v2`, time- og dagsvalidering (kræver `season_cache.pkl`, `sst_cells.json`, `validate_925.json`) |
