@@ -114,7 +114,9 @@ Scoring:
    og ingen variant slår støjen (startlist-referatet, punkt 1-afsnittet).
 2. Vindretning og luftmasse scores ikke (pilotregel: højtryk NV for
    Danmark giver god termik).
-3. Lapse-vægten (0.30, den største) er aldrig efterprøvet mod data.
+3. Lapse-vægten (0.30, den største) er aldrig efterprøvet mod data. 5/10:
+   lapse og termiktop sorterer stadig bar fra kort inden for scorebåndene
+   (AUC 0.705 / 0.733), så scoren udnytter dem for dårligt. Næste kandidat.
 4. Strålingsfeltet reagerer knap på modellens cirrus; kun høj-sky-andelen
    ved det. Bekræftet i dag: ingen brugbar skelnen.
 5. Hcrit-margin fra solindstråling i stedet for modellens varmestrøm
@@ -123,11 +125,10 @@ Scoring:
 
 Data:
 
-7. **Hent `temperature_1000hPa` og lavniveau-profil/varmestrøm fra
-   `icon_seamless` eller `dmi_seamless`** (best_match har kun 925/850 hPa
-   under 1.6 km). Prøvekald 5/10: `icon_seamless` gav 950/925/900/850 hPa
-   og sensible heat flux, men ingen BL-højde; `dmi_seamless` gav 180 m-
-   temperatur og BL-højde, men ikke 950/900 hPa.
+7. ~~**Hent lavniveaudata fra `icon_seamless`/`dmi_seamless`**~~ Målt 5/10,
+   ikke implementeret: kun ICON's termiktop tilføjer en smule, mod et ekstra
+   kald pr. batch. Lapse 2-180 m-cappet har næsten aldrig data i
+   produktionen (best_match mangler 180 m). Se startlist-referatet, punkt 7.
 8. Gentag startlist-valideringen på flere efterårsdage og i foråret (hvor
    sæsonfaktoren også er under 1). Næste weekend er et godt live-tjek,
    især fugtige dage med lav base som lørdag 3/10, hvor de nye regler mest
@@ -144,7 +145,7 @@ UI:
 Drift:
 
 13. **Læs `Batch n/27 ok in X s`-linjerne i GitHub Actions-loggene**
-    (5/10: læst, kaldene hænger tæt efter et vellykket kald; probe startet, se
+    (5/10: læst, kaldene hænger tæt efter et vellykket kald; proben fandt ingen pause under ~150 s der virker, så løsningen er at flytte kaldene, se
     `2026-09-02-api-robusthed.md`, opfølgning 5/10)
     (`2026-09-02-api-robusthed.md`, opfølgning 1/10). Ligger mange
     vellykkede kald tæt på 30 s: hæv timeouten. Hænger de: flyt kaldene

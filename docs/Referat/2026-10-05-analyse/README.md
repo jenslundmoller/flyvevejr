@@ -33,3 +33,5 @@ Tilføjet senere samme dag (punkt 13):
 | `limit9.py` | Punkt 9: hvilket loft der satte scoren pr. time (afløser `caps.py`, som manglede lapse 2-180 m, CAPE og havde overskyet som cap 2) -> `limit_rows.json`. Produktionens `data.limited_by` gav samme koder og scores i alle 986 timer |
 | `solar1.py` | Punkt 1: solscore og flyvninger mod lav sky og direkte stråling i cumulus-regimet (kræver `limit_rows.json` fra `limit9.py`) -> `solar_rows.json` |
 | `solarvar.py` | Punkt 1: varianter af `score_solar_v2`, time- og dagsvalidering (kræver `season_cache.pkl`, `sst_cells.json`, `validate_925.json`) |
+| `pull_models.py` | Punkt 7: icon_seamless- og dmi_seamless-lavniveaufelter for startlist-dagene -> `hist_models.pkl` (108 kald) |
+| `lowlevel7.py` | Punkt 7: AUC for de nye felter alene og inden for produktionens scorebånd (kræver `solar_rows.json`) |

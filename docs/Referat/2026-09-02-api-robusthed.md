@@ -342,3 +342,27 @@ det, et nyt kald 30 s efter. Under (a) fejler det sidste (~65 s efter
 succesen), under (b) lykkes det. Resultatet afgør pausen i
 `process_all_points`; flytning væk fra GitHub-runnerne er kun nødvendig hvis
 heller ikke den rette pause holder fejlraten under ~10 %.
+
+### Probe-resultat 5/10 (run 37314330909, 3 gentagelser pr. arm)
+
+| Kald efter et vellykket kald | Fejlede |
+|---|---|
+| 5 s (hang30-armens første kald) | 0 af 3 |
+| 20 s | 3 af 3 |
+| 40 s | 1 af 3 |
+| 60 s | 2 af 3 |
+| 80 s | 2 af 3 |
+| 100 s | 3 af 3 |
+| Første kald efter >= 150 s stilhed | 0 af 18 hængte |
+
+**Forklaring (a) holder ikke.** Fejlraten falder ikke med afstanden inden for
+20-100 s, og kaldet 5 s efter hængte aldrig, så hang30-armen fik aldrig testet
+(b). Samlet: 11 af 15 kald ved 20-100 s hængte, 0 af 21 ved 5 s eller efter
+>= 150 s stilhed. Tallene pr. arm er små, men der findes ingen pause under
+~150 s der beviseligt virker, og 27 x 150 s er over en time pr. kørsel.
+
+**Konsekvens.** Pacing er ikke en løsning. Kørslerne lykkes i dag takket være
+genforsøg og redningsrunden (36 af 36 grønne 1-5/10), så problemet er
+køretid (12-43 min) og en sjælden fejlmail, ikke manglende data. Den
+egentlige løsning er at flytte kaldene væk fra GitHub-runnerne; hjemmefra
+hænger intet (6 af 6 og 1 af 1 i dag).

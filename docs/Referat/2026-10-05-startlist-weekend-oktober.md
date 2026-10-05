@@ -462,3 +462,45 @@ og sommer og oktober trækker i hver sin retning med under 1 point. "Kun
 direkte sol" er den eneste med en tydelig oktober-gevinst, men koster to
 sommerdage i bånd og træfsikkerhed. Punktet kan lukkes; genåbnes hvis
 efterårs- og forårsdagene (punkt 8) viser et mønster.
+
+---
+
+## Opfølgning: bedre lavniveaudata fra icon_seamless / dmi_seamless (punkt 7)
+
+Hentet fra historical-forecast for de 18 pladser og 19 dage
+([`pull_models.py`](2026-10-05-analyse/pull_models.py), 108 kald) og målt mod
+de 873 timer med facit ([`lowlevel7.py`](2026-10-05-analyse/lowlevel7.py)).
+AUC = sandsynligheden for at en bar time rangerer over en kort; 0.5 er
+ingen information. "Inden for scorebånd" sammenligner kun timer i samme
+produktionsscore-bånd, altså om feltet tilføjer noget scoren ikke har.
+
+| Felt | AUC alene | Inden for scorebånd | Inden for score x termiktop |
+|---|---|---|---|
+| Produktionens score | 0.769 | | |
+| Produktionens lapse_rate | 0.771 | 0.705 | 0.631 |
+| Produktionens termiktop | 0.798 | 0.733 | 0.633 |
+| icon termiktop (950/925/900/850) | 0.805 | 0.738 | 0.663 |
+| icon lapse 2 m -> 900 hPa | 0.751 | 0.685 | 0.609 |
+| icon laveste lags-lapse < 1.5 km | 0.700 | 0.670 | 0.598 |
+| icon sensibel varmestrøm | 0.705 | 0.633 | 0.553 |
+| dmi lapse 2-180 m | 0.676 | 0.607 | 0.541 |
+
+**Fund.**
+- best_match leverer allerede `temperature_1000hPa`; det er 950/900 hPa og
+  80/120/180 m-temperaturen der mangler. Derfor har **lapse 2-180 m-cappet
+  (1/2) data i kun 168 af 5040 flyvepladstimer** i produktionen. Med DMI's
+  180 m ville det ramme 7 af 873 timer, alle korte og allerede scoret ~3;
+  med ICON's ingen. Det er ikke værd at genoplive.
+- Kun ICON's termiktop tilføjer en smule ud over produktionens (0.663 mod
+  0.633 i den hårdeste kontrol). Varmestrøm og ICON-lapse tilføjer mindre end
+  det produktionen allerede har. best_match 925 hPa afviger under 1 K fra
+  ICON i 91 % af timerne.
+- ICON kan ikke hentes i samme kald uden at fordoble alle variable, så det
+  koster et ekstra kald pr. batch (27 -> 54) netop hvor GitHub-runnerne
+  drosles.
+
+**Konklusion: ikke implementeret.** Det egentlige fund er at produktionens
+egen lapse_rate og termiktop stadig sorterer bar fra kort inden for
+scorebåndene (0.705 / 0.733): scoren udnytter information den allerede har
+for dårligt. Det peger på åbent punkt 3 (lapse-vægten) og termiktoppens
+vægt, som kan afprøves uden nye API-kald.
