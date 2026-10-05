@@ -170,6 +170,10 @@ nede af søbrise-straffen i vestenvind 33 km inde.
 4. På sigt: RASP-agtig W* (termikstyrke fra varmestrøm og BL-dybde) som
    kerneinput i stedet for lappeværket af absolutte caps; den håndterer
    årstiden af sig selv.
+5. Fix 3 over et låg: når der ligger en inversion lige over 925 hPa, kan
+   2 m -> 925 hPa blive overadiabatisk og løfte en lav, låst dag (18/7).
+   Kandidat: fix 3 kun når 925 -> 850 >= 0. Afvent flere dage med den
+   profil, se det sidste afsnit.
 
 ## Opfølgning samme dag: søbrise og havtemperatur
 
@@ -504,3 +508,84 @@ egen lapse_rate og termiktop stadig sorterer bar fra kort inden for
 scorebåndene (0.705 / 0.733): scoren udnytter information den allerede har
 for dårligt. Det peger på åbent punkt 3 (lapse-vægten) og termiktoppens
 vægt, som kan afprøves uden nye API-kald.
+
+## Opfølgning: Jylland mod startlist.club juli-september, og 18/7
+
+Spørgsmål: holder v2 (alle rettelser fra i dag) i Jylland, og ikke kun på
+Sjælland og de dage den blev kalibreret på?
+
+**Data.** Startlister for alle weekenddage 4/7-27/9 (26 dage), samme
+skolefly-filter og facit-bånd som ovenfor. Timedata fra
+historical-forecast (forecast-endpointet når ikke 4/7) og målt
+havtemperatur ved produktionens havceller. 11 jyske pladser (Hammer
+udeladt), 113 plads-dage; for variantafprøvningen også 6 sjællandske
+pladser (81) og oktoberweekenden (24), i alt 218. Metrik som ovenfor:
+gennemsnit af dagens 3 bedste timer kl. 11-18.
+
+**Jylland, nuværende v2:**
+
+| | Plads-dage | I bånd | Fløjne dage | Svage dage | Adskillelse |
+|---|---|---|---|---|---|
+| Juli | 37 | 24 (65 %) | 8.0 | 4.9 | 3.1 |
+| August | 49 | 36 (73 %) | 8.5 | 6.1 | 2.4 |
+| September | 27 | 18 (67 %) | 6.9 | 4.4 | 2.5 |
+| I alt | 113 | 78 (69 %) | 8.0 | 5.1 | 2.8 |
+
+Kalibreringsdagene (11/7-23/8) trækker op: 74 % i bånd og adskillelse 3.5.
+Dagene scoren aldrig har set (4/7-19/7 og september): **61 % i bånd og
+adskillelse 1.8**, samme niveau som oktoberweekenden (9/14). Inden for
+samme dag adskiller scoren svage fra fløjne pladser med kun 1.6 i
+gennemsnit, og 4 af 16 dage står forkert. Scoren skelner dage bedre end
+pladser.
+
+Undercalls (21) fordeler sig på cirrus, vind, stråling og overskyet uden
+et dominerende cap (fx 16/8 Bolhede 3.7 og Arnborg 5.4 under cirrus med
+191/223 min). Overcalls (14) er mest enkeltpladser på dage hvor andre
+fløj godt (klubaktivitet), undtagen **18/7**, hvor fem jyske pladser
+scorede 7.5-8.9 og kun Christianshede fløj længere (120 min).
+
+### 18/7: blandingslagets lapse over et låg
+
+Kl. 12-15 på de fem pladser:
+
+| Lag | Lapse (grader/100 m) |
+|---|---|
+| 2 m -> 925 hPa (~720 m) | 1.3-1.7 |
+| 925 -> 850 hPa | -0.15 til +0.10 (inversion lige over 925) |
+| 2 m -> 850 hPa | 0.57-0.73 |
+
+Fix 3 erstatter 850-lapse med 2 m -> 925 hPa når den er >= 0.95 og
+grænselaget >= 900 m. Begge var opfyldt, så scoren kørte på 1.3-1.7,
+hvilket er overadiabatisk over 700 m: 2 m-temperaturen er overfladelaget,
+ikke et labilt blandingslag. Uden fix 3 falder de fem til 3.0-5.6.
+
+Radiosonde Schleswig 12 UTC: konstant theta (289 K) fra jorden til ~1200 m
+som modellen sagde, men mættet (RH 95-100 %) fra ~950 m helt op til en skarp
+inversion ved 1230 m (+5 K): et stratocumulus-lag presset op under låget.
+Flyvningerne passer: mange ture på 15-45 min kl. 11-15 på alle pladser,
+altså svag og lav termik. 4/10 havde 250 m tør luft mellem skytoppen og
+inversionen, og i modellen ingen inversion lige over 925 hPa.
+
+**Varianter af fix 3, 218 plads-dage:**
+
+| Variant | I bånd | Afv. | Adskillelse | Okt i bånd |
+|---|---|---|---|---|
+| Nuværende | 154 | 109.6 | 2.88 | 16/24 |
+| Uden fix 3 | 147 | 107.5 | 2.74 | 9/24 |
+| 925-lapse klampet til 1.0 | 153 | 102.7 | 2.72 | 16/24 |
+| Fix 3 kun hvis 925 -> 850 >= 0 | 156 | 105.7 | 3.03 | 16/24 |
+| Begge | 155 | 100.2 | 2.86 | 16/24 |
+
+**Konklusion: ikke implementeret.** Inversions-vagten (fix 3 kun når der
+ikke ligger en inversion lige over 925 hPa) ser bedst ud og rører ikke
+oktober, men den flytter kun 11 plads-dage på tre dage: 18/7 (fire svage
+pladser bedre, Viborg stadig 7.3; Christianshede, 120 min, 9.1 -> 5.6),
+15/8 (Kalundborg, staerk, 6.6 -> 3.0 under samme profil) og 13/9 (intet
+båndskifte). Det er reelt én dag og et modeksempel. Den rigtige forskel
+ifølge sonden, mættet luft helt op til låget, ses ikke i modellens
+skyfelter (lav sky stod også på 100 % de gode sammenligningsdage).
+Nogle af 18/7's "svage" ligger desuden på grænsen til mulig; en fair
+score var nok 4-5.
+
+Scripts: `jy_pull.py`, `jy_pull2.py`, `jy_score.py`, `jy_variants.py` i
+[analysemappen](2026-10-05-analyse/README.md).

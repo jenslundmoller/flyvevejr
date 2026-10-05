@@ -122,6 +122,14 @@ Scoring:
 5. Hcrit-margin fra solindstråling i stedet for modellens varmestrøm
    (±100-200 m på termiktoppen); hænger sammen med RASP-agtig W*.
 6. Termiktoppen stopper ved LCL; cumulus kan række 200-500 m højere.
+18. Fix 3 (blandingslagets lapse) over et låg: 18/7 scorede fem jyske
+    pladser 7.5-8.9 på svage dage, fordi 2 m -> 925 hPa var 1.3-1.7 under
+    en inversion lige over 925 hPa. Kandidat: fix 3 kun når 925 -> 850 >= 0
+    (218 plads-dage: i bånd 154 -> 156, adskillelse 2.88 -> 3.03, oktober
+    uændret), men den hviler på én dag og har et modeksempel (Kalundborg
+    15/8). Ikke implementeret; saml flere dage med profilen. Jylland juli-
+    september: 61 % i bånd på dage uden for kalibreringen. Se
+    startlist-referatet, sidste afsnit.
 
 Data:
 

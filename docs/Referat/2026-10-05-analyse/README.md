@@ -35,3 +35,12 @@ Tilføjet senere samme dag (punkt 13):
 | `solarvar.py` | Punkt 1: varianter af `score_solar_v2`, time- og dagsvalidering (kræver `season_cache.pkl`, `sst_cells.json`, `validate_925.json`) |
 | `pull_models.py` | Punkt 7: icon_seamless- og dmi_seamless-lavniveaufelter for startlist-dagene -> `hist_models.pkl` (108 kald) |
 | `lowlevel7.py` | Punkt 7: AUC for de nye felter alene og inden for produktionens scorebånd (kræver `solar_rows.json`) |
+
+Tilføjet: Jylland juli-september og 18/7 (åbent punkt 18 i overdragelsen):
+
+| Script | Gør |
+|---|---|
+| (curl) | Startlister for alle weekenddage 4/7-27/9 som ovenfor, derefter `parse.py` og `summ.py` -> `facit.json` |
+| `jy_pull.py`, `jy_pull2.py` | Historical-forecast og målt havtemperatur 3/7-27/9 for 17 pladser -> `hist.pkl`, og 2/10-4/10 -> `hist_oct.pkl` |
+| `jy_score.py` | Nuværende v2 pr. jysk plads-dag mod facit -> `rows.json` |
+| `jy_variants.py` | Varianter af fix 3 (uden, klampet, inversions-vagt) på 218 plads-dage -> `variants.json` |
