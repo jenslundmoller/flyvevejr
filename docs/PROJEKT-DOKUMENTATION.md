@@ -143,6 +143,7 @@ Tilføjet 2026-10-05 efter startlist-weekenden 3.-4. oktober (se [Referat 2026-1
 10. **Terrænhøjde**: alle punkter har `elevation_m` (hardcodet for flyvepladser, `termik/grid_elevations.json` for griddet, hentet én gang med `termik/tools/fetch_elevations.py`), så parcel-beregningen starter i den rigtige højde.
 11. **Målt havtemperatur i søbrisen**: én gang pr. kørsel hentes havoverfladetemperaturen for en fast havcelle pr. kystnært punkt (`termik/sea_points.json`, valgt med `termik/tools/fetch_sea_points.py`) fra Open-Meteos marine-API. Fallback er en målt klimatologi interpoleret pr. dag. Den gamle månedstabel lå 1-3 grader for koldt og faldt 4 grader natten til 1/10.
 12. **5b ser også det nedre lag**: havluften kaldes kun stabil når både hav -> 850 hPa (< 7 K) og hav -> 925 hPa (< 0.47 grader/100 m, samme grænse pr. 100 m) er stabile, så et låg mellem 925 og 850 hPa ikke skjuler ustabil havluft.
+13. **Overskyet er en straf, ikke et cap 2**: rå skydække ≥ 87 % giver -2 point og loft 5. Cap 2 kastede en rangering væk der stadig virkede (piloterne holdt sig oppe i 47 % af de cappede timer).
 
 ### Basis-scorer (vægtet sum, v2)
 
@@ -171,7 +172,7 @@ Tilføjet 2026-10-05 efter startlist-weekenden 3.-4. oktober (se [Referat 2026-1
 |-----------|-----------|------------|
 | Lapse rate <0.50 | 1 | Stærk inversion — ingen termik mulig |
 | Lapse rate <0.65 | 3 | Stabil atmosfære — meget begrænset termik |
-| Skydække ≥87% | 2 | Sol blokeret — ingen opvarmning. Læser den **rå** total, ikke lagvægtet, se nedenfor |
+| Skydække ≥87% | v1: 2. v2: -2 point og loft 5 | Sol blokeret. Læser den **rå** total, ikke lagvægtet, se nedenfor. v2 bevarer rangeringen (Referat 2026-10-05) |
 | Effektiv stråling <400 / <250 / <100 W/m² (v2: sæsonskaleret) | 5 / 3 / 1 | For lidt opvarmning til konvektion |
 | Grænselagshøjde <900 m | 5 | For tyndt arbejdslag til at blive oppe i |
 | Høj sky ≥85% nu og i de sidste 3 timer | 3 | Optisk tykt cirrus-skjold lukker jorden ned |

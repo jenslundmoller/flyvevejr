@@ -24,6 +24,9 @@ from termik.config import (
     CIRRUS_SHIELD_MAX_SCORE,
     MID_LEVEL_DECK_THRESHOLD,
     MID_LEVEL_DECK_MAX_SCORE,
+    OVERCAST_COVER,
+    OVERCAST_PENALTY,
+    OVERCAST_MAX_SCORE,
     SEA_TEMP_BY_MONTH,
     SEA_TEMP_CLIMATOLOGY,
     SEABREEZE_STABLE_MARINE_INSTAB,
@@ -450,8 +453,11 @@ def apply_dealbreakers_v2(
             max_score = min(max_score, 1)
         elif surface_lapse_rate < 0.5:
             max_score = min(max_score, 2)
-    if cloud_cover >= 87:
-        max_score = min(max_score, 2)
+    # Overskyet: straf og loft i stedet for v1's cap 2, som kastede en
+    # stadig brugbar rangering væk (noten ved OVERCAST_COVER i config).
+    if cloud_cover >= OVERCAST_COVER:
+        score = score - OVERCAST_PENALTY
+        max_score = min(max_score, OVERCAST_MAX_SCORE)
     if cloud_cover_high is not None and cloud_cover_high >= CIRRUS_SHIELD_PRESENT_MIN:
         shield = max([cloud_cover_high] + list(trailing_cirrus or []))
         if shield >= CIRRUS_SHIELD_THRESHOLD:

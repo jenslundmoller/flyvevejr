@@ -300,6 +300,22 @@ CIRRUS_SHIELD_MEMORY_HOURS = 3
 MID_LEVEL_DECK_THRESHOLD = 85
 MID_LEVEL_DECK_MAX_SCORE = 2
 
+# Overskyet-reglen (v2): rå cloud_cover >= 87 % trækker 2 point og lægger
+# loft 5, i stedet for v1's hårde cap 2. Time for time mod startlisterne
+# (18 sæsondage + 3.-4. oktober, 873 timer med flyvninger, historical-
+# forecast) bandt cap 2 i 238 timer, og piloterne holdt sig oppe 60+ min i
+# 47 % af dem; den ucappede score rangerede dem stadig (7-10: 62 %, 5.5-7:
+# 42 %, 4-5.5: 18 %, < 4: 0 %), som cap 2 kastede væk. Med cap 2 fløj score
+# 0-3 oftere (46 %) end 3-5 (37 %). Med -2/loft 5: 24/43/62/73/85 % bar
+# pr. scorebånd 0-3/3-5/5-6.5/6.5-8/8+, træfsikkerhed 0.691 -> 0.726,
+# dagsvalideringen uændret (sommer 85.4 -> 85.6, oktober 13.2 -> 12.5).
+# Testes stadig mod rå total, ikke lagvægtet (se noten i v1's
+# apply_dealbreakers); referencedagene 8/8 og 9/8 er uændrede.
+# Se Referat 2026-10-05.
+OVERCAST_COVER = 87
+OVERCAST_PENALTY = 2.0
+OVERCAST_MAX_SCORE = 5
+
 # --- v2-konstanter (DSvU-hæftet, se docs/plans/2026-08-25-scoring-v2-dsvu-haefte.md) ---
 
 # Punkt 2: 1-4/8 lav cumulus er hæftets optimale skybillede (Skema 1 s. 13,

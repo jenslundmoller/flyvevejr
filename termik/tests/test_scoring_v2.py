@@ -732,3 +732,44 @@ def test_compute_v2_passes_the_925_level_to_the_sea_breeze():
     with_925 = compute_thermal_score_v2(**kwargs, temp_925hpa=13.5, height_925hpa_m=778.0)
     assert without["seabreeze_penalty"] == 1.8
     assert with_925["seabreeze_penalty"] == 0.9
+
+
+# --- Overskyet-cappet blødt op (Referat 2026-10-05, lave scores) ---
+#
+# cloud_cover >= 87 cappede på 2. Time for time mod startlisterne (873
+# timer) bandt det i 238 timer, og i 47 % af dem holdt piloterne sig oppe
+# i 60+ min; den ucappede score rangerede dem stadig (7-10: 62 %, 4-5.5:
+# 18 %, < 4: 0 %). Nu: 2 point fra og loft 5, så rangeringen bevares og en
+# næsten overskyet time aldrig viser "God termik".
+
+from termik.config import OVERCAST_COVER, OVERCAST_PENALTY, OVERCAST_MAX_SCORE
+
+
+def _overcast(score, cloud_cover=90.0):
+    """Kun overskyet-reglen: alt andet er sat så intet andet cap rammer."""
+    return apply_dealbreakers_v2(score, 1.0, cloud_cover, 0.0, 8.0, 12.0, 15.0)
+
+
+def test_overcast_is_a_penalty_with_a_ceiling():
+    assert (OVERCAST_COVER, OVERCAST_PENALTY, OVERCAST_MAX_SCORE) == (87, 2.0, 5)
+    assert _overcast(8.0) == 5          # loftet
+    assert _overcast(6.0) == 4.0        # straffen
+    assert _overcast(3.0) == 1.0        # rangeringen bevares i bunden
+
+
+def test_overcast_rule_starts_at_87():
+    assert _overcast(8.0, cloud_cover=86.0) == 8.0
+    assert _overcast(8.0, cloud_cover=87.0) == 5
+
+
+def test_overcast_keeps_ranking_that_the_old_cap_flattened():
+    # Det gamle cap gav 2 til begge; nu skilles de ad
+    assert _overcast(7.5) > _overcast(4.5)
+
+
+def test_overcast_score_is_never_negative():
+    result = compute_thermal_score_v2(**base_kwargs(
+        cloud_cover=95.0, cloud_cover_low=95.0, shortwave_radiation=120.0,
+        direct_radiation=5.0, temp_850hpa=12.0, precipitation=0.0,
+    ))
+    assert result["score"] >= 0

@@ -322,7 +322,51 @@ i en gruppe hvor 41 % af timerne kunne flyves; det er en grænse for
 prognosen, ikke en forkert tærskel. Skjoldet er netto den bedste af de
 afprøvede regler.
 
-**Nyt åbent punkt fra samme data:** timer uden skjold med score 0-3 bar
-i 49 % af tilfældene (89/181), mod 31 % ved score 3-5 og 55 % ved 5-6.5.
-De lave scores er dårligere kalibreret end skjoldet; næste undersøgelse
-bør finde hvilke caps der binder i de timer.
+Timer uden skjold med score 0-3 bar i 49 % af tilfældene (89/181), mod
+31 % ved score 3-5; undersøgt i næste afsnit.
+
+## Opfølgning: hvorfor lave scores flyves, og overskyet-cappet
+
+Samme 873 timer. Hver times kald til `apply_dealbreakers_v2` blev
+opfanget, og hvert caps betingelse genberegnet, så det kunne ses hvilket
+cap der satte den endelige score.
+
+**Hvilke caps binder, og hvor ofte blev der alligevel fløjet:**
+
+| Cap | Timer hvor det binder | Bar |
+|---|---|---|
+| **Skydække >= 87 % (cap 2)** | **238** | **47 %** |
+| Mellemhøjt dække | 59 | 30 % |
+| Cirrus-skjold | 63 | 41 % |
+| Grænselag < 900 m (cap 5) | 42 | 59 % |
+| Lapse < 0.65 / < 0.70 / < 0.50 | 20 / 11 / 4 | 25 / 27 / 25 % |
+| Nedbør | 9 | 33 % |
+| (alle timer) | 873 | 64 % |
+
+Af de 202 timer med score 0-3 uden skjold stod skydække-cappet alene for
+128 (54 % bar). Lapse-, dække- og nedbørs-caps er velkalibrerede.
+
+**Den ucappede score rangerede stadig:** i timerne hvor skydække-cappet
+bandt, bar 62 % ved ucappet score 7-10, 42 % ved 5.5-7, 18 % ved 4-5.5 og
+0 % under 4. Cap 2 fladede det ud. Hverken direkte sol, lav sky eller
+lagvægtet dække skilte bar fra kort.
+
+**Afprøvede varianter:**
+
+| Variant | Træfsikkerhed | Bar pr. scorebånd 0-3 / 3-5 / 5-6.5 / 6.5-8 / 8+ | Dage sommer / okt |
+|---|---|---|---|
+| Cap 2 (før) | 0.691 | 46 / 37 / 55 / 73 / 85 % | 85.4 / 13.2 |
+| Cap 4 | 0.691 | 28 / 47 / 55 / 73 / 85 % | 85.5 / 12.6 |
+| Cap 5 | 0.721 | 28 / 40 / 59 / 73 / 85 % | 85.6 / 12.0 |
+| -2 point | 0.726 | 24 / 43 / 59 / 75 / 85 % | 85.7 / 12.5 |
+| **-2 point, loft 5 (valgt)** | **0.726** | **24 / 43 / 62 / 73 / 85 %** | 85.6 / 12.5 |
+
+**Implementeret:** `OVERCAST_COVER = 87`, `OVERCAST_PENALTY = 2.0`,
+`OVERCAST_MAX_SCORE = 5` i v2 (v1 er urørt). Kalibreringen bliver
+monoton (højere score betyder altid større chance), træfsikkerheden stiger
+3.5 procentpoint, dagsvalideringen er uændret, og referencedagene 8/8 og
+9/8 består. Loftet 5 betyder at en næsten overskyet time aldrig viser
+"God termik".
+
+Forbehold: timedata fra historical-forecast (ikke præcis det publicerede),
+og "bar" tæller enhver time en flyvning på 60+ min rører.
