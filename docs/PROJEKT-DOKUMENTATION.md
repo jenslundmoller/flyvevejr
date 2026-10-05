@@ -324,7 +324,8 @@ flyvevejr/
 │   ├── fetch_weather.py           # Open-Meteo API + databehandling
 │   ├── tools/                     # Håndværktøjer: replay_day, compare_scores,
 │   │                              #   fetch_reference_day, fetch_elevations,
-│   │                              #   fetch_sea_points, probe_throttle, forecast_watchdog
+│   │                              #   fetch_sea_points, probe_throttle, forecast_watchdog,
+│   │                              #   dispatch_workflow
 │   ├── cron_setup.sh              # Hjælpescript til lokal cron
 │   ├── requirements.txt           # Python: requests, pytest
 │   ├── output/
@@ -336,7 +337,7 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/                     # 502 tests (2026-10-05)
+│   └── tests/                     # 506 tests (2026-10-05)
 │       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
 │       ├── test_locations.py
 │       ├── test_scoring.py        # v1 + termiktop
@@ -345,7 +346,8 @@ flyvevejr/
 │       ├── test_comments.py
 │       ├── test_fetch_weather.py
 │       ├── test_probe_throttle.py # Probe-logikken med falsk klokke
-│       └── test_forecast_watchdog.py # Hvornår en kørsel flyttes til GitHub
+│       ├── test_forecast_watchdog.py # Hvornår en kørsel flyttes til GitHub
+│       └── test_dispatch_workflow.py # Deploy-trigger uden gh
 ```
 
 ---
@@ -422,8 +424,8 @@ Desktop: sidepanel til højre. Mobil (<768px): sidepanel som bund-panel.
 ### update-forecast.yml
 
 - **Trigger**: Cron `15 */3 * * *` (hver 3. time kl. XX:15) + manuel dispatch (valg af runner)
-- **Runner** (siden 2026-10-05): selvhostet på maskinen derhjemme (labels `self-hosted`, `flyvevejr`, kører som brugeren `gh-runner`). Open-Meteo drosler GitHub-runnerne: halvdelen af kaldene hang 30 s derfra, hjemmefra intet ([Referat 2026-09-02, opfølgning 5/10](Referat/2026-09-02-api-robusthed.md)). Manuel dispatch med `runner=ubuntu-latest` kører på GitHub som reserve.
-- **Kører**: Python 3.12 (selvhostet: maskinens egen i en venv; GitHub: setup-python), installerer requests, kører `python -m termik`
+- **Runner** (siden 2026-10-05): selvhostet på OMV-maskinen derhjemme (Debian 13, labels `self-hosted`, `flyvevejr`, i `/opt/gh-runner` som systembrugeren `gh-runner`, hærdet med en systemd-drop-in; se OMV-webhosting-referencen). Open-Meteo drosler GitHub-runnerne: halvdelen af kaldene hang 30 s derfra, hjemmefra intet ([Referat 2026-09-02, opfølgning 5/10](Referat/2026-09-02-api-robusthed.md)). Manuel dispatch med `runner=ubuntu-latest` kører på GitHub som reserve.
+- **Kører**: Python (OMV: maskinens 3.13 i en venv; GitHub: setup-python 3.12; testsuiten består på begge), installerer requests, kører `python -m termik`. Deploy startes med `termik/tools/dispatch_workflow.py` (REST-API via requests), fordi OMV ikke har gh.
 - **Committer**: Opdaterede JSON-filer til repo'et med bot-bruger
 - **Push med rebase-retry** (siden 2026-08-26): kørslen tager ~20 min fra checkout til push, så et kode-push i det vindue flyttede main og fik datapushet afvist. Push-trinnet prøver nu op til 3 gange med `git pull --rebase` imellem; datacommits rører kun `termik/output/data/`, så rebasen er altid ren.
 

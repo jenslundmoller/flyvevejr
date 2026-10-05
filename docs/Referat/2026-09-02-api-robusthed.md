@@ -369,9 +369,12 @@ hænger intet (6 af 6 og 1 af 1 i dag).
 
 ### Besluttet 5/10: selvhostet runner med GitHub som reserve
 
-`update-forecast.yml` kører nu på en selvhostet runner på maskinen
-derhjemme (tændt døgnet rundt), labels `self-hosted` + `flyvevejr`, som en
-separat bruger `gh-runner` uden adgang til hjemmemappen. Reposet er
+`update-forecast.yml` kører nu på en selvhostet runner på OMV-maskinen
+(tændt døgnet rundt, Debian 13, Python 3.13), labels `self-hosted` +
+`flyvevejr`, i `/opt/gh-runner` som systembrugeren `gh-runner`, med
+`/srv`, FlightRadars og cloudflareds stier skjult via `InaccessiblePaths=`.
+OMV har ikke gh, så deploy startes via REST-API'et
+(`termik/tools/dispatch_workflow.py`). Reposet er
 offentligt, så ingen workflow må få en `pull_request`-trigger (en fork kunne
 ellers køre kode på maskinen). `forecast-fallback.yml` flytter en kørsel der
 har stået 15 min i kø til `ubuntu-latest`, så en slukket maskine giver en

@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   update-forecast:
-    # Selvhostet runner derhjemme: Open-Meteo drosler GitHub-runnerne, så
+    # Selvhostet runner på OMV-maskinen derhjemme: Open-Meteo drosler GitHub-runnerne, så
     # halvdelen af kaldene hang 30 s derfra, mens intet hænger hjemmefra
     # (Referat 2026-09-02, opfølgning 5/10). Er maskinen nede, flytter
     # forecast-fallback.yml kørslen til ubuntu-latest.
@@ -37,7 +37,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # setup-python kender ikke Zorin OS; maskinen har selv Python 3.12.
+      # Den selvhostede runner (OMV, Debian 13) bruger maskinens Python 3.13 i en
+      # venv; testsuiten består på både 3.12 og 3.13.
       - name: Set up Python
         if: runner.environment == 'github-hosted'
         uses: actions/setup-python@v7
@@ -86,17 +87,8 @@ jobs:
 
       - name: Trigger deploy
         if: steps.commit.outputs.changed == 'true'
+        # Python i stedet for gh: den selvhostede runner på OMV har ikke gh.
         env:
           GH_TOKEN: ${{ github.token }}
           REF: ${{ github.ref_name }}
-        run: |
-          for attempt in 1 2 3; do
-            if gh workflow run deploy-pages.yml --ref "$REF"; then
-              echo "Deploy triggered on attempt $attempt"
-              exit 0
-            fi
-            echo "Attempt $attempt failed, retrying in $((attempt * 10))s..."
-            sleep $((attempt * 10))
-          done
-          echo "::error::Failed to trigger deploy after 3 attempts"
-          exit 1
+        run: python -m termik.tools.dispatch_workflow deploy-pages.yml
