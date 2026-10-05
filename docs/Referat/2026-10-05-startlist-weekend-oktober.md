@@ -164,11 +164,77 @@ nede af søbrise-straffen i vestenvind 33 km inde.
 
 1. Gentag valideringen på flere efterårsdage (og foråret, hvor
    sæsonfaktoren også er under 1) før yderligere kalibrering.
-2. Søbrise-straffen i efterår: Slaglille 4/10 fik 1.8 i vestenvind med
-   kold luftmasse over 12-graders hav; tjek 5b's instabilitetstest mod
-   oktober (havtemp fra SEA_TEMP_BY_MONTH er et månedsgennemsnit).
+2. Søbrise-straffen: løst samme dag, se næste afsnit. Tilbage står at
+   5b også bruger 850 hPa-temperaturen, som har samme inversionsproblem
+   som lapse rate; pålandsstudiets data har ikke 925 hPa, så det kræver
+   en ny dataindsamling.
 3. Hent `temperature_1000hPa` og lavniveau-profil/heat flux fra
    `icon_seamless` eller `dmi_seamless` i stedet for ECMWF-niveauerne.
 4. På sigt: RASP-agtig W* (termikstyrke fra varmestrøm og BL-dybde) som
    kerneinput i stedet for lappeværket af absolutte caps; den håndterer
    årstiden af sig selv.
+
+## Opfølgning samme dag: søbrise og havtemperatur
+
+Slaglille søndag blev holdt 1.8 nede af søbrise-straffen, i vestenvind
+33 km inde. Punkt 5b (pålandsvind >= 8 kt over stabil havluft giver fuld
+søbrise) fyrede fordi havtemp minus 850-temp var 12 - 5.1 = 6.9, under
+tærsklen 7. De 12 grader er `SEA_TEMP_BY_MONTH[10]`, en fast månedsværdi.
+
+**Månedstabellen var forkert.** Open-Meteos marine-API ved pladsernes
+havpunkter:
+
+- 3.-4. oktober målte 14.5-16.4 grader (Storebælt 15.9), ikke 12.
+- Tabellen er en trappe: natten til 1/10 falder det antagne hav 4 grader
+  (16 -> 12), mens det målte gik 15.1 -> 15.0.
+- Målt minus tabel, middel 2024-2026: maj +2.9, juni +2.4, juli +1.9,
+  august +0.9, september +1.2, oktober +1.1.
+
+Med de målte 15.9 er land/hav-forskellen ~0 og 5b fyrer ikke: straffen
+bliver 0, ikke 1.8.
+
+**Tærsklen 7 holder.** Pålandsstudiet (2026-08-25) gentaget med målt
+havtemperatur på samme 26 pålandsdage (v2 >= 6.5, aktive): tabel og målt
+fejlklassificerer begge 5 dage ved tærskel 7 (tabel: 3 falske straffe og 2
+manglende; målt: 0 falske og 5 manglende), og ingen anden tærskel er
+bedre. Gevinsten ligger i havtemperaturen, ikke i at flytte tærsklen.
+
+### Implementeret
+
+- `termik/tools/fetch_sea_points.py` vælger én gang en havcelle pr.
+  kystnært punkt (ud langs kystretningen til marine-API'et svarer med en
+  havtemperatur), afrundet til 0.1 grad og delt: 158 celler for 255
+  punkter i `termik/sea_points.json`. Svævethy og seks indre
+  Limfjords-gitterpunkter får ingen celle (fjorden er ikke i
+  marine-modellen) og bruger klimatologien.
+- `fetch_weather.fetch_sea_temps` henter den aktuelle havtemperatur for
+  alle celler én gang pr. kørsel (2 lette kald) og sætter `sea_temp_c` på
+  punkterne. Fejler kaldet, kører prognosen videre på klimatologien.
+- Fallback: `SEA_TEMP_CLIMATOLOGY`, målt månedsmiddel 2024-2026,
+  interpoleret pr. dag (ingen trapper). Månedstabellen bruges kun af v1 og
+  direkte kald.
+- Data-blokken viser `sea_temp` og `sea_temp_source` (measured /
+  climatology). `replay_day` bruger den målte havtemperatur for den
+  genafspillede dag, så kalibrering ser det samme som produktionen.
+
+### Validering
+
+Samme sæt som ovenfor, med produktionens havceller og målt historik.
+
+| | Sommer i bånd | Sommer afv. | Sommer adskillelse | Okt i bånd | Okt afv. | Okt adskillelse |
+|---|---|---|---|---|---|---|
+| Før alle rettelser | 37/58 | 85.3 | 2.07 | 14/24 | 23.1 | 0.36 |
+| Fix 1-3 | 37/58 | 86.1 | 2.30 | 12/24 | 14.1 | 1.07 |
+| **+ målt havtemp** | **38/58** | **85.4** | **2.38** | **16/24** | 13.2 | **1.59** |
+| (+ kun klimatologi) | 38/58 | 86.9 | 2.32 | 16/24 | 12.7 | 1.59 |
+
+Søndagens stærke pladser når nu båndet: Slaglille 7.1 -> 8.5, Kalundborg
+6.8 -> 8.4, Gørløse 7.6 -> 8.5 (før alle rettelser 4.8-5.0). Replay af
+Slaglille 4/10 giver 7.7-8.6 kl. 12-15. Om sommeren flytter kun to rækker
+sig mærkbart: Kalundborg 2/8 (god, 208 min) 8.2 -> 9.1 og Sæby 23/8
+(svag) 7.0 -> 6.6, begge i den rigtige retning.
+
+Målt og klimatologi er næsten lige gode på dette materiale; målt er valgt
+fordi årene afviger (4/10-2026 lå 0.8 over klimatologien) og fordi lokal
+opvælling ikke kan ligge i en tabel (Køge Bugt 15 grader 8/8-2026 mod
+19 i resten af farvandet).

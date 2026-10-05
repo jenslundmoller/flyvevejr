@@ -20,13 +20,16 @@ See USAGE below for how to call it.
 import sys
 from datetime import date
 
+import requests
+
 from termik.config import (
     API_BASE_URL,
+    MARINE_API_URL,
     HOURLY_PARAMS,
     TIMEZONE,
 )
 from termik.fetch_weather import calculate_trailing_window, process_point_hour
-from termik.locations import AIRFIELDS
+from termik.locations import AIRFIELDS, SEA_POINTS
 from termik.scoring import effective_radiation
 from termik.tools.fetch_reference_day import MAX_PAST_DAYS, fetch_hourly, parse_day
 
@@ -77,6 +80,31 @@ def build_url(point: dict, day: date, today: date) -> str:
         f"&timezone={TIMEZONE}"
         f"&wind_speed_unit=kn"
     )
+
+
+def measured_sea_temp(point: dict, day: date) -> float | None:
+    """The sea cell's measured temperature at 13:00 on `day`, as production
+    would have read it, or None (no cell, or the marine API has no value).
+    Without it process_point_hour falls back to the climatology."""
+    cell = point.get("sea_cell")
+    if cell is None:
+        return None
+    lat, lon = SEA_POINTS["cells"][cell]
+    response = requests.get(
+        MARINE_API_URL,
+        params={
+            "latitude": lat,
+            "longitude": lon,
+            "hourly": "sea_surface_temperature",
+            "start_date": day.isoformat(),
+            "end_date": day.isoformat(),
+            "timezone": TIMEZONE,
+        },
+        timeout=60,
+    )
+    response.raise_for_status()
+    values = response.json().get("hourly", {}).get("sea_surface_temperature") or []
+    return values[13] if len(values) > 13 else None
 
 
 def day_hour_indices(hourly: dict, day: date) -> list[int]:
@@ -149,7 +177,11 @@ def main(argv: list[str]) -> None:
         covered = f"{hourly['time'][0]} to {hourly['time'][-1]}"
         raise SystemExit(f"ERROR: response covers {covered}, which does not cover {day}")
 
-    print(f"{point['name']} ({point['id']}) on {day}, {TIMEZONE}, forecast endpoint")
+    sea_temp = measured_sea_temp(point, day)
+    if sea_temp is not None:
+        point = dict(point, sea_temp_c=sea_temp)
+    sea_note = f"sea {sea_temp} C measured" if sea_temp is not None else "sea from climatology"
+    print(f"{point['name']} ({point['id']}) on {day}, {TIMEZONE}, forecast endpoint, {sea_note}")
     replay(point, hourly, day)
 
 

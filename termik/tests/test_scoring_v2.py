@@ -567,3 +567,107 @@ def test_process_point_hour_feeds_the_925_level():
     assert result["data"]["lapse_rate"] > 1.0
     assert result["data"]["lapse_rate_850"] == 0.72
     assert result["score"] > 6.0
+
+
+# --- Målt havtemperatur til søbrisen (Referat 2026-10-05) ---
+#
+# Månedstabellen SEA_TEMP_BY_MONTH var en trappe: 16 grader 30/9, 12 grader
+# 1/10, mens havet målte 15-16 begge dage. Slaglille 4/10 fik derfor 1.8 i
+# søbrise-straf (5b: 12 - 5.1 = 6.9 < 7) på en dag med 10 flyvninger over
+# 2 t. Produktionen læser nu den målte havtemperatur; uden den bruges en
+# målt klimatologi interpoleret pr. dag.
+
+from datetime import date as _date
+from termik.scoring_v2 import sea_temp_climatology
+from termik.config import SEA_TEMP_CLIMATOLOGY
+
+
+def test_climatology_hits_its_monthly_values_mid_month():
+    for month, value in SEA_TEMP_CLIMATOLOGY.items():
+        assert sea_temp_climatology(_date(2026, month, 15)) == pytest.approx(value)
+
+
+def test_climatology_has_no_step_at_month_change():
+    # Den gamle tabel faldt 4 grader natten til 1/10
+    assert abs(sea_temp_climatology(_date(2026, 9, 30))
+               - sea_temp_climatology(_date(2026, 10, 1))) < 0.3
+
+
+def test_climatology_wraps_the_year():
+    assert sea_temp_climatology(_date(2026, 1, 1)) == pytest.approx(
+        (SEA_TEMP_CLIMATOLOGY[12] + SEA_TEMP_CLIMATOLOGY[1]) / 2, abs=0.2)
+
+
+def test_measured_sea_temp_overrides_the_month_table():
+    # Slaglille 4/10 kl. 14: 33 km, kyst mod 239, vind 284 med 8 kt
+    args = (33.0, 239.0, 284.0, 8.0, 15.9, 10)
+    assert calculate_seabreeze_penalty_v2(*args, temp_850hpa=5.1) == 1.8
+    # Storebælt målte 15.9: ingen land/hav-forskel, ingen søbrise
+    assert calculate_seabreeze_penalty_v2(*args, temp_850hpa=5.1, sea_temp_c=15.9) == 0
+
+
+def test_measured_sea_temp_still_flags_stable_sea_air():
+    # Forårsdag: varm land, koldt hav, varm luft i 850 -> 5b fyrer stadig
+    penalty = calculate_seabreeze_penalty_v2(
+        13.0, 270.0, 270.0, 10.0, 18.0, 5, temp_850hpa=6.0, sea_temp_c=11.0)
+    assert penalty == pytest.approx(3.0 * (1 - 13 / 80), abs=0.1)
+
+
+def test_process_point_hour_uses_measured_sea_temp():
+    from termik.fetch_weather import process_point_hour
+
+    hourly = dict(
+        _synthetic_hourly(),
+        time=["2026-10-04T14:00"],
+        temperature_2m=[15.9], dewpoint_2m=[9.8], temperature_850hPa=[5.1],
+        wind_speed_10m=[8.0], wind_direction_10m=[284.0], wind_gusts_10m=[14.8],
+        shortwave_radiation=[343.0], direct_radiation=[168.0],
+    )
+    coastal = dict(_inland_point(), coast_distance_km=33.0, coast_direction_deg=239.0)
+    measured = process_point_hour(dict(coastal, sea_temp_c=15.9), hourly, 0, month=10)
+    fallback = process_point_hour(coastal, hourly, 0, month=10)
+    assert measured["data"]["sea_temp"] == 15.9
+    assert measured["data"]["sea_temp_source"] == "measured"
+    assert fallback["data"]["sea_temp_source"] == "climatology"
+    assert fallback["data"]["sea_temp"] == pytest.approx(
+        sea_temp_climatology(_date(2026, 10, 4)), abs=0.05)
+    assert measured["score"] >= fallback["score"]
+
+
+@pytest.mark.real_sea_fetch
+def test_fetch_sea_temps_failure_falls_back_quietly(monkeypatch):
+    import requests
+    import termik.fetch_weather as fw
+
+    def boom(*a, **k):
+        raise requests.exceptions.ConnectionError("marine down")
+    monkeypatch.setattr(fw.requests, "get", boom)
+    monkeypatch.setattr(fw.time, "sleep", lambda s: None)
+    # En død marine-API må aldrig vælte prognosen; scoringen falder tilbage
+    assert fw.fetch_sea_temps() == {}
+
+
+def test_attach_sea_temps():
+    from termik.fetch_weather import attach_sea_temps
+    points = [{"id": "a", "sea_cell": 1}, {"id": "b"}, {"id": "c", "sea_cell": 2}]
+    out = attach_sea_temps(points, {1: 15.9})
+    assert out[0]["sea_temp_c"] == 15.9
+    assert "sea_temp_c" not in out[1]
+    assert "sea_temp_c" not in out[2]        # cellen svarede ikke
+    assert "sea_temp_c" not in points[0]     # originalerne røres ikke
+
+
+@pytest.mark.real_sea_fetch
+def test_fetch_sea_temps_maps_cells_and_skips_land(monkeypatch):
+    import termik.fetch_weather as fw
+
+    class Resp:
+        def raise_for_status(self): pass
+        def json(self):
+            return [{"current": {"sea_surface_temperature": 15.9}},
+                    {"current": {"sea_surface_temperature": None}},
+                    {"current": {"sea_surface_temperature": 14.6}}]
+    monkeypatch.setattr(fw, "SEA_POINTS", {"cells": [[55.3, 11.1], [56.9, 8.8], [56.1, 12.3]],
+                                           "by_point": {}})
+    monkeypatch.setattr(fw.requests, "get", lambda *a, **k: Resp())
+    assert fw.fetch_sea_temps() == {0: 15.9, 2: 14.6}

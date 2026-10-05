@@ -387,12 +387,31 @@ MIXED_LAYER_MIN_THICKNESS_M = 300
 # 6.6) fra de målte successer (8.5 og op).
 SEABREEZE_STABLE_MARINE_INSTAB = 7.0
 
+# Søbrisens rækkevidde ind i landet; ud over den er straffen 0 (v2 bruger
+# den, v1 har sit eget 80-tal).
+SEABREEZE_MAX_DISTANCE_KM = 80
+
 # Sea surface temperature estimate by month (1-12)
 # Based on average Danish waters temperature
 SEA_TEMP_BY_MONTH = {
     1: 4, 2: 3, 3: 4, 4: 6, 5: 10, 6: 14,
     7: 17, 8: 18, 9: 16, 10: 12, 11: 9, 12: 6,
 }
+
+# Målt havtemperatur-klimatologi til v2's søbrise (fallback når den målte
+# værdi mangler). Månedsmiddel af Open-Meteos marine-API kl. 13 ved 17 af
+# pladsernes havpunkter, maj 2024 til oktober 2026 (jan-apr kun 2025-26).
+# Værdien gælder den 15. og interpoleres lineært mellem månederne, så der
+# ikke er et trin ved månedsskiftet. Tabellen ovenfor (v1 og direkte kald)
+# lå 1-3 grader for koldt maj-oktober og faldt 4 grader natten til 1/10;
+# målt 4/10-2026 var 14.5-16.4. Se Referat 2026-10-05.
+SEA_TEMP_CLIMATOLOGY = {
+    1: 3.6, 2: 1.4, 3: 4.1, 4: 8.1, 5: 12.9, 6: 16.4,
+    7: 18.9, 8: 18.9, 9: 17.2, 10: 13.1, 11: 9.4, 12: 6.4,
+}
+
+# Marine-API'et til den målte havtemperatur; ét kald pr. 100 havceller.
+MARINE_API_URL = "https://marine-api.open-meteo.com/v1/marine"
 
 # Output paths (relative to project root)
 OUTPUT_DIR = "termik/output"

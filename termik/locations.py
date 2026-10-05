@@ -337,6 +337,21 @@ def _load_grid_elevations():
 
 _GRID_ELEVATIONS = _load_grid_elevations()
 
+# Sea cell per coastal point, generated once by termik.tools.fetch_sea_points.
+# fetch_weather reads the measured sea temperature of these cells once per
+# run; a point without a cell uses the climatology in scoring_v2.
+SEA_POINTS_PATH = os.path.join(os.path.dirname(__file__), "sea_points.json")
+
+
+def _load_sea_points():
+    if not os.path.exists(SEA_POINTS_PATH):
+        return {"cells": [], "by_point": {}}
+    with open(SEA_POINTS_PATH) as f:
+        return json.load(f)
+
+
+SEA_POINTS = _load_sea_points()
+
 
 def _build_grid():
     """Build a GRID_STEP_DEG x GRID_STEP_DEG grid of land points over Denmark."""
@@ -372,3 +387,8 @@ GRID_POINTS = _build_grid()
 # ---------------------------------------------------------------------------
 
 ALL_POINTS = AIRFIELDS + GRID_POINTS
+
+for _point in ALL_POINTS:
+    _cell = SEA_POINTS["by_point"].get(_point["id"])
+    if _cell is not None:
+        _point["sea_cell"] = _cell

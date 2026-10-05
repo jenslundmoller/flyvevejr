@@ -25,7 +25,9 @@ from termik.config import (
     MID_LEVEL_DECK_THRESHOLD,
     MID_LEVEL_DECK_MAX_SCORE,
     SEA_TEMP_BY_MONTH,
+    SEA_TEMP_CLIMATOLOGY,
     SEABREEZE_STABLE_MARINE_INSTAB,
+    SEABREEZE_MAX_DISTANCE_KM,
     CU_ALLOWANCE,
     CIRRUS_BANK_LIGHT,
     CIRRUS_BANK_HEAVY,
@@ -43,6 +45,7 @@ from termik.config import (
     MIXED_LAYER_MIN_THICKNESS_M,
 )
 import math
+from datetime import date
 
 from termik.scoring import (
     score_lapse_rate,
@@ -79,6 +82,29 @@ def radiation_season_factor(lat: float, day_of_year: int) -> float:
     """
     ratio = _noon_sun_sine(lat, day_of_year) / _noon_sun_sine(lat, RADIATION_SEASON_REF_DOY)
     return max(RADIATION_SEASON_MIN_FACTOR, min(1.0, ratio))
+
+
+def sea_temp_climatology(day: date) -> float:
+    """Havtemperatur fra den målte klimatologi, interpoleret pr. dag.
+
+    Månedsværdien gælder den 15.; imellem interpoleres lineært, også hen
+    over årsskiftet. Se noten ved SEA_TEMP_CLIMATOLOGY.
+    """
+    def anchor(year: int, month: int) -> date:
+        return date(year, month, 15)
+
+    if day.day >= 15:
+        before = anchor(day.year, day.month)
+        nxt_month = day.month % 12 + 1
+        after = anchor(day.year + (day.month == 12), nxt_month)
+        v0, v1 = SEA_TEMP_CLIMATOLOGY[day.month], SEA_TEMP_CLIMATOLOGY[nxt_month]
+    else:
+        prev_month = (day.month - 2) % 12 + 1
+        before = anchor(day.year - (day.month == 1), prev_month)
+        after = anchor(day.year, day.month)
+        v0, v1 = SEA_TEMP_CLIMATOLOGY[prev_month], SEA_TEMP_CLIMATOLOGY[day.month]
+    fraction = (day - before).days / (after - before).days
+    return v0 + (v1 - v0) * fraction
 
 
 def mixed_layer_lapse_v2(
@@ -204,6 +230,7 @@ def calculate_seabreeze_penalty_v2(
     temp_2m: float,
     month: int,
     temp_850hpa: float | None = None,
+    sea_temp_c: float | None = None,
 ) -> float:
     """Punkt 5: søbrisens styrke følger land/hav-forskellen og vinden.
 
@@ -223,11 +250,16 @@ def calculate_seabreeze_penalty_v2(
     Diff <= 2 forbliver straffri: alle målte dage i det hjørne var
     konvektive, og et ustraffet ukendt hjørne er bedre end et udokumenteret
     straffet.
+
+    sea_temp_c er havets målte temperatur (eller klimatologien) fra
+    fetch_weather. Uden den bruges månedstabellen, som kun er tilbage for
+    direkte kald; den lå 1-3 grader for koldt og havde et trin på 4 grader
+    ved 1/10 (Referat 2026-10-05).
     """
-    if coast_distance_km >= 80:
+    if coast_distance_km >= SEABREEZE_MAX_DISTANCE_KM:
         return 0
 
-    sea_temp = SEA_TEMP_BY_MONTH[month]
+    sea_temp = sea_temp_c if sea_temp_c is not None else SEA_TEMP_BY_MONTH[month]
     land_sea_diff = temp_2m - sea_temp
     if land_sea_diff <= 2:
         return 0
@@ -262,7 +294,7 @@ def calculate_seabreeze_penalty_v2(
     else:
         risk = drive * 0.5
 
-    distance_factor = max(0, 1 - coast_distance_km / 80)
+    distance_factor = max(0, 1 - coast_distance_km / SEABREEZE_MAX_DISTANCE_KM)
     return round(risk * distance_factor, 1)
 
 
@@ -476,6 +508,7 @@ def compute_thermal_score_v2(
     temp_925hpa: float | None = None,
     height_925hpa_m: float | None = None,
     surface_elevation_m: float = 0,
+    sea_temp_c: float | None = None,
 ) -> dict:
     """Den samlede v2-score. Samme signatur og resultatform som v1 plus
     termiktoppen (punkt 4), så fetch_weather kan bruge de to i flæng.
@@ -526,6 +559,7 @@ def compute_thermal_score_v2(
         coast_distance_km, coast_direction_deg,
         wind_dir, wind_speed_kt, temp_2m, month,
         temp_850hpa=temp_850hpa,
+        sea_temp_c=sea_temp_c,
     )
     total -= seabreeze_penalty
 

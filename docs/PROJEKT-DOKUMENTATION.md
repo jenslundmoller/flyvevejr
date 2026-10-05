@@ -141,6 +141,7 @@ Tilføjet 2026-10-05 efter startlist-weekenden 3.-4. oktober (se [Referat 2026-1
 8. **Sæsonskaleret stråling**: alle absolutte W/m²-tærskler (strålings-gaten, varmehukommelsens gulv, solscorens 600 W/m² og basehøjde-cappets SW-krav) ganges med sin(middagssol i dag) / sin(middagssol 8/8), klampet til [0.5, 1.0]. Maj-juli er uændret; 4/10 er faktoren 0.63.
 9. **Blandingslagets lapse**: er 2 m -> 925 hPa >= 0.95 og grænselaget >= 900 m, scores og cappes på den største af 850- og 925-lapse. Fanger dage hvor inversionen ligger under 850 hPa over et fuldt blandet lag. `lapse_rate` er den scorede værdi, `lapse_rate_850` revisionssporet.
 10. **Terrænhøjde**: alle punkter har `elevation_m` (hardcodet for flyvepladser, `termik/grid_elevations.json` for griddet, hentet én gang med `termik/tools/fetch_elevations.py`), så parcel-beregningen starter i den rigtige højde.
+11. **Målt havtemperatur i søbrisen**: én gang pr. kørsel hentes havoverfladetemperaturen for en fast havcelle pr. kystnært punkt (`termik/sea_points.json`, valgt med `termik/tools/fetch_sea_points.py`) fra Open-Meteos marine-API. Fallback er en målt klimatologi interpoleret pr. dag. Den gamle månedstabel lå 1-3 grader for koldt og faldt 4 grader natten til 1/10.
 
 ### Basis-scorer (vægtet sum, v2)
 
@@ -208,7 +209,7 @@ Danmark er meget kystnært, og søbrisen er en af de vigtigste termik-dræbere. 
 
 1. **Kystafstand** (forudberegnet, statisk); straffen skaleres med afstanden, max effekt inden for 80 km
 2. **Vindretning vs. kystretning** — er vinden fralands eller pålands?
-3. **Land/hav-temperaturforskel** driver risikoen; er forskellen ≤2 grader, er der ingen straf (kryds-plads-studiet 2026-08-25: 8/8 pålandsdage med lille forskel bar, median 174 min)
+3. **Land/hav-temperaturforskel** (havet målt, se punkt 11 ovenfor) driver risikoen; er forskellen ≤2 grader, er der ingen straf (kryds-plads-studiet 2026-08-25: 8/8 pålandsdage med lille forskel bar, median 174 min)
 4. **Havluftens instabilitet (5b)**: pålandsvind ≥8 kt med stabil havluft (havtemp minus 850 hPa-temp under 7) løfter drivkraften til maksimum uanset land/hav-forskellen. Konvektiv havluft (kold luftmasse over varmt sensommerhav) bærer derimod termik med ind over land.
 
 ### Validering

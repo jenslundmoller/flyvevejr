@@ -76,3 +76,17 @@ def test_inland_elevations_are_real():
     silkeborg = next(af for af in AIRFIELDS if af["id"] == "silkeborg")
     assert 80 < silkeborg["elevation_m"] < 120
     assert max(gp["elevation_m"] for gp in GRID_POINTS) > 50
+
+
+def test_coastal_points_have_a_sea_cell():
+    # fetch_weather reads the measured sea temperature of these cells; a
+    # handful of inner-fjord points may lack one and use the climatology.
+    from termik.locations import SEA_POINTS
+    coastal = [p for p in ALL_POINTS if p["coast_distance_km"] < 80]
+    placed = [p for p in coastal if "sea_cell" in p]
+    assert len(placed) >= 0.95 * len(coastal)
+    for p in placed:
+        lat, lon = SEA_POINTS["cells"][p["sea_cell"]]
+        assert 54.0 < lat < 58.5 and 7.0 < lon < 15.5, p["id"]
+    ringsted = next(af for af in AIRFIELDS if af["id"] == "ringsted")
+    assert "sea_cell" in ringsted

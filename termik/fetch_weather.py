@@ -19,12 +19,17 @@ from termik.config import (
     DATA_DIR,
     RADIATION_MEMORY_HOURS,
     CIRRUS_SHIELD_MEMORY_HOURS,
+    MARINE_API_URL,
 )
 import termik.config as config_module
 from termik.scoring import compute_thermal_score, compute_thermal_top, THERMAL_TOP_LEVELS_HPA
-from termik.scoring_v2 import compute_thermal_score_v2, radiation_season_factor
+from termik.scoring_v2 import (
+    compute_thermal_score_v2,
+    radiation_season_factor,
+    sea_temp_climatology,
+)
 from termik.comments import generate_comment
-from termik.locations import ALL_POINTS, AIRFIELDS
+from termik.locations import ALL_POINTS, AIRFIELDS, SEA_POINTS
 
 
 def build_api_url(points: list[dict]) -> str:
@@ -196,6 +201,57 @@ def calculate_trailing_window(
     return [v for v in values[start:hour_index] if v is not None]
 
 
+# Havcellerne hentes i bidder af denne størrelse; current-feltet er let.
+MARINE_BATCH_SIZE = 100
+
+
+def fetch_sea_temps(max_retries: int = 3) -> dict[int, float]:
+    """Målt havoverfladetemperatur pr. havcelle (indeks i SEA_POINTS), nu.
+
+    Ét let kald pr. MARINE_BATCH_SIZE celler pr. kørsel. Havtemperaturen
+    flytter sig tiendedele om dagen, så værdien bruges for alle prognosens
+    timer. Fejler kaldet, returneres {} og scoringen falder tilbage på
+    klimatologien: en død marine-API må aldrig vælte prognosen.
+    """
+    cells = SEA_POINTS["cells"]
+    temps: dict[int, float] = {}
+    for start in range(0, len(cells), MARINE_BATCH_SIZE):
+        batch = cells[start:start + MARINE_BATCH_SIZE]
+        params = {
+            "latitude": ",".join(str(lat) for lat, _ in batch),
+            "longitude": ",".join(str(lon) for _, lon in batch),
+            "current": "sea_surface_temperature",
+        }
+        for attempt in range(max_retries):
+            try:
+                response = requests.get(MARINE_API_URL, params=params, timeout=60)
+                response.raise_for_status()
+                body = response.json()
+                break
+            except (requests.exceptions.RequestException, ValueError) as e:
+                if attempt == max_retries - 1:
+                    print(f"WARNING: sea temperature fetch failed ({e}); "
+                          f"sea breeze falls back to the climatology.")
+                    return {}
+                time.sleep(5 * (attempt + 1))
+        results = body if isinstance(body, list) else [body]
+        for offset, result in enumerate(results):
+            value = result.get("current", {}).get("sea_surface_temperature")
+            if value is not None:
+                temps[start + offset] = value
+    print(f"Sea temperature: {len(temps)}/{len(cells)} cells.")
+    return temps
+
+
+def attach_sea_temps(points: list[dict], sea_temps: dict[int, float]) -> list[dict]:
+    """Kopier punkterne og sæt sea_temp_c på dem hvis celle svarede."""
+    out = []
+    for point in points:
+        value = sea_temps.get(point.get("sea_cell"))
+        out.append(dict(point, sea_temp_c=value) if value is not None else point)
+    return out
+
+
 def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: int) -> dict:
     """Process one hour of forecast data for one point.
 
@@ -284,6 +340,8 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
                 "wind_gusts_kt": wind_gusts,
                 "lapse_rate": None,
                 "lapse_rate_850": None,
+                "sea_temp": None,
+                "sea_temp_source": None,
                 "cape": cape,
                 "precipitation": precipitation,
                 "pressure": pressure,
@@ -381,6 +439,18 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
 
     # Versionskontakten læses ved kald, ikke ved import, så en test (eller en
     # rollback) kan flippe termik.config.SCORING_VERSION uden genstart.
+    # Timens dato styrer både strålingens sæsonfaktor og havtemperatur-
+    # fallbacken. Syntetiske testdata uden tidsstempel kører uden begge.
+    timestamps = hourly_data.get("time")
+    day = datetime.fromisoformat(timestamps[hour_index][:10]).date() if timestamps else None
+    # Søbrisen læser havets målte temperatur (fetch_sea_temps); mangler den,
+    # bruges klimatologien for dagen (Referat 2026-10-05).
+    sea_temp_c = point.get("sea_temp_c")
+    sea_temp_source = "measured" if sea_temp_c is not None else None
+    if sea_temp_c is None and day is not None:
+        sea_temp_c = round(sea_temp_climatology(day), 1)
+        sea_temp_source = "climatology"
+
     if config_module.SCORING_VERSION == "v2":
         # v2's basehøjde-bånd (Skema 1) testes mod den UKORRIGEREDE base,
         # min(LCL, TI-nul): den Hcrit-korrigerede thermal_top er et
@@ -396,11 +466,9 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         # Strålingstærsklerne følger årstiden (Referat 2026-10-05). Datoen
         # læses af timens eget tidsstempel; uden det (syntetiske testdata)
         # bruges de kalibrerede augusttærskler uændret.
-        timestamps = hourly_data.get("time")
         radiation_scale = 1.0
-        if timestamps:
-            day_of_year = datetime.fromisoformat(timestamps[hour_index][:10]).timetuple().tm_yday
-            radiation_scale = radiation_season_factor(point["lat"], day_of_year)
+        if day is not None:
+            radiation_scale = radiation_season_factor(point["lat"], day.timetuple().tm_yday)
         result = compute_thermal_score_v2(
             **score_kwargs,
             thermal_base_agl_m=thermal_base_agl,
@@ -411,6 +479,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             temp_925hpa=level_temps_c.get(925),
             height_925hpa_m=level_heights_m.get(925),
             surface_elevation_m=surface_elevation_m,
+            sea_temp_c=sea_temp_c,
         )
     else:
         result = compute_thermal_score(**score_kwargs)
@@ -469,6 +538,8 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
             "lapse_rate": result["lapse_rate"],
             # 2 m -> 850 hPa uanset blandingslaget; kun v2 leverer det
             "lapse_rate_850": result.get("lapse_rate_850"),
+            "sea_temp": sea_temp_c,
+            "sea_temp_source": sea_temp_source,
             "cape": cape,
             "precipitation": precipitation,
             "pressure": pressure,
@@ -581,12 +652,13 @@ def process_all_points() -> dict:
     all_results = []
     failed = []
     total_batches = (len(ALL_POINTS) + API_BATCH_SIZE - 1) // API_BATCH_SIZE
+    points = attach_sea_temps(ALL_POINTS, fetch_sea_temps())
 
     # Batch points
     for batch_num, i in enumerate(range(0, len(ALL_POINTS), API_BATCH_SIZE)):
         if batch_num > 0:
             time.sleep(5)  # Avoid rate limiting between batches
-        batch_points = ALL_POINTS[i : i + API_BATCH_SIZE]
+        batch_points = points[i : i + API_BATCH_SIZE]
         started = time.monotonic()
         try:
             batch_data = fetch_batch(batch_points)
