@@ -1,5 +1,9 @@
 # Overdragelse 2026-10-05: kalibrering efter startlist-weekenden
 
+> **Fortsat samme dag:** punkt 13, 9, 1 og 7 er afsluttet, og driften er
+> flyttet til OMV. Se [2026-10-05-overdragelse-2.md](2026-10-05-overdragelse-2.md),
+> som er den aktuelle overdragelse.
+
 Samlet status efter sessionen 5. oktober 2026, så arbejdet kan fortsætte i
 en ny session. Detaljer, tal og begrundelser står i
 [2026-10-05-startlist-weekend-oktober.md](2026-10-05-startlist-weekend-oktober.md);
@@ -152,13 +156,11 @@ UI:
 
 Drift:
 
-13. **Læs `Batch n/27 ok in X s`-linjerne i GitHub Actions-loggene**
-    (5/10: læst, kaldene hænger tæt efter et vellykket kald; proben fandt ingen pause under ~150 s der virker, så løsningen er at flytte kaldene, se
-    `2026-09-02-api-robusthed.md`, opfølgning 5/10)
-    (`2026-09-02-api-robusthed.md`, opfølgning 1/10). Ligger mange
-    vellykkede kald tæt på 30 s: hæv timeouten. Hænger de: flyt kaldene
-    væk fra GitHub-runnerne (self-hosted runner, betalt API-nøgle eller
-    Cloudflare Worker/VPS). Fem dages kørsler ligger klar.
+13. ~~**Læs `Batch n/27 ok in X s`-linjerne i GitHub Actions-loggene**~~
+    Løst 5/10: kaldene hang (ikke langsomme), proben fandt ingen pause der
+    virker, og forecast-jobbet kører nu på en selvhostet runner på OMV
+    (2.5 min, 0 timeouts). Se `2026-09-02-api-robusthed.md`, opfølgning 5/10,
+    og [overdragelsen 2026-10-05 (2)](2026-10-05-overdragelse-2.md).
 14. Redningsrunden for fejlede batches og dækningsbanneret er ikke set i
     produktion.
 

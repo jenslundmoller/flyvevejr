@@ -7,7 +7,7 @@ Automatisk termik-vurdering for danske svæveflyvere. Systemet henter vejrdata f
 1. **Termik-score (0-10)** — samlet vurdering af flyveforhold
 2. **Termik-tophøjde (m)** — maks. brugbar termikhøjde via parcel-teori (jf. [Referat 2026-05-28](Referat/2026-05-28-termik-top.md))
 
-Resultaterne vises som to skifteligbare interaktive kortlag på **https://flyvevejr.dk**. Data opdateres automatisk hver 3. time via GitHub Actions.
+Resultaterne vises som to skifteligbare interaktive kortlag på **https://flyvevejr.dk**. Data opdateres automatisk hver 3. time kl. 05-17 UTC via GitHub Actions på en selvhostet runner (OMV-maskinen derhjemme).
 
 ---
 
@@ -59,15 +59,15 @@ Open-Meteo API (gratis, ingen nøgle)
        ▼
 ┌──────────────────┐     ┌────────────────┐     ┌─────────────────────┐
 │ Python-script    │────▶│ JSON-datafiler │────▶│ Statisk HTML/JS     │
-│ (GitHub Actions, │     │ current.json   │     │ Leaflet.js heatmap  │
-│  hver 3. time)   │     │ airfields.json │     │ flyvevejr.dk        │
+│ (Actions på OMV, │     │ current.json   │     │ Leaflet.js heatmap  │
+│  05-17 UTC /3 t) │     │ airfields.json │     │ flyvevejr.dk        │
 └──────────────────┘     │ meta.json      │     └─────────────────────┘
                          └────────────────┘
 ```
 
 ### Dataflow
 
-1. GitHub Actions kører `python -m termik` hver 3. time (kl. XX:15)
+1. GitHub Actions kører `python -m termik` kl. 05:15, 08:15, 11:15, 14:15 og 17:15 UTC på den selvhostede runner på OMV (reserve: GitHubs egne runnere, se GitHub Actions nedenfor)
 2. Scriptet henter først den målte havtemperatur for 158 havceller fra
    Open-Meteos marine-API (2 lette kald; fejler de, bruges klimatologien),
    derefter vejrdata fra Open-Meteo for 262 punkter, 30 flyvepladser
@@ -75,7 +75,7 @@ Open-Meteo API (gratis, ingen nøgle)
 3. For hvert punkt beregnes termik-score for hver time, 7 dage frem
 4. Resultatet skrives som JSON-filer
 5. GitHub Actions committer de opdaterede JSON-filer og pusher
-6. Push trigger GitHub Pages deploy
+6. Kørslen starter GitHub Pages-deploy via REST-API'et (`termik/tools/dispatch_workflow.py`)
 7. https://flyvevejr.dk viser den opdaterede side
 
 ### Hosting
@@ -83,7 +83,7 @@ Open-Meteo API (gratis, ingen nøgle)
 | Komponent | Tjeneste |
 |-----------|----------|
 | Kode + data | GitHub repo `jenslundmoller/flyvevejr` |
-| Automatisering | GitHub Actions (gratis for public repos) |
+| Automatisering | GitHub Actions; forecast-jobbet på en selvhostet runner på OMV, øvrige jobs på GitHubs runnere (gratis for public repos) |
 | Webhosting | GitHub Pages |
 | Domæne | flyvevejr.dk |
 | DNS | Cloudflare (CNAME → jenslundmoller.github.io, proxy fra) |
@@ -305,7 +305,7 @@ aldrig. `icon_seamless` og `dmi_seamless` leverer flere lavniveau-felter (se
 flyvevejr/
 ├── .github/
 │   └── workflows/
-│       ├── update-forecast.yml    # Henter vejrdata hver 3. time
+│       ├── update-forecast.yml    # Henter vejrdata hver 3. time kl. 05-17 UTC
 │       ├── rerun-failed-forecast.yml # Genstarter en fejlet forecast-kørsel
 │       ├── forecast-fallback.yml  # Flytter kørslen til GitHub hvis runneren derhjemme er nede
 │       ├── probe-throttle.yml     # Manuel måling af Open-Meteos drosling
@@ -392,7 +392,7 @@ zoom-knapperne. Viser de aktuelle forhold for den valgte favorit-plads (jf.
 
 - **Datakilde**: ingen ny API-kald. Widgeten læser den aktuelle lokale time for
   favorit-pladsen direkte fra `current.json` via `getPointAtTime(plads, 0, time)`.
-  Data fornyes som hidtil hver 3. time via GitHub Actions, så "caching" sker
+  Data fornyes hver 3. time i dagtimerne via GitHub Actions, så "caching" sker
   gratis på data-laget. Opdateres ved page-load, ved favorit-skift, og hvert
   minut (følger uret uden reload).
 - **Indhold**: stort temperaturtal + pladsnavn, dynamisk vejr-ikon (inline-SVG
@@ -447,6 +447,17 @@ Vagthund for den selvhostede runner, kører på GitHub hver halve time kl. 05-18
 
 Engangsmåling (kun manuel start): hvor længe Open-Meteo holder igen over for en GitHub-runner efter et vellykket kald. Loggene 1-5/10 viste at kaldene hænger (30 s uden svar) i 50-61 % af tilfældene inden for ~55 s efter et vellykket kald, men kun 2 % efter ~110 s; hjemmefra hænger intet. Start den lige efter en forecast-kørsel, så de ikke deler kvote. Se [Referat 2026-09-02, opfølgning 5/10](Referat/2026-09-02-api-robusthed.md).
 
+### Sikkerhed for den selvhostede runner (repoet er offentligt)
+
+Besluttet 2026-10-05: repoet forbliver offentligt, fordi GitHub Pages fra et privat repo kræver en betalt plan. Til gengæld:
+
+- **Ingen workflow må få en `pull_request`-trigger.** En fork kunne ellers køre kode på OMV.
+- **Godkendelse af fork-workflows** er sat til "alle eksterne bidragydere" (Settings → Actions → General).
+- **Kun GitHubs egne actions** (`actions/*`, `github/*`) må køres; alle workflows bruger kun dem.
+- **Runneren er hærdet** på OMV: egen systembruger, `ProtectSystem=strict`, `ProtectHome=true`, og `/srv`, FlightRadar, hue-poller og cloudflared skjult med `InaccessiblePaths=`.
+
+**Overvej i fremtiden** at gøre repoet privat og flytte siden væk fra GitHub Pages (Cloudflare Pages, eller OMV via den eksisterende Cloudflare Tunnel), så den selvhostede runner ikke hænger på et offentligt repo. Repoet er desuden ~920 MB, fordi hver kørsel committer ~14 MB JSON; en flytning er en naturlig anledning til at stoppe med at committe data. Se åbent punkt 20 og 19 i [overdragelsen 2026-10-05 (2)](Referat/2026-10-05-overdragelse-2.md).
+
 ### deploy-pages.yml
 
 - **Trigger**: Push til main der ændrer `termik/output/**` + manuel dispatch
@@ -492,12 +503,12 @@ python -m pytest termik/tests/ -v
 
 ### Automatisk drift
 
-Systemet kører fuldautomatisk via GitHub Actions. Ingen server eller lokal maskine nødvendig.
+Systemet kører fuldautomatisk via GitHub Actions. Forecast-jobbet kører siden 2026-10-05 på en selvhostet runner på OMV-maskinen derhjemme (`/opt/gh-runner`, systemd-unit `actions.runner.jenslundmoller-flyvevejr.omv.service`); opsætning, hærdning og fejlsøgning står i OMV-webhosting-referencen rev. 5. Er OMV nede, flytter `forecast-fallback.yml` kørslen til GitHubs runnere efter 15 min, så siden aldrig mangler data, men kørslen tager så 12-43 min på grund af Open-Meteos drosling. Hjemme-IP'en deler Open-Meteos gratis kvote (10.000 kald/døgn) med alt andet derhjemme, inklusive analysekald; produktionen bruger ~5.000.
 
 ### Manuel kørsel
 
 ```bash
-cd /home/jens/Documents/Flyveteori
+cd /home/jens/AI/Flyvevejr
 source termik/.venv/bin/activate
 python -m termik
 ```
@@ -506,7 +517,9 @@ python -m termik
 
 1. Gå til Actions-fanen på GitHub
 2. Vælg "Update Termik Forecast"
-3. Klik "Run workflow"
+3. Klik "Run workflow" og vælg runner (`self-hosted` = OMV, `ubuntu-latest` = GitHubs reserve)
+
+Eller fra kommandolinjen: `gh workflow run update-forecast.yml -f runner=self-hosted`.
 
 ### Lokal udvikling med preview
 
@@ -539,7 +552,7 @@ Alle vægte og tærskler er i `termik/config.py`. Score-funktionerne er i `termi
 | **Open-Meteo** | Gratis, ingen nøgle, alle parametre inkl. pressure levels og CAPE |
 | **Statisk HTML/JS** | Ingen server nødvendig, kan hostes gratis på GitHub Pages |
 | **Leaflet.js** | Open source, let, god heatmap-plugin |
-| **GitHub Actions** | Gratis CI/CD for public repos, cron-scheduling |
+| **GitHub Actions** | Gratis CI/CD for public repos, cron-scheduling; selvhostet runner på OMV fordi Open-Meteo drosler GitHubs runnere |
 | **GitHub Pages** | Gratis hosting, custom domain-support, automatisk SSL |
 
 ---
