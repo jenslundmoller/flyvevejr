@@ -252,21 +252,26 @@ Gratis, ingen API-nøgle. Understøtter multi-location i ét kald (kommaseparere
 temperature_2m, dewpoint_2m, relative_humidity_2m, wind_speed_10m, wind_direction_10m, wind_gusts_10m, cloud_cover, cloud_cover_low, cloud_cover_mid, cloud_cover_high, precipitation, shortwave_radiation, direct_radiation, cape, surface_pressure, boundary_layer_height
 
 **Højdelag (80/120/180 m):**
-wind_speed/direction_80m/120m/180m, temperature_80m/120m/180m
+wind_speed/direction_80m/120m/180m
 
 **Pressure levels — temperaturer:**
-temperature_950hPa, temperature_925hPa, temperature_900hPa, temperature_850hPa, temperature_800hPa, temperature_700hPa, temperature_600hPa
+temperature_925hPa, temperature_850hPa, temperature_700hPa, temperature_600hPa
 
 **Pressure levels — geopotential heights (til parcel-teori for termik-tophøjde):**
-geopotential_height_950hPa til geopotential_height_600hPa
+geopotential_height_925hPa, _850hPa, _700hPa, _600hPa
+
+I alt 32 variable (2026-10-05). Open-Meteo tæller hver påbegyndte 10 variable som ét kald pr. punkt, så en kørsel koster ~1.000 af de 10.000 gratis kald i døgnet (262 punkter x 3,2 plus havtemperaturen).
 
 **Pressure levels — vind:**
 wind_speed_850hPa, wind_direction_850hPa
 
 **Bemærk (målt 2026-10-05):** best_match henter trykniveauerne for Danmark
-fra ECMWF, som kun har 1000/925/850 hPa i de nederste 1.6 km. 950, 900 og
-800 hPa samt 80/120/180 m-temperaturen kommer derfor tomme tilbage, og har
-gjort det siden mindst juli. Parcel-beregningen og blandingslagets lapse
+fra en model der kun har 1000/925/850 hPa i de nederste 1.6 km. 950, 900 og
+800 hPa samt 80/120/180 m-temperaturen kom tomme tilbage for 252 af 262
+punkter og hentes derfor ikke længere; kun Lolland og gitteret ved 54.5-54.7 N
+fik dem. Fjernelsen flyttede 6 af 700 dagtimer på de 10 punkter (alle op til
+3, via lapse 2-180 m-cappet) og termiktoppen dér med -45 m i middel, som nu
+regnes som i resten af landet. Koden læser felterne stadig, hvis de findes. Parcel-beregningen og blandingslagets lapse
 bygger reelt på 925 og 850 hPa; overflade-lapse-checket (2 m -> 180 m) kører
 aldrig. `icon_seamless` og `dmi_seamless` leverer flere lavniveau-felter (se
 åbent punkt 7 i [overdragelsen](Referat/2026-10-05-overdragelse.md)).
@@ -337,7 +342,7 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/                     # 506 tests (2026-10-05)
+│   └── tests/                     # 513 tests (2026-10-05)
 │       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
 │       ├── test_locations.py
 │       ├── test_scoring.py        # v1 + termiktop
@@ -347,7 +352,8 @@ flyvevejr/
 │       ├── test_fetch_weather.py
 │       ├── test_probe_throttle.py # Probe-logikken med falsk klokke
 │       ├── test_forecast_watchdog.py # Hvornår en kørsel flyttes til GitHub
-│       └── test_dispatch_workflow.py # Deploy-trigger uden gh
+│       ├── test_dispatch_workflow.py # Deploy-trigger uden gh
+│       └── test_workflow_schedule.py # Kørselsplanen (dagtimer, frisk morgen)
 ```
 
 ---
@@ -423,7 +429,7 @@ Desktop: sidepanel til højre. Mobil (<768px): sidepanel som bund-panel.
 
 ### update-forecast.yml
 
-- **Trigger**: Cron `15 */3 * * *` (hver 3. time kl. XX:15) + manuel dispatch (valg af runner)
+- **Trigger**: Cron `15 5-17/3 * * *` (05:15, 08:15, 11:15, 14:15, 17:15 UTC; ingen kørsler om natten, frisk prognose om morgenen; besluttet 2026-10-05) + manuel dispatch (valg af runner). 5 kørsler x ~1.000 = ~5.000 Open-Meteo-kald i døgnet.
 - **Runner** (siden 2026-10-05): selvhostet på OMV-maskinen derhjemme (Debian 13, labels `self-hosted`, `flyvevejr`, i `/opt/gh-runner` som systembrugeren `gh-runner`, hærdet med en systemd-drop-in; se OMV-webhosting-referencen). Open-Meteo drosler GitHub-runnerne: halvdelen af kaldene hang 30 s derfra, hjemmefra intet ([Referat 2026-09-02, opfølgning 5/10](Referat/2026-09-02-api-robusthed.md)). Manuel dispatch med `runner=ubuntu-latest` kører på GitHub som reserve.
 - **Kører**: Python (OMV: maskinens 3.13 i en venv; GitHub: setup-python 3.12; testsuiten består på begge), installerer requests, kører `python -m termik`. Deploy startes med `termik/tools/dispatch_workflow.py` (REST-API via requests), fordi OMV ikke har gh.
 - **Committer**: Opdaterede JSON-filer til repo'et med bot-bruger
@@ -435,7 +441,7 @@ Vagthund: trigges når en forecast-kørsel slutter. Fejlede den (og attempt < 3)
 
 ### forecast-fallback.yml
 
-Vagthund for den selvhostede runner, kører på GitHub hver halve time (`5,35 * * * *`). Har en forecast-kørsel stået i kø i mindst 15 min (en online runner tager den på sekunder), aflyses den og erstattes af én kørsel på `ubuntu-latest`. Reservekørsler (titel "(ubuntu-latest)") aflyses aldrig. Logikken er `termik/tools/forecast_watchdog.py` med tests. En aflyst kørsel trigger ikke rerun-workflowet, som kun reagerer på `failure`.
+Vagthund for den selvhostede runner, kører på GitHub hver halve time kl. 05-18 UTC (`5,35 5-18 * * *`). Har en forecast-kørsel stået i kø i mindst 15 min (en online runner tager den på sekunder), aflyses den og erstattes af én kørsel på `ubuntu-latest`. Reservekørsler (titel "(ubuntu-latest)") aflyses aldrig. Logikken er `termik/tools/forecast_watchdog.py` med tests. En aflyst kørsel trigger ikke rerun-workflowet, som kun reagerer på `failure`.
 
 ### probe-throttle.yml
 

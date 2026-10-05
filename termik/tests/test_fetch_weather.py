@@ -83,7 +83,9 @@ def _minimal_hourly_data(hours: int = 4, **overrides) -> dict:
     get a silently truncated window (Python slices do not raise on short
     lists) and assert against the wrong values while staying green.
     """
-    unknown = set(overrides) - set(HOURLY_PARAMS) - {"time"}
+    # Felter koden stadig læser når API'et giver dem (fx de trimmede lag på
+    # Lolland), er gyldige overrides og står i _NEUTRAL_HOURLY_VALUES.
+    unknown = set(overrides) - set(_NEUTRAL_HOURLY_VALUES) - {"time"}
     if unknown:
         raise TypeError(f"unknown hourly_data key(s): {', '.join(sorted(unknown))}")
     wrong_length = {
@@ -100,10 +102,14 @@ def _minimal_hourly_data(hours: int = 4, **overrides) -> dict:
             for h in range(hours)
         ]
     }
-    for key in HOURLY_PARAMS:
+    for key in _NEUTRAL_HOURLY_VALUES:
         data[key] = [_NEUTRAL_HOURLY_VALUES[key]] * hours
     data.update(overrides)
     return data
+
+
+def test_neutral_fixture_covers_every_fetched_param():
+    assert set(HOURLY_PARAMS) <= set(_NEUTRAL_HOURLY_VALUES)
 
 
 def _test_point(**overrides) -> dict:
@@ -240,9 +246,31 @@ def test_build_api_url_includes_altitude_params():
     assert "wind_speed_120m" in url
     assert "wind_speed_180m" in url
     assert "wind_direction_80m" in url
-    assert "temperature_80m" in url
-    assert "temperature_180m" in url
     assert "boundary_layer_height" in url
+
+
+# best_match giver kun disse felter for 10 af 262 punkter (Lolland og
+# gitteret ved 54.5-54.7 N); resten af landet får tomme lister. De koster
+# 0.9 kald pr. punkt hos Open-Meteo og flyttede 6 af 700 dagtimer på de 10
+# punkter (Referat 2026-09-02, opfølgning 5/10), så de hentes ikke længere.
+TRIMMED_PARAMS = [
+    "temperature_80m", "temperature_120m", "temperature_180m",
+    "temperature_950hPa", "temperature_900hPa", "temperature_800hPa",
+    "geopotential_height_950hPa", "geopotential_height_900hPa",
+    "geopotential_height_800hPa",
+]
+
+
+def test_fields_best_match_leaves_empty_are_not_fetched():
+    url = build_api_url([{"lat": 55.92, "lon": 9.07}])
+    for param in TRIMMED_PARAMS:
+        assert param not in HOURLY_PARAMS
+        assert f"{param}," not in url and not url.endswith(param)
+
+
+def test_param_count_keeps_the_api_weight_down():
+    """Open-Meteo tæller 10 variable som ét kald pr. punkt."""
+    assert len(HOURLY_PARAMS) == 32
 
 
 def test_process_point_hour_passes_multilevel_data():

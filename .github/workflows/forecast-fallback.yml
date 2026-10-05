@@ -2,14 +2,15 @@ name: Forecast Fallback
 
 # Forecast-kørslerne går på den selvhostede runner derhjemme. Er maskinen
 # slukket, står jobbet i kø i op til et døgn, og kortet viser en gammel
-# prognose. Denne vagthund kører på en GitHub-hostet runner hver halve time:
+# prognose. Denne vagthund kører på en GitHub-hostet runner hver halve time i dagtimerne:
 # har en kørsel stået i kø i mindst 15 min, aflyses den og erstattes af én
 # kørsel på ubuntu-latest (langsom pga. droslingen, men den lykkes).
 # Logikken og testene står i termik/tools/forecast_watchdog.py.
 
 on:
   schedule:
-    - cron: '5,35 * * * *'
+    # Kun når forecast-kørsler kan stå i kø: 05:15 til ~17:45, plus et kvarter.
+    - cron: '5,35 5-18 * * *'
   workflow_dispatch:
 
 permissions:

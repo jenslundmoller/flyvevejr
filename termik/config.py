@@ -44,10 +44,11 @@ HOURLY_PARAMS = [
     "wind_direction_120m",
     "wind_speed_180m",
     "wind_direction_180m",
-    # Multi-level temperature
-    "temperature_80m",
-    "temperature_120m",
-    "temperature_180m",
+    # 80/120/180 m-temperatur, 950/900/800 hPa og deres højder hentes ikke:
+    # best_match giver dem kun for 10 af 262 punkter (Lolland og gitteret ved
+    # 54.5-54.7 N), og Open-Meteo tæller hver 10. variabel som et kald pr.
+    # punkt. Koden læser dem stadig, hvis de findes (Referat 2026-09-02,
+    # opfølgning 5/10).
     # Standard parameters
     "cloud_cover",
     "cloud_cover_low",
@@ -60,19 +61,13 @@ HOURLY_PARAMS = [
     "surface_pressure",
     "boundary_layer_height",
     # Pressure levels — temperatures
-    "temperature_950hPa",
     "temperature_925hPa",
-    "temperature_900hPa",
     "temperature_850hPa",
-    "temperature_800hPa",
     "temperature_700hPa",
     "temperature_600hPa",
     # Pressure levels — geopotential heights for parcel-theory thermal-top
-    "geopotential_height_950hPa",
     "geopotential_height_925hPa",
-    "geopotential_height_900hPa",
     "geopotential_height_850hPa",
-    "geopotential_height_800hPa",
     "geopotential_height_700hPa",
     "geopotential_height_600hPa",
     # Pressure level winds (existing — used for shear/seabreeze diagnostics)
