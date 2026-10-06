@@ -75,29 +75,75 @@ sæsonskaleret 25 %.
 **4. "Inversion"-dommen er forkert i 25 timer.** Toppen vises som 0 m, men
 piloterne nåede median 644 m AGL (11 dage, mest september-oktober).
 
-**5. Om efteråret er selve den rå base ~150 m for lav.** Selv uden
-fradrag ligger september-oktober 50 m under det fløjne, hvor sommeren
-ligger 130 m over. Noget i LCL/TI-nul reagerer på årstiden (måske 2 m-
-dugpunktet). Hviler på ~10 efterårsdage.
+**5. Det er ikke efteråret der er for lavt, men sommeren der er for højt.**
+Schleswig-sonden (10035) kl. 12 UTC på alle 89 flyvedage mod modellen i
+samme punkt (historical-forecast). Sondens LCL er beregnet for
+blandingslaget (middel af theta og blandingsforhold i de nederste 500 m),
+som er det cumulus faktisk danner base fra:
+
+| | 2 m-temp model-sonde | 2 m-dugpunkt model-sonde | Model-LCL minus sondens |
+|---|---|---|---|
+| Juni-august (68 dage) | +0.9 | -0.7 | **+133 m** |
+| September-oktober (11 dage) | +0.2 | -0.2 | -12 m |
+
+Fejlen følger strålingen (korrelation 0.43 med absolut SW, 0.38 med
+sæsonskaleret):
+
+| Modellens SW kl. 12 UTC | Dage | Model-LCL minus sondens |
+|---|---|---|
+| 0-200 W/m² | 5 | -54 m |
+| 200-400 W/m² | 16 | +31 m |
+| 400-600 W/m² | 25 | +80 m |
+| over 600 W/m² | 43 | **+151 m** |
+
+I stærk sol er modellens 2 m-luft for varm og tør, så LCL ligger for højt.
+Flyvningerne viser det samme: i maj-august ligger rå base minus fløjet top
+på ~0 m ved 300-500 W/m² og +160 m over 700 W/m². Det sommerkalibrerede
+fradrag har altså reelt rettet en modelfejl, og derfor ramte det for lavt
+om efteråret, hvor der ikke er nogen fejl at rette. Det oprindelige
+fradrag (200-500 m) går den forkerte vej: størst når solen er svagest.
+
+**6. Et fradrag der følger strålingen.** Tilpasset alene på Jylland+Fyn
+maj-august (gitter over hældning, tærskel og bund), testet på september-
+oktober som modellen ikke har set:
+
+| Fradrag | Maj-aug (tilpasset) | Sep-okt (ikke set) | Hele sæsonen | Sjælland uden loft | Loft-timer under loftet |
+|---|---|---|---|---|---|
+| v1: 200-500 m | -126 / 219 | -378 / 368 | -152 / 232 | +0 / 212 | 40 % |
+| 100-300 m sæsonskaleret (første forslag) | -19 / 189 | -211 / 209 | -43 / 191 | +111 / 222 | 25 % |
+| **0.4 x (SW - 400), mindst 0** | **-1 / 173** | **-107 / 135** | **-16 / 170** | +121 / 212 | 20 % |
+| Intet fradrag | +94 / 197 | -86 / 129 | +74 / 191 | +215 / 271 | 14 % |
+
+0.4 x (SW - 400) giver 0 m ved 400 W/m² og derunder, 120 m ved 700 og 200 m
+ved 900, i tråd med sondens +151 m over 600 W/m². Hældning 0.6 og tærskel
+500 er lige så gode på sommeren; 0.4/400 er valgt fordi den har mindst
+afvigelse og er mindst stejl. Sjællands +121 er lofterne (fund 2).
+
+Tilbage om efteråret står ~100 m hvor piloterne kommer over modellens base,
+selv om modellen og sonden er enige om blandingslagets LCL. Det kan være
+basen der stiger over eftermiddagen (sonden er kl. 14 lokal), men det
+hviler på 8-10 dage og er ikke tilpasset væk.
 
 ## Implementeret
 
-Margin 100 m i fuld sol til 300 m uden sol (v2), fuld sol = 600 W/m²
-ganget med strålingens sæsonfaktor (samme `radiation_season_factor` som
-fix 2): `hcrit_margin_v2` i `scoring_v2.py`, konstanterne
-`HCRIT_V2_*` i config, og `compute_thermal_top` tager et `margin_m` fra
-kalderen. v1 er urørt. Ændrer kun den viste top og kommentarteksten:
-scoren bruger den rå base (punkt 4 i v2), og `margin_collapse` er uændret
-fordi fradraget allerede er klampet til halvdelen af den rå højde.
+Fradraget fra rå base til vist top er i v2 `hcrit_margin_v2(SW)` =
+0.4 m pr. W/m² over 400 W/m², intet under (konstanterne
+`HCRIT_V2_SW_FREE_W_M2` og `HCRIT_V2_M_PER_W_M2` i config). Absolut
+stråling, ikke sæsonskaleret, fordi fejlen sidder i modellens 2 m-felter.
+`compute_thermal_top` tager fradraget fra kalderen (`margin_m`); v1 er
+urørt. Klampningen til halvdelen af den rå højde over terræn står stadig.
 
-Kontrol på de 1.612 timer med produktionskoden: scoren er uændret i alle
-timer, og `thermal_top_limited_by` ligeså. Jylland og Fyn (1.142 timer):
-afvigelse -152 -> -43 m, gennemsnitlig fejl 232 -> 191 m; september-
-oktober (104 timer) -379 -> -212 m, fejl 368 -> 209 m.
+Kontrol med produktionskoden på alle dagtimer (kl. 8-19) for 26
+flyvepladser 18/5-4/10, 43.680 timer: scoren er uændret i alle. 30 timer
+skifter `thermal_top_limited_by` fra `margin_collapse` til `weak_solar`
+(overskyede timer med base under 100 m AGL); ingen af dem påvirker scoren.
+Jylland og Fyn (1.142 timer med flyvninger): afvigelse -152 -> -16 m,
+gennemsnitlig fejl 232 -> 170 m; september-oktober -379 -> -106 m, fejl
+368 -> 135 m.
 
-Valgt frem for fast 100 m (lidt lavere fejl) fordi den beholder den
-fysiske idé: svagere sol giver svagere termik og større afstand til
-toppen. Forskellen er under 10 m i gennemsnitlig fejl.
+Et første forslag (100-300 m med fuld sol sæsonskaleret) blev committet
+og erstattet samme dag, da sonden viste at fejlen følger strålingen og
+ikke årstiden.
 
 ## Forbehold
 
@@ -111,8 +157,8 @@ toppen. Forskellen er under 10 m i gennemsnitlig fejl.
 
 ## Åbne punkter
 
-1. Efterårets lave rå base (fund 5): saml flere efterårsdage og se på
-   dugpunktet.
+1. De sidste ~100 m om efteråret (fund 6): saml flere efterårsdage, og se
+   om basen stiger over eftermiddagen.
 2. Den falske "inversion"-dom (fund 4): 25 timer hvor der blev fløjet til
    ~640 m AGL.
 3. Sjælland: hvis dagens loft kan registreres (FlightRadar eller

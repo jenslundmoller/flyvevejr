@@ -345,18 +345,19 @@ THERMAL_TOP_STRONG_AGL_M = 1200  # over: +0.5 bonus
 THERMAL_TOP_STRONG_BONUS = 0.5
 THERMAL_TOP_CAP_MIN_SW = 400
 
-# Hcrit-fradraget på den viste termiktop (kun v2). v1 trækker 200 m fra i
-# fuld sol og op til 500 m uden sol, med fuld sol = 600 W/m² absolut. Mod
-# 27.500 termikbobler fra FlightRadar (maj-oktober, Jylland og Fyn, hvor
-# piloterne ikke stoppes af luftrumslofter) lå toppen 150 m under hvor
-# piloterne forlod boblen, og 300-400 m under i september-oktober, fordi
-# strålingen der sjældent når 600. 100-300 m med fuld sol skaleret efter
-# årstiden (radiation_season_factor) halverer afvigelsen. Scoren bruger den
-# rå base (punkt 4), så kun den viste top og kommentaren flytter sig.
+# Fradraget fra rå base til vist termiktop (kun v2). v1 trækker 200 m fra i
+# fuld sol og op til 500 m uden sol, som sikkerhedsmargin. Mod 27.500
+# termikbobler fra FlightRadar (maj-oktober, Jylland og Fyn, hvor piloterne
+# ikke stoppes af luftrumslofter) og Schleswig-sonden 12 UTC (89 dage) er
+# fradraget i stedet en rettelse af modellen: i stærk sol er dens 2 m-luft
+# for varm og tør, så LCL ligger for højt (sonden: -54 m under 200 W/m²,
+# +151 m over 600). Fradraget er derfor 0.4 m pr. W/m² over 400 W/m² og
+# intet under. Tilpasset på maj-august, testet på september-oktober:
+# afvigelse -211 -> -107 m, gennemsnitlig fejl 209 -> 135 m. Scoren bruger
+# den rå base (punkt 4), så kun den viste top og kommentaren flytter sig.
 # Se Referat 2026-10-06.
-HCRIT_V2_MARGIN_FULL_SUN_M = 100
-HCRIT_V2_MARGIN_NO_SUN_M = 300
-HCRIT_V2_FULL_SUN_W_M2 = 600
+HCRIT_V2_SW_FREE_W_M2 = 400
+HCRIT_V2_M_PER_W_M2 = 0.4
 
 # Punkt 6: koldluftsadvektion holder termikken længere (s. 14), så
 # varmehukommelsens faktor løftes +0.10 når 850 hPa er faldet mindst 1 grad

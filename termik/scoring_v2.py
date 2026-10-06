@@ -47,9 +47,8 @@ from termik.config import (
     MIXED_LAYER_LAPSE_MIN,
     MIXED_LAYER_MIN_DEPTH_M,
     MIXED_LAYER_MIN_THICKNESS_M,
-    HCRIT_V2_MARGIN_FULL_SUN_M,
-    HCRIT_V2_MARGIN_NO_SUN_M,
-    HCRIT_V2_FULL_SUN_W_M2,
+    HCRIT_V2_SW_FREE_W_M2,
+    HCRIT_V2_M_PER_W_M2,
 )
 import math
 from datetime import date
@@ -91,23 +90,17 @@ def radiation_season_factor(lat: float, day_of_year: int) -> float:
     return max(RADIATION_SEASON_MIN_FACTOR, min(1.0, ratio))
 
 
-def hcrit_margin_v2(shortwave_radiation: float | None, radiation_scale: float = 1.0) -> int:
-    """Fradraget fra rå base til vist termiktop: 100 m i fuld sol, 300 m uden.
+def hcrit_margin_v2(shortwave_radiation: float | None) -> int:
+    """Fradraget fra rå base til vist termiktop: modellens LCL ligger for højt
+    i stærk sol, så 0.4 m pr. W/m² over 400 W/m² trækkes fra, og intet under.
 
-    Lineært imellem. "Fuld sol" er 600 W/m² gange årstidens
-    radiation_scale, så en oktoberdag med fuld sol ikke straffes som halv
-    sol. Se noten ved HCRIT_V2_MARGIN_FULL_SUN_M i config.
+    Bevidst absolut stråling, ikke sæsonskaleret: fejlen sidder i modellens
+    2 m-felter og følger strålingen, ikke solhøjden. Se noten ved
+    HCRIT_V2_SW_FREE_W_M2 i config.
     """
-    if shortwave_radiation is None or shortwave_radiation <= 0:
-        return HCRIT_V2_MARGIN_NO_SUN_M
-    full_sun = HCRIT_V2_FULL_SUN_W_M2 * radiation_scale
-    if shortwave_radiation >= full_sun:
-        return HCRIT_V2_MARGIN_FULL_SUN_M
-    t = shortwave_radiation / full_sun
-    return round(
-        HCRIT_V2_MARGIN_NO_SUN_M
-        + t * (HCRIT_V2_MARGIN_FULL_SUN_M - HCRIT_V2_MARGIN_NO_SUN_M)
-    )
+    if shortwave_radiation is None or shortwave_radiation <= HCRIT_V2_SW_FREE_W_M2:
+        return 0
+    return round(HCRIT_V2_M_PER_W_M2 * (shortwave_radiation - HCRIT_V2_SW_FREE_W_M2))
 
 
 def sea_temp_climatology(day: date) -> float:

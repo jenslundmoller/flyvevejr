@@ -149,7 +149,7 @@ Tilføjet 2026-10-05 efter startlist-weekenden 3.-4. oktober (se [Referat 2026-1
 
 Tilføjet 2026-10-06 efter sammenligning med FlightRadars termikbobler (se [Referat 2026-10-06](Referat/2026-10-06-termiktop-mod-flightradar.md)):
 
-14. **Mindre, sæsonskaleret fradrag på termiktoppen**: den viste top er den rå base minus 100 m i fuld sol til 300 m uden sol (v1: 200-500 m), og "fuld sol" er 600 W/m² gange strålingens sæsonfaktor. Mod 27.500 bobler i Jylland og på Fyn lå toppen 150 m for lavt over sæsonen og 380 m i september-oktober; nu 43 og 210 m. Scoren er uændret (den bruger den rå base).
+14. **Termiktoppens fradrag retter modellens solfejl**: den viste top er den rå base minus 0.4 m pr. W/m² over 400 W/m² (0 m i svag sol, 120 m ved 700 W/m²); v1 trækker 200-500 m fra. Schleswig-sonden viser at modellens 2 m-luft er for varm og tør i stærk sol, så LCL ligger op til 150 m for højt. Mod 27.500 bobler i Jylland og på Fyn lå toppen 150 m for lavt over sæsonen og 380 m i september-oktober; nu 16 og 106 m. Scoren er uændret (den bruger den rå base).
 
 ### Basis-scorer (vægtet sum, v2)
 
@@ -299,7 +299,7 @@ aldrig. `icon_seamless` og `dmi_seamless` leverer flere lavniveau-felter (se
 | Lapse rate | (temperature_2m - temperature_850hPa) / 15; i v2 erstattet af 2 m -> 925 hPa når det lag er konvektivt (>= 0.95) og grænselaget >= 900 m |
 | Tryktendens | Delta surface_pressure over 3 timer |
 | Nedbør seneste 6t | Sum af precipitation for foregående 6 timer |
-| Termik-tophøjde | TI=0 via tør-adiabatisk parcel-løft på multilevel-sondering (DALR = 9.8 K/km), cap'd med LCL (Bolton 1980 eq. 22), minus Hcrit-margin (v2: 100-300 m, lineært skaleret med shortwave_radiation, fuld sol sæsonskaleret; v1: 200-500 m). Se Referat 2026-05-28 og 2026-10-06. |
+| Termik-tophøjde | TI=0 via tør-adiabatisk parcel-løft på multilevel-sondering (DALR = 9.8 K/km), cap'd med LCL (Bolton 1980 eq. 22), minus et fradrag (v2: 0.4 m pr. W/m² over 400 W/m², en rettelse af modellens for høje LCL i stærk sol; v1: Hcrit-margin 200-500 m, lineært skaleret med shortwave_radiation). Se Referat 2026-05-28 og 2026-10-06. |
 
 ---
 

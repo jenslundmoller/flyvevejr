@@ -890,31 +890,25 @@ def test_v1_and_missing_data_publish_an_empty_list(monkeypatch):
     assert process_point_hour(_inland_point(), hourly, 0, month=6)["data"]["limited_by"] == []
 
 
-# --- Hcrit-fradraget på termiktoppen (Referat 2026-10-06) ---
-# 100 m i fuld sol til 300 m uden sol; "fuld sol" følger årstiden.
+# --- Fradraget på termiktoppen (Referat 2026-10-06) ---
+# Modellens 2 m-luft er for varm og tør i stærk sol, så LCL ligger for højt:
+# 0.4 m pr. W/m² over 400 W/m², intet fradrag under.
 
 from termik.scoring_v2 import hcrit_margin_v2
 from termik.scoring import compute_thermal_top
 
 
-def test_hcrit_margin_v2_full_sun():
-    assert hcrit_margin_v2(700.0) == 100
-    assert hcrit_margin_v2(600.0) == 100
+def test_hcrit_margin_v2_is_zero_in_weak_sun():
+    assert hcrit_margin_v2(400.0) == 0
+    assert hcrit_margin_v2(250.0) == 0
+    assert hcrit_margin_v2(0.0) == 0
+    assert hcrit_margin_v2(None) == 0
 
 
-def test_hcrit_margin_v2_no_sun():
-    assert hcrit_margin_v2(0.0) == 300
-    assert hcrit_margin_v2(None) == 300
-
-
-def test_hcrit_margin_v2_is_linear_between():
-    assert hcrit_margin_v2(300.0) == 200
-
-
-def test_hcrit_margin_v2_full_sun_follows_the_season():
-    # 4/10: faktor ~0.63, så 380 W/m² er fuld sol, ikke 63 % af den
-    assert hcrit_margin_v2(380.0, radiation_scale=0.63) == 100
-    assert hcrit_margin_v2(380.0) == 173
+def test_hcrit_margin_v2_grows_with_strong_sun():
+    assert hcrit_margin_v2(500.0) == 40
+    assert hcrit_margin_v2(700.0) == 120
+    assert hcrit_margin_v2(900.0) == 200
 
 
 def _sounding_hour(time, shortwave):
@@ -960,16 +954,14 @@ def test_v2_publishes_the_smaller_margin_and_v1_keeps_its_own(monkeypatch):
 
     raw = min(v2["lcl_m"], v2["ti_zero_m"])
     assert v1["thermal_top_m"] == raw - 200
-    assert v2["thermal_top_m"] == raw - 100
+    assert v2["thermal_top_m"] == raw - 120
 
 
-def test_v2_margin_is_season_scaled_in_october(monkeypatch):
+def test_v2_takes_nothing_off_in_weak_sun(monkeypatch):
     from termik.fetch_weather import process_point_hour
     import termik.config as config_module
 
-    # 400 W/m² er fuld sol 4/10, men kun to tredjedele af den i juni
+    # En oktobertime med 350 W/m²: rå base er den viste top
     monkeypatch.setattr(config_module, "SCORING_VERSION", "v2")
-    october = process_point_hour(_inland_point(), _sounding_hour("2026-10-04T13:00", 400.0), 0, month=10)["data"]
-    june = process_point_hour(_inland_point(), _sounding_hour("2026-06-15T13:00", 400.0), 0, month=6)["data"]
-    assert october["thermal_top_m"] == min(october["lcl_m"], october["ti_zero_m"]) - 100
-    assert june["thermal_top_m"] == min(june["lcl_m"], june["ti_zero_m"]) - 167
+    october = process_point_hour(_inland_point(), _sounding_hour("2026-10-04T13:00", 350.0), 0, month=10)["data"]
+    assert october["thermal_top_m"] == min(october["lcl_m"], october["ti_zero_m"])
