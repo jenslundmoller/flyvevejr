@@ -5,10 +5,10 @@ run-name: Update Termik Forecast (${{ inputs.runner || 'self-hosted' }})
 
 on:
   schedule:
-    # Hver 3. time kl. 05-17 UTC (07-19 dansk sommertid): ingen kigger om
-    # natten, men morgenkørslen kl. 05 giver en frisk prognose. 5 kørsler i
-    # døgnet holder Open-Meteo-forbruget på ~5.400 af 10.000 gratis kald.
-    - cron: '15 5-17/3 * * *'
+    # Hver 3. time kl. 05:15-20:15 UTC (07:15-22:15 dansk sommertid): ingen
+    # kørsler om natten, frisk prognose om morgenen og en sen aftenkørsel.
+    # 6 kørsler x ~1.000 = ~6.000 af Open-Meteos 10.000 gratis kald i døgnet.
+    - cron: '15 5-20/3 * * *'
   workflow_dispatch: # Allow manual trigger
     inputs:
       runner:

@@ -13,7 +13,7 @@ OMV-maskinen derhjemme. Prompt til at fortsætte står nederst.
 | 9 Begrænsende faktor | `data.limited_by` pr. flyvepladstime og en gul linje i popup'en | Nej (verificeret på 986 timer) |
 | 1 `score_solar` og cumulus | Målt, uændret: v2 har allerede løst 8/8, ingen variant slår støjen | Nej |
 | 7 Lavniveaudata (ICON/DMI) | Målt, ikke implementeret: lille gevinst mod dobbelt så mange kald | Nej |
-| Kørselsplan og parametre | 5 kørsler kl. 05-17 UTC, 32 i stedet for 41 variable | 6 af 700 dagtimer på 10 sydlige punkter (op til 3) |
+| Kørselsplan og parametre | 6 kørsler kl. 05-20 UTC (20:15 tilføjet 6/10), 32 i stedet for 41 variable | 6 af 700 dagtimer på 10 sydlige punkter (op til 3) |
 
 Ingen scoringsregel er ændret i denne session.
 
@@ -64,18 +64,18 @@ OMV-referencen (driftsdokumentet for maskinen) er opdateret som rev. 5:
 `~/Downloads/omv-webhosting-reference-rev5.html`. Læg den hvor rev. 4 bor.
 
 **Reserve:** `forecast-fallback.yml` kører på GitHub hver halve time kl.
-05-18 UTC. En forecast-kørsel der har stået 15 min i kø (OMV nede), aflyses
+05-21 UTC. En forecast-kørsel der har stået 15 min i kø (OMV nede), aflyses
 og erstattes af én kørsel på `ubuntu-latest` (langsom, men den lykkes).
 Reservekørsler har "(ubuntu-latest)" i titlen og aflyses aldrig. Manuelt
 testet: grøn, "Ingen hængende kørsler".
 
-**Kørselsplan:** `15 5-17/3 * * *`, altså 05:15, 08:15, 11:15, 14:15, 17:15
-UTC (07:15-19:15 dansk sommertid). Ingen kørsler om natten; morgenkørslen
-giver en frisk prognose. GitHub starter cron-kørsler 15-30 min forsinket.
+**Kørselsplan:** `15 5-20/3 * * *`, altså 05:15, 08:15, 11:15, 14:15, 17:15
+og 20:15 UTC (07:15-22:15 dansk sommertid; 20:15 tilføjet 6/10). Ingen
+kørsler om natten; morgenkørslen giver en frisk prognose. GitHub starter cron-kørsler 15-30 min forsinket.
 
 **Open-Meteo-forbrug:** gratis grænse 10.000 kald/døgn, hver påbegyndte 10
 variable tæller som et kald pr. punkt. Før: 41 variable x 8 kørsler = ~9.900
-(lige ved grænsen). Nu: 32 variable x 5 kørsler = ~5.000. De 9 fjernede
+(lige ved grænsen). Nu: 32 variable x 6 kørsler = ~6.000. De 9 fjernede
 (80/120/180 m-temperatur, 950/900/800 hPa med højder) var tomme for 252 af
 262 punkter. **Hjemme-IP'en deler kvoten** med analysekald hjemmefra.
 

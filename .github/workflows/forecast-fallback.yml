@@ -9,8 +9,8 @@ name: Forecast Fallback
 
 on:
   schedule:
-    # Kun når forecast-kørsler kan stå i kø: 05:15 til ~17:45, plus et kvarter.
-    - cron: '5,35 5-18 * * *'
+    # Kun når forecast-kørsler kan stå i kø: 05:15 til ~20:45, plus et kvarter.
+    - cron: '5,35 5-21 * * *'
   workflow_dispatch:
 
 permissions:

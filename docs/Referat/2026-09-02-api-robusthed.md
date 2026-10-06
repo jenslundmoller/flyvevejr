@@ -389,13 +389,14 @@ variable tæller som et kald pr. punkt. Med 41 variable og 8 kørsler var
 forbruget ~9.900 i døgnet, lige ved grænsen (beregnet; Open-Meteo siger ikke
 eksplicit at hvert punkt i et flerpunktskald tæller for sig).
 
-- **Plan**: `15 5-17/3 * * *`, altså 05:15-17:15 UTC hver 3. time. Ingen
+- **Plan**: `15 5-20/3 * * *`, altså 05:15-20:15 UTC hver 3. time (20:15
+  tilføjet 6/10; oprindeligt 05:15-17:15). Ingen
   kørsler om natten, frisk prognose om morgenen. Vagthunden følger med
-  (`5,35 5-18 * * *`).
+  (`5,35 5-21 * * *`).
 - **Trimmet til 32 variable**: 80/120/180 m-temperatur og 950/900/800 hPa med
   højder var tomme for 252 af 262 punkter (målt for alle punkter). For de 10
   sydlige punkter flyttede fjernelsen 6 af 700 dagtimer (op til 3) og
   termiktoppen -45 m i middel.
-- **Resultat**: ~1.000 kald pr. kørsel, ~5.000 i døgnet. Timevise kørsler
+- **Resultat**: ~1.000 kald pr. kørsel, ~6.000 i døgnet med 6 kørsler. Timevise kørsler
   ville kræve ~24.000 og en betalt nøgle, og gav lidt: de underliggende
   modeller kommer kun med nye kørsler hver 3. time.

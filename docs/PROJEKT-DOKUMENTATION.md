@@ -7,7 +7,7 @@ Automatisk termik-vurdering for danske svæveflyvere. Systemet henter vejrdata f
 1. **Termik-score (0-10)** — samlet vurdering af flyveforhold
 2. **Termik-tophøjde (m)** — maks. brugbar termikhøjde via parcel-teori (jf. [Referat 2026-05-28](Referat/2026-05-28-termik-top.md))
 
-Resultaterne vises som to skifteligbare interaktive kortlag på **https://flyvevejr.dk**. Data opdateres automatisk hver 3. time kl. 05-17 UTC via GitHub Actions på en selvhostet runner (OMV-maskinen derhjemme).
+Resultaterne vises som to skifteligbare interaktive kortlag på **https://flyvevejr.dk**. Data opdateres automatisk hver 3. time kl. 05-20 UTC via GitHub Actions på en selvhostet runner (OMV-maskinen derhjemme).
 
 ---
 
@@ -60,14 +60,14 @@ Open-Meteo API (gratis, ingen nøgle)
 ┌──────────────────┐     ┌────────────────┐     ┌─────────────────────┐
 │ Python-script    │────▶│ JSON-datafiler │────▶│ Statisk HTML/JS     │
 │ (Actions på OMV, │     │ current.json   │     │ Leaflet.js heatmap  │
-│  05-17 UTC /3 t) │     │ airfields.json │     │ flyvevejr.dk        │
+│  05-20 UTC /3 t) │     │ airfields.json │     │ flyvevejr.dk        │
 └──────────────────┘     │ meta.json      │     └─────────────────────┘
                          └────────────────┘
 ```
 
 ### Dataflow
 
-1. GitHub Actions kører `python -m termik` kl. 05:15, 08:15, 11:15, 14:15 og 17:15 UTC på den selvhostede runner på OMV (reserve: GitHubs egne runnere, se GitHub Actions nedenfor)
+1. GitHub Actions kører `python -m termik` kl. 05:15, 08:15, 11:15, 14:15, 17:15 og 20:15 UTC på den selvhostede runner på OMV (reserve: GitHubs egne runnere, se GitHub Actions nedenfor)
 2. Scriptet henter først den målte havtemperatur for 158 havceller fra
    Open-Meteos marine-API (2 lette kald; fejler de, bruges klimatologien),
    derefter vejrdata fra Open-Meteo for 262 punkter, 30 flyvepladser
@@ -309,7 +309,7 @@ aldrig. `icon_seamless` og `dmi_seamless` leverer flere lavniveau-felter (se
 flyvevejr/
 ├── .github/
 │   └── workflows/
-│       ├── update-forecast.yml    # Henter vejrdata hver 3. time kl. 05-17 UTC
+│       ├── update-forecast.yml    # Henter vejrdata hver 3. time kl. 05-20 UTC
 │       ├── rerun-failed-forecast.yml # Genstarter en fejlet forecast-kørsel
 │       ├── forecast-fallback.yml  # Flytter kørslen til GitHub hvis runneren derhjemme er nede
 │       └── deploy-pages.yml       # Deployer til GitHub Pages
@@ -431,7 +431,7 @@ Desktop: sidepanel til højre. Mobil (<768px): sidepanel som bund-panel.
 
 ### update-forecast.yml
 
-- **Trigger**: Cron `15 5-17/3 * * *` (05:15, 08:15, 11:15, 14:15, 17:15 UTC; ingen kørsler om natten, frisk prognose om morgenen; besluttet 2026-10-05) + manuel dispatch (valg af runner). 5 kørsler x ~1.000 = ~5.000 Open-Meteo-kald i døgnet.
+- **Trigger**: Cron `15 5-20/3 * * *` (05:15, 08:15, 11:15, 14:15, 17:15, 20:15 UTC; ingen kørsler om natten, frisk prognose om morgenen, sen aftenkørsel; besluttet 2026-10-05, aftenkørslen tilføjet 2026-10-06) + manuel dispatch (valg af runner). 6 kørsler x ~1.000 = ~6.000 Open-Meteo-kald i døgnet.
 - **Runner** (siden 2026-10-05): selvhostet på OMV-maskinen derhjemme (Debian 13, labels `self-hosted`, `flyvevejr`, i `/opt/gh-runner` som systembrugeren `gh-runner`, hærdet med en systemd-drop-in; se OMV-webhosting-referencen). Open-Meteo drosler GitHub-runnerne: halvdelen af kaldene hang 30 s derfra, hjemmefra intet ([Referat 2026-09-02, opfølgning 5/10](Referat/2026-09-02-api-robusthed.md)). Manuel dispatch med `runner=ubuntu-latest` kører på GitHub som reserve.
 - **Kører**: Python (OMV: maskinens 3.13 i en venv; GitHub: setup-python 3.12; testsuiten består på begge), installerer requests, kører `python -m termik`. Deploy startes med `termik/tools/dispatch_workflow.py` (REST-API via requests), fordi OMV ikke har gh.
 - **Committer**: Opdaterede JSON-filer til repo'et med bot-bruger
@@ -443,7 +443,7 @@ Vagthund: trigges når en forecast-kørsel slutter. Fejlede den (og attempt < 3)
 
 ### forecast-fallback.yml
 
-Vagthund for den selvhostede runner, kører på GitHub hver halve time kl. 05-18 UTC (`5,35 5-18 * * *`). Har en forecast-kørsel stået i kø i mindst 15 min (en online runner tager den på sekunder), aflyses den og erstattes af én kørsel på `ubuntu-latest`. Reservekørsler (titel "(ubuntu-latest)") aflyses aldrig. Logikken er `termik/tools/forecast_watchdog.py` med tests. En aflyst kørsel trigger ikke rerun-workflowet, som kun reagerer på `failure`.
+Vagthund for den selvhostede runner, kører på GitHub hver halve time kl. 05-21 UTC (`5,35 5-21 * * *`). Har en forecast-kørsel stået i kø i mindst 15 min (en online runner tager den på sekunder), aflyses den og erstattes af én kørsel på `ubuntu-latest`. Reservekørsler (titel "(ubuntu-latest)") aflyses aldrig. Logikken er `termik/tools/forecast_watchdog.py` med tests. En aflyst kørsel trigger ikke rerun-workflowet, som kun reagerer på `failure`.
 
 ### Sikkerhed for den selvhostede runner (repoet er offentligt)
 
@@ -501,7 +501,7 @@ python -m pytest termik/tests/ -v
 
 ### Automatisk drift
 
-Systemet kører fuldautomatisk via GitHub Actions. Forecast-jobbet kører siden 2026-10-05 på en selvhostet runner på OMV-maskinen derhjemme (`/opt/gh-runner`, systemd-unit `actions.runner.jenslundmoller-flyvevejr.omv.service`); opsætning, hærdning og fejlsøgning står i OMV-webhosting-referencen rev. 5. Er OMV nede, flytter `forecast-fallback.yml` kørslen til GitHubs runnere efter 15 min, så siden aldrig mangler data, men kørslen tager så 12-43 min på grund af Open-Meteos drosling. Hjemme-IP'en deler Open-Meteos gratis kvote (10.000 kald/døgn) med alt andet derhjemme, inklusive analysekald; produktionen bruger ~5.000.
+Systemet kører fuldautomatisk via GitHub Actions. Forecast-jobbet kører siden 2026-10-05 på en selvhostet runner på OMV-maskinen derhjemme (`/opt/gh-runner`, systemd-unit `actions.runner.jenslundmoller-flyvevejr.omv.service`); opsætning, hærdning og fejlsøgning står i OMV-webhosting-referencen rev. 5. Er OMV nede, flytter `forecast-fallback.yml` kørslen til GitHubs runnere efter 15 min, så siden aldrig mangler data, men kørslen tager så 12-43 min på grund af Open-Meteos drosling. Hjemme-IP'en deler Open-Meteos gratis kvote (10.000 kald/døgn) med alt andet derhjemme, inklusive analysekald; produktionen bruger ~6.000.
 
 ### Manuel kørsel
 

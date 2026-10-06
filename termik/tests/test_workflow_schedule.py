@@ -1,7 +1,7 @@
 """Kørselsplanen for forecast-workflowet (besluttet 2026-10-05).
 
-Hver 3. time, ingen kørsler mellem 20 og 05 UTC (ingen kigger om natten),
-men en frisk prognose om morgenen. Læses med regex, ikke yaml, så testen
+Hver 3. time kl. 05:15-20:15 UTC: ingen kørsler om natten, en frisk
+prognose om morgenen og en sen aftenkørsel (aftenkørslen tilføjet 2026-10-06). Læses med regex, ikke yaml, så testen
 ikke kræver en pakke runneren ellers ikke har.
 """
 
@@ -32,7 +32,7 @@ def expand(field, lo, hi):
     return out
 
 
-NIGHT = set(range(20, 24)) | set(range(0, 5))
+NIGHT = set(range(21, 24)) | set(range(0, 5))
 
 
 def run_hours(name):
@@ -43,7 +43,7 @@ def run_hours(name):
 
 
 def test_forecast_runs_every_third_hour_during_the_day():
-    assert run_hours("update-forecast.yml") == {5, 8, 11, 14, 17}
+    assert run_hours("update-forecast.yml") == {5, 8, 11, 14, 17, 20}
 
 
 def test_no_forecast_runs_at_night():
@@ -55,8 +55,8 @@ def test_first_run_is_early_morning():
 
 
 def test_fallback_watches_while_runs_can_be_queued():
-    # Sidste kørsel startes ~17:15-17:45; vagthunden skal nå at se den stå
-    # 15 min i kø, og den skal ikke køre om natten.
+    # Sidste kørsel startes ~20:15-20:45; vagthunden skal nå at se den stå
+    # 15 min i kø (senest ~21:05), og den skal ikke køre om natten ud over det.
     hours = run_hours("forecast-fallback.yml")
-    assert {5, 17, 18} <= hours
-    assert not hours & NIGHT
+    assert {5, 20, 21} <= hours
+    assert not hours & (NIGHT - {21})
