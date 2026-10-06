@@ -134,6 +134,10 @@ Scoring:
     15/8). Ikke implementeret; saml flere dage med profilen. Jylland juli-
     september: 61 % i bånd på dage uden for kalibreringen. Se
     startlist-referatet, sidste afsnit.
+19. Termiktoppen mod FlightRadar (Referat 2026-10-06): om efteråret er
+    selve den rå base (LCL/TI-nul) ~150 m for lav, og "inversion"-dommen
+    viser 0 m i 25 timer hvor der blev fløjet til ~640 m AGL. Sjælland kan
+    ikke kalibrere toppen uden dagens luftrumsloft (~750 / ~1400 m).
 
 Data:
 
