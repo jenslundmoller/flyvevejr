@@ -384,7 +384,9 @@ Mørkeblå (0) → Lyseblå (3) → Gul (5) → Orange (7) → Rød (10)
 
 ### Kortlag — termik-tophøjde
 
-Lag baseret på `compute_thermal_top()`-resultatet per grid-celle, renderet med samme glatte browser-interpolation og kystklipning som score-laget (siden 2026-08-25; null-celler udfyldes med nærmeste reelle værdi før interpolationen). Distinkt viridis-lignende palet (lilla → orange) for at undgå forveksling med score-laget. Værdier <500 m vises lilla, ~1500 m grøn (god dansk dag), 2500 m+ orange-rød (sjælden i DK). Højde-labels tegnes ovenpå ved zoom ≥ 9.
+Lag baseret på `compute_thermal_top()`-resultatet per grid-celle, renderet med samme glatte browser-interpolation og kystklipning som score-laget (siden 2026-08-25; null-celler udfyldes med nærmeste reelle værdi før interpolationen). Paletten (`THERMAL_TOP_STOPS` i `app.js`, legenden i `style.css`) lægger de fleste farveskift under 1500 m, hvor forskellen i flyvning er størst: 0 m grå (ingen termik), 300 m lilla (for lavt til at holde sig oppe), 600 m magenta (marginalt, kun platrunde), 900 m orange (lokal termikflyvning), 1200 m gul (strækflyvning mulig), 1500 m grøn (god dag), 2000 m mørkegrøn og 2500 m+ dybgrøn. Den undgår score-lagets blå → rød, så de to lag ikke forveksles. Legenden har ikke-equidistante stop og etiketter for hver 500 m. Højde-labels tegnes ovenpå ved zoom ≥ 9.
+
+Indtil 2026-10-06 brugte laget en viridis-lignende palet (lilla → blå → grøn → orange), hvor hele 0-1000 m lå i mørke lilla nuancer. Typiske danske dage, og især efterårsdage med toppe under 900 m, så derfor ens ud på kortet.
 
 ### Vejr-widget — vejret lige nu på favorit-pladsen
 
