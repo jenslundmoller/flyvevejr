@@ -39,13 +39,13 @@ def _binding_line(thermal_top_m: float, limited_by: str) -> str | None:
     """
     top = round(thermal_top_m / 50) * 50
     if limited_by == "lcl":
-        return f"Toppen begrænses af skybasen, regn med ca. {top} m o.h."
+        return f"Toppen begrænses af skybasen, regn med ca. {top} m QNH"
     if limited_by == "ti_zero":
-        return f"Toppen begrænses af temperaturen i højden, regn med ca. {top} m o.h."
+        return f"Toppen begrænses af temperaturen i højden, regn med ca. {top} m QNH"
     if limited_by == "cap":
-        return f"Dyb konvektion, regn med mindst {top} m o.h."
+        return f"Dyb konvektion, regn med mindst {top} m QNH"
     if limited_by in ("weak_solar", "margin_collapse"):
-        return f"Svag sol: termikken bærer kun til ca. {top} m o.h."
+        return f"Svag sol: termikken bærer kun til ca. {top} m QNH"
     return None
 
 

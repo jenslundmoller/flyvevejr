@@ -662,8 +662,8 @@ function buildHeroes(d) {
         ? '<b>' + d.thermal_top_m + ' m</b><small>' + limitedByDa(d.thermal_top_limited_by) + '</small>'
         : '<b>\u2013</b><small>ingen data</small>';
     return '<div class="popup-heroes">'
-        + '<div class="popup-hero" title="Beregnet maks. brugbar termikh\u00F8jde i meter over havet (\u2248 QNH)"><span>Termiktop o.h.</span>' + topCell + '</div>'
-        + '<div class="popup-hero" title="Estimeret skybase over jorden (spread \u00D7 125 m)"><span>Skybase o.j.</span><b>' + d.skybase_m + ' m</b><small>' + d.skybase_ft + ' ft</small></div>'
+        + '<div class="popup-hero" title="Beregnet maks. brugbar termikh\u00F8jde i meter over havet, som h\u00F8jdem\u00E5leren viser med QNH"><span>Termiktop QNH</span>' + topCell + '</div>'
+        + '<div class="popup-hero" title="Estimeret skybase over jorden, som h\u00F8jdem\u00E5leren viser med QFE (spread \u00D7 125 m)"><span>Skybase QFE</span><b>' + d.skybase_m + ' m</b><small>' + d.skybase_ft + ' ft</small></div>'
         + '<div class="popup-hero" title="Vind i 10 m; pilen peger med vinden"><span>Vind</span><b>' + getWindArrow(d.wind_dir) + ' ' + Math.round(d.wind_speed_kt) + ' kt</b><small>' + compassLetter(d.wind_dir) + ' \u00B7 st\u00F8d ' + Math.round(d.wind_gusts_kt) + '</small></div>'
         + '</div>';
 }
