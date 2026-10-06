@@ -147,6 +147,10 @@ Tilføjet 2026-10-05 efter startlist-weekenden 3.-4. oktober (se [Referat 2026-1
 12. **5b ser også det nedre lag**: havluften kaldes kun stabil når både hav -> 850 hPa (< 7 K) og hav -> 925 hPa (< 0.47 grader/100 m, samme grænse pr. 100 m) er stabile, så et låg mellem 925 og 850 hPa ikke skjuler ustabil havluft.
 13. **Overskyet er en straf, ikke et cap 2**: rå skydække ≥ 87 % giver -2 point og loft 5. Cap 2 kastede en rangering væk der stadig virkede (piloterne holdt sig oppe i 47 % af de cappede timer).
 
+Tilføjet 2026-10-06 efter sammenligning med FlightRadars termikbobler (se [Referat 2026-10-06](Referat/2026-10-06-termiktop-mod-flightradar.md)):
+
+14. **Mindre, sæsonskaleret fradrag på termiktoppen**: den viste top er den rå base minus 100 m i fuld sol til 300 m uden sol (v1: 200-500 m), og "fuld sol" er 600 W/m² gange strålingens sæsonfaktor. Mod 27.500 bobler i Jylland og på Fyn lå toppen 150 m for lavt over sæsonen og 380 m i september-oktober; nu 43 og 210 m. Scoren er uændret (den bruger den rå base).
+
 ### Basis-scorer (vægtet sum, v2)
 
 | Faktor | Vægt | Score 10 | Score 0 |
@@ -295,7 +299,7 @@ aldrig. `icon_seamless` og `dmi_seamless` leverer flere lavniveau-felter (se
 | Lapse rate | (temperature_2m - temperature_850hPa) / 15; i v2 erstattet af 2 m -> 925 hPa når det lag er konvektivt (>= 0.95) og grænselaget >= 900 m |
 | Tryktendens | Delta surface_pressure over 3 timer |
 | Nedbør seneste 6t | Sum af precipitation for foregående 6 timer |
-| Termik-tophøjde | TI=0 via tør-adiabatisk parcel-løft på multilevel-sondering (DALR = 9.8 K/km), cap'd med LCL (Bolton 1980 eq. 22), minus Hcrit-margin (200-500 m, lineært skaleret med shortwave_radiation). Se Referat 2026-05-28. |
+| Termik-tophøjde | TI=0 via tør-adiabatisk parcel-løft på multilevel-sondering (DALR = 9.8 K/km), cap'd med LCL (Bolton 1980 eq. 22), minus Hcrit-margin (v2: 100-300 m, lineært skaleret med shortwave_radiation, fuld sol sæsonskaleret; v1: 200-500 m). Se Referat 2026-05-28 og 2026-10-06. |
 
 ---
 

@@ -80,13 +80,20 @@ fradrag ligger september-oktober 50 m under det fløjne, hvor sommeren
 ligger 130 m over. Noget i LCL/TI-nul reagerer på årstiden (måske 2 m-
 dugpunktet). Hviler på ~10 efterårsdage.
 
-## Beslutning
+## Implementeret
 
 Margin 100 m i fuld sol til 300 m uden sol (v2), fuld sol = 600 W/m²
 ganget med strålingens sæsonfaktor (samme `radiation_season_factor` som
-fix 2). v1 er urørt. Ændrer kun den viste top og kommentarteksten: scoren
-bruger den rå base (punkt 4 i v2), og `margin_collapse` er uændret fordi
-fradraget allerede er klampet til halvdelen af den rå højde.
+fix 2): `hcrit_margin_v2` i `scoring_v2.py`, konstanterne
+`HCRIT_V2_*` i config, og `compute_thermal_top` tager et `margin_m` fra
+kalderen. v1 er urørt. Ændrer kun den viste top og kommentarteksten:
+scoren bruger den rå base (punkt 4 i v2), og `margin_collapse` er uændret
+fordi fradraget allerede er klampet til halvdelen af den rå højde.
+
+Kontrol på de 1.612 timer med produktionskoden: scoren er uændret i alle
+timer, og `thermal_top_limited_by` ligeså. Jylland og Fyn (1.142 timer):
+afvigelse -152 -> -43 m, gennemsnitlig fejl 232 -> 191 m; september-
+oktober (104 timer) -379 -> -212 m, fejl 368 -> 209 m.
 
 Valgt frem for fast 100 m (lidt lavere fejl) fordi den beholder den
 fysiske idé: svagere sol giver svagere termik og større afstand til

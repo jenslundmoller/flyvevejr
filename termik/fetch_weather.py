@@ -25,6 +25,7 @@ import termik.config as config_module
 from termik.scoring import compute_thermal_score, compute_thermal_top, THERMAL_TOP_LEVELS_HPA
 from termik.scoring_v2 import (
     compute_thermal_score_v2,
+    hcrit_margin_v2,
     radiation_season_factor,
     sea_temp_climatology,
 )
@@ -395,8 +396,21 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
     # direct_radiation: None means parameter missing entirely (older fetches);
     # 0 from API at night is fine and should pass through as 0.
 
-    # Termiktoppen beregnes før scoren: v2 bruger den som input (punkt 4),
-    # og den er uafhængig af scoren i begge versioner.
+    # Versionskontakten læses ved kald, ikke ved import, så en test (eller en
+    # rollback) kan flippe termik.config.SCORING_VERSION uden genstart.
+    is_v2 = config_module.SCORING_VERSION == "v2"
+    # Timens dato styrer strålingens sæsonfaktor (v2's tærskler og
+    # termiktoppens fradrag) og havtemperatur-fallbacken. Syntetiske
+    # testdata uden tidsstempel kører uden begge, med augusttærsklerne.
+    timestamps = hourly_data.get("time")
+    day = datetime.fromisoformat(timestamps[hour_index][:10]).date() if timestamps else None
+    radiation_scale = 1.0
+    if day is not None:
+        radiation_scale = radiation_season_factor(point["lat"], day.timetuple().tm_yday)
+
+    # Termiktoppen beregnes før scoren: v2 bruger den som input (punkt 4).
+    # v2 trækker sit eget, mindre og sæsonskalerede fradrag fra den rå base
+    # (Referat 2026-10-06); v1 beholder sit.
     thermal_top = compute_thermal_top(
         surface_temp_c=temp,
         surface_dewpoint_c=dewpoint,
@@ -405,6 +419,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         level_temps_c=level_temps_c,
         level_heights_m=level_heights_m,
         shortwave_radiation=shortwave,
+        margin_m=hcrit_margin_v2(shortwave, radiation_scale) if is_v2 else None,
     )
 
     score_kwargs = dict(
@@ -438,12 +453,6 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         trailing_cirrus=trailing_cirrus,
     )
 
-    # Versionskontakten læses ved kald, ikke ved import, så en test (eller en
-    # rollback) kan flippe termik.config.SCORING_VERSION uden genstart.
-    # Timens dato styrer både strålingens sæsonfaktor og havtemperatur-
-    # fallbacken. Syntetiske testdata uden tidsstempel kører uden begge.
-    timestamps = hourly_data.get("time")
-    day = datetime.fromisoformat(timestamps[hour_index][:10]).date() if timestamps else None
     # Søbrisen læser havets målte temperatur (fetch_sea_temps); mangler den,
     # bruges klimatologien for dagen (Referat 2026-10-05).
     sea_temp_c = point.get("sea_temp_c")
@@ -452,7 +461,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         sea_temp_c = round(sea_temp_climatology(day), 1)
         sea_temp_source = "climatology"
 
-    if config_module.SCORING_VERSION == "v2":
+    if is_v2:
         # v2's basehøjde-bånd (Skema 1) testes mod den UKORRIGEREDE base,
         # min(LCL, TI-nul): den Hcrit-korrigerede thermal_top er et
         # brugshøjde-produkt, og at teste den mod basehøjde-bånd cappede
@@ -464,12 +473,7 @@ def process_point_hour(point: dict, hourly_data: dict, hour_index: int, month: i
         thermal_base_agl = (
             min(base_candidates) - surface_elevation_m if base_candidates else None
         )
-        # Strålingstærsklerne følger årstiden (Referat 2026-10-05). Datoen
-        # læses af timens eget tidsstempel; uden det (syntetiske testdata)
-        # bruges de kalibrerede augusttærskler uændret.
-        radiation_scale = 1.0
-        if day is not None:
-            radiation_scale = radiation_season_factor(point["lat"], day.timetuple().tm_yday)
+        # Strålingstærsklerne følger årstiden (Referat 2026-10-05).
         result = compute_thermal_score_v2(
             **score_kwargs,
             thermal_base_agl_m=thermal_base_agl,

@@ -888,3 +888,88 @@ def test_v1_and_missing_data_publish_an_empty_list(monkeypatch):
     hourly = _synthetic_hourly()
     hourly["temperature_2m"] = [None]
     assert process_point_hour(_inland_point(), hourly, 0, month=6)["data"]["limited_by"] == []
+
+
+# --- Hcrit-fradraget på termiktoppen (Referat 2026-10-06) ---
+# 100 m i fuld sol til 300 m uden sol; "fuld sol" følger årstiden.
+
+from termik.scoring_v2 import hcrit_margin_v2
+from termik.scoring import compute_thermal_top
+
+
+def test_hcrit_margin_v2_full_sun():
+    assert hcrit_margin_v2(700.0) == 100
+    assert hcrit_margin_v2(600.0) == 100
+
+
+def test_hcrit_margin_v2_no_sun():
+    assert hcrit_margin_v2(0.0) == 300
+    assert hcrit_margin_v2(None) == 300
+
+
+def test_hcrit_margin_v2_is_linear_between():
+    assert hcrit_margin_v2(300.0) == 200
+
+
+def test_hcrit_margin_v2_full_sun_follows_the_season():
+    # 4/10: faktor ~0.63, så 380 W/m² er fuld sol, ikke 63 % af den
+    assert hcrit_margin_v2(380.0, radiation_scale=0.63) == 100
+    assert hcrit_margin_v2(380.0) == 173
+
+
+def _sounding_hour(time, shortwave):
+    return {
+        "time": [time],
+        "temperature_2m": [24.0], "dewpoint_2m": [12.0], "relative_humidity_2m": [45],
+        "temperature_850hPa": [9.0], "temperature_700hPa": [-5.0],
+        "wind_speed_10m": [10.0], "wind_direction_10m": [270.0], "wind_gusts_10m": [15.0],
+        "cloud_cover": [30.0], "precipitation": [0.0],
+        "shortwave_radiation": [shortwave], "cape": [300.0], "surface_pressure": [1015.0],
+        "temperature_950hPa": [18.0], "temperature_925hPa": [16.0], "temperature_900hPa": [13.0],
+        "temperature_800hPa": [4.0], "temperature_600hPa": [-14.0],
+        "geopotential_height_950hPa": [540.0], "geopotential_height_925hPa": [760.0],
+        "geopotential_height_900hPa": [985.0], "geopotential_height_850hPa": [1500.0],
+        "geopotential_height_800hPa": [2025.0], "geopotential_height_700hPa": [3110.0],
+        "geopotential_height_600hPa": [4300.0],
+    }
+
+
+def test_compute_thermal_top_takes_the_callers_margin():
+    kwargs = dict(
+        surface_temp_c=24.0, surface_dewpoint_c=12.0, surface_pressure_hpa=1015.0,
+        surface_elevation_m=0,
+        level_temps_c={950: 18.0, 925: 16.0, 900: 13.0, 850: 9.0, 800: 4.0, 700: -5.0, 600: -14.0},
+        level_heights_m={950: 540, 925: 760, 900: 985, 850: 1500, 800: 2025, 700: 3110, 600: 4300},
+        shortwave_radiation=700.0,
+    )
+    default = compute_thermal_top(**kwargs)
+    smaller = compute_thermal_top(**kwargs, margin_m=100)
+    assert smaller["thermal_top_m"] - default["thermal_top_m"] == 100
+    assert smaller["lcl_m"] == default["lcl_m"]
+
+
+def test_v2_publishes_the_smaller_margin_and_v1_keeps_its_own(monkeypatch):
+    from termik.fetch_weather import process_point_hour
+    import termik.config as config_module
+
+    hour = _sounding_hour("2026-06-15T13:00", 700.0)
+    monkeypatch.setattr(config_module, "SCORING_VERSION", "v1")
+    v1 = process_point_hour(_inland_point(), hour, 0, month=6)["data"]
+    monkeypatch.setattr(config_module, "SCORING_VERSION", "v2")
+    v2 = process_point_hour(_inland_point(), hour, 0, month=6)["data"]
+
+    raw = min(v2["lcl_m"], v2["ti_zero_m"])
+    assert v1["thermal_top_m"] == raw - 200
+    assert v2["thermal_top_m"] == raw - 100
+
+
+def test_v2_margin_is_season_scaled_in_october(monkeypatch):
+    from termik.fetch_weather import process_point_hour
+    import termik.config as config_module
+
+    # 400 W/m² er fuld sol 4/10, men kun to tredjedele af den i juni
+    monkeypatch.setattr(config_module, "SCORING_VERSION", "v2")
+    october = process_point_hour(_inland_point(), _sounding_hour("2026-10-04T13:00", 400.0), 0, month=10)["data"]
+    june = process_point_hour(_inland_point(), _sounding_hour("2026-06-15T13:00", 400.0), 0, month=6)["data"]
+    assert october["thermal_top_m"] == min(october["lcl_m"], october["ti_zero_m"]) - 100
+    assert june["thermal_top_m"] == min(june["lcl_m"], june["ti_zero_m"]) - 167

@@ -64,13 +64,15 @@ def compute_thermal_top(
     level_temps_c: dict,
     level_heights_m: dict,
     shortwave_radiation: float | None = None,
+    margin_m: float | None = None,
 ) -> dict:
     """Estimate maximum usable thermal height via dry-adiabatic parcel theory.
 
     Lifts a surface parcel along the dry adiabat (9.8 K/km) until it reaches
     the environment temperature (TI=0 height), then caps with the LCL and
     subtracts an SW-scaled Hcrit margin (200-500 m) to give the height
-    glider pilots can realistically thermal to.
+    glider pilots can realistically thermal to. A caller-supplied margin_m
+    replaces that margin (v2 passes its own, see hcrit_margin_v2).
 
     Returns dict with keys:
         thermal_top_m: int | None  — Hcrit-corrected MSL height (m), None on missing data
@@ -172,7 +174,7 @@ def compute_thermal_top(
     elif lcl_m is None:
         limited_by = "no_dewpoint"
 
-    margin = _hcrit_margin(shortwave_radiation)
+    margin = _hcrit_margin(shortwave_radiation) if margin_m is None else margin_m
     raw_top_agl = raw_top - surface_elevation_m
     if raw_top_agl > 0:
         margin = min(margin, raw_top_agl / 2)
