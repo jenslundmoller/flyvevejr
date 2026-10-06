@@ -462,6 +462,7 @@ Besluttet 2026-10-05: repoet forbliver offentligt, fordi GitHub Pages fra et pri
 
 - **Trigger**: Push til main der ændrer `termik/output/**` + manuel dispatch
 - **Kører**: Upload `termik/output/` som GitHub Pages artifact og deployer
+- **Service worker**: `sw.js` serverer app-skallen (`app.js`, `style.css`, `index.html` m.fl.) cache-first; kun `data/*.json` hentes network-first. En ændring i frontend-filerne når derfor først tilbagevendende besøgende (og PWA'en), når `CACHE_VERSION` i `sw.js` tælles op (`termik-vNN`). Tæl den op i samme push som UI-ændringen. Brugeren skal derefter genindlæse én gang (PWA: luk og åbn).
 
 ---
 
