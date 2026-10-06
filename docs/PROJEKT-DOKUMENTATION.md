@@ -315,12 +315,14 @@ flyvevejr/
 │       ├── rerun-failed-forecast.yml # Genstarter en fejlet forecast-kørsel
 │       ├── forecast-fallback.yml  # Flytter kørslen til GitHub hvis runneren derhjemme er nede
 │       └── deploy-pages.yml       # Deployer til GitHub Pages
+├── .claude/rules/                 # Regler til Claude Code (scoring, frontend, drift)
 ├── .gitignore
+├── CLAUDE.md                      # Instruktioner til Claude Code
 ├── docs/
 │   ├── PROJEKT-DOKUMENTATION.md   # Dette dokument
-│   └── plans/
-│       ├── 2026-03-27-termik-forecast-design.md
-│       └── 2026-03-27-termik-forecast-implementation.md
+│   ├── AABNE-PUNKTER.md           # Alle åbne punkter med faste numre
+│   ├── Referat/                   # Referater, overdragelser, analysescripts
+│   └── plans/                     # Designs og planer
 ├── termik/
 │   ├── __init__.py
 │   ├── __main__.py                # Entry point: python -m termik
@@ -347,7 +349,7 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/                     # 504 tests (2026-10-06)
+│   └── tests/                     # 509 tests (2026-10-06)
 │       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
 │       ├── test_locations.py
 │       ├── test_scoring.py        # v1 + termiktop
@@ -483,23 +485,25 @@ Cloudflare-proxy er slået fra for at undgå konflikt med GitHub Pages' eget SSL
 
 ## Test
 
-269 automatiserede tests fordelt på 6 moduler (268 beståede, 1 `xfail`):
+509 automatiserede tests i 11 moduler (2026-10-06). Ingen af dem rammer nettet: `conftest.py` stubber havtemperatur-kaldet, og referencedagene har timedata bagt ind.
 
 | Modul | Tests | Dækker |
 |-------|-------|--------|
-| test_locations.py | 8 | Datastruktur, koordinatvalidering, grid-dækning |
-| test_scoring.py | 180 | Score-funktioner, dealbreakers, modifikatorer, scenario-tests, parcel-teori for termik-tophøjde |
+| test_scoring.py | 181 | v1: score-funktioner, dealbreakers, modifikatorer, scenarier, parcel-teori for termik-tophøjde |
+| test_scoring_v2.py | 170 | v2-punkterne 1-14 inkl. begrænsende faktor og termiktop-fradraget |
+| test_fetch_weather.py | 60 | URL-bygning, response-parsing, trendberegninger, havtemperatur, thermal_top-integration |
+| test_comments.py | 27 | Kommentargenerering for alle vejrsituationer |
 | test_scenarios_multilevel.py | 24 | Multilevel-data scenarier (vindshear, BL-mixing) |
-| test_comments.py | 17 | Kommentargenerering for alle vejrsituationer |
-| test_fetch_weather.py | 30 | URL-bygning, response-parsing, trendberegninger, thermal_top-integration |
-| test_reference_days.py | 10 | De to pilot-verificerede dage, med timedata bagt ind så de kører offline |
+| test_scenarios_v2_season.py | 11 | v2 over sæsonen (sæsonskaleret stråling) |
+| test_locations.py | 11 | Datastruktur, koordinatvalidering, grid-dækning |
+| test_reference_days.py | 10 | De to pilot-verificerede dage 8/8 og 9/8 |
+| test_forecast_watchdog.py | 7 | Hvornår en kørsel flyttes til GitHub |
+| test_dispatch_workflow.py | 4 | Deploy-trigger uden gh |
+| test_workflow_schedule.py | 4 | Kørselsplanen (dagtimer, frisk morgen) |
 
-`xfail`'en er acceptkriterium 1 kl. 19 på 2026-08-08, bevidst efterladt åbent og markeret `strict=True`, så den siger til hvis den nogensinde begynder at bestå. Se [Referat 2026-08-12](Referat/2026-08-12-straale-gate.md).
-
-Kør alle tests:
+Kør alle tests (system-Python, fra repoets rod eller en worktree):
 ```bash
-source termik/.venv/bin/activate
-python -m pytest termik/tests/ -v
+python3 -m pytest termik/tests -q
 ```
 
 ---

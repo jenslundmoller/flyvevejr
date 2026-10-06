@@ -3,6 +3,7 @@ __pycache__/
 .pytest_cache/
 termik/.venv/
 termik/output/cron.log
-.claude/
+.claude/worktrees/
+.claude/settings.local.json
 *.pdf
 3. Meteorologi SPL-teori.md
