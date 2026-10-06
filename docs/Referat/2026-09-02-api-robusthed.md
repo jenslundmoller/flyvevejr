@@ -335,7 +335,8 @@ forklaringer, fordi retry-rytmen altid kobler dem:
   Så er en længere første backoff nok.
 
 **Probe.** `termik/tools/probe_throttle.py`, kørt fra
-`.github/workflows/probe-throttle.yml` (kun manuel start, lige efter en
+`.github/workflows/probe-throttle.yml` (begge slettet 6/10 efter målingen;
+findes i commit `9fa8a98`) (kun manuel start, lige efter en
 forecast-kørsel). Den måler i blandet rækkefølge et kald 20/40/60/80/100 s
 efter et vellykket kald, og en "hang30"-arm: kald 5 s efter succes, og hænger
 det, et nyt kald 30 s efter. Under (a) fejler det sidste (~65 s efter

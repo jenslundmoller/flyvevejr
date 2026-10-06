@@ -308,7 +308,6 @@ flyvevejr/
 │       ├── update-forecast.yml    # Henter vejrdata hver 3. time kl. 05-17 UTC
 │       ├── rerun-failed-forecast.yml # Genstarter en fejlet forecast-kørsel
 │       ├── forecast-fallback.yml  # Flytter kørslen til GitHub hvis runneren derhjemme er nede
-│       ├── probe-throttle.yml     # Manuel måling af Open-Meteos drosling
 │       └── deploy-pages.yml       # Deployer til GitHub Pages
 ├── .gitignore
 ├── docs/
@@ -329,7 +328,7 @@ flyvevejr/
 │   ├── fetch_weather.py           # Open-Meteo API + databehandling
 │   ├── tools/                     # Håndværktøjer: replay_day, compare_scores,
 │   │                              #   fetch_reference_day, fetch_elevations,
-│   │                              #   fetch_sea_points, probe_throttle, forecast_watchdog,
+│   │                              #   fetch_sea_points, forecast_watchdog,
 │   │                              #   dispatch_workflow
 │   ├── cron_setup.sh              # Hjælpescript til lokal cron
 │   ├── requirements.txt           # Python: requests, pytest
@@ -342,7 +341,7 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/                     # 513 tests (2026-10-05)
+│   └── tests/                     # 504 tests (2026-10-06)
 │       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
 │       ├── test_locations.py
 │       ├── test_scoring.py        # v1 + termiktop
@@ -350,7 +349,6 @@ flyvevejr/
 │       ├── test_reference_days.py # 8/8 og 9/8 med bagte timedata
 │       ├── test_comments.py
 │       ├── test_fetch_weather.py
-│       ├── test_probe_throttle.py # Probe-logikken med falsk klokke
 │       ├── test_forecast_watchdog.py # Hvornår en kørsel flyttes til GitHub
 │       ├── test_dispatch_workflow.py # Deploy-trigger uden gh
 │       └── test_workflow_schedule.py # Kørselsplanen (dagtimer, frisk morgen)
@@ -442,10 +440,6 @@ Vagthund: trigges når en forecast-kørsel slutter. Fejlede den (og attempt < 3)
 ### forecast-fallback.yml
 
 Vagthund for den selvhostede runner, kører på GitHub hver halve time kl. 05-18 UTC (`5,35 5-18 * * *`). Har en forecast-kørsel stået i kø i mindst 15 min (en online runner tager den på sekunder), aflyses den og erstattes af én kørsel på `ubuntu-latest`. Reservekørsler (titel "(ubuntu-latest)") aflyses aldrig. Logikken er `termik/tools/forecast_watchdog.py` med tests. En aflyst kørsel trigger ikke rerun-workflowet, som kun reagerer på `failure`.
-
-### probe-throttle.yml
-
-Engangsmåling (kun manuel start): hvor længe Open-Meteo holder igen over for en GitHub-runner efter et vellykket kald. Loggene 1-5/10 viste at kaldene hænger (30 s uden svar) i 50-61 % af tilfældene inden for ~55 s efter et vellykket kald, men kun 2 % efter ~110 s; hjemmefra hænger intet. Start den lige efter en forecast-kørsel, så de ikke deler kvote. Se [Referat 2026-09-02, opfølgning 5/10](Referat/2026-09-02-api-robusthed.md).
 
 ### Sikkerhed for den selvhostede runner (repoet er offentligt)
 

@@ -142,9 +142,8 @@ Nye:
 21. **Mellemhøj sky-cappet (2)** har den dårligste træfsikkerhed af de
     hyppige lofter: 18 af 56 facit-timer bar alligevel. Kandidat til samme
     time-for-time-forsøg som cirrus-skjoldet.
-22. **Probe-workflowet** (`probe-throttle.yml`, `probe_throttle.py` og
-    tests) er en afsluttet engangsmåling. Brugeren har ikke besluttet om det
-    skal slettes.
+22. ~~**Probe-workflowet**~~ Slettet 6/10 (workflow, værktøj og tests);
+    koden findes i commit `9fa8a98`, resultatet i api-robusthed-referatet.
 23. **`surface_stable`-cappet**: fjern det eller dokumentér det som inaktivt
     (se faldgruber).
 24. **Redningsrunden og fallback til `ubuntu-latest`** er ikke set i
