@@ -87,16 +87,19 @@ function scoreToHeatIntensity(score) {
     return Math.max(0, Math.min(1, score / 10));
 }
 
-// Distinct viridis-like palette for thermal-top altitudes (meters MSL).
-// Chosen to be perceptually different from the score palette so the two
-// layers are immediately distinguishable in screenshots and on shared links.
+// Palette for thermal-top altitudes (meters). Most hue and lightness changes
+// sit below 1500 m, because that is where the flying difference is biggest:
+// grey (nothing) → purple → magenta → orange → yellow → green. It deliberately
+// avoids the score palette's blue→red ramp so the two layers can't be confused.
 const THERMAL_TOP_STOPS = [
-    [0,    [45,  27,  78]],   // dark purple — no thermal
-    [500,  [94,  58,  140]],  // purple-blue — very weak
-    [1000, [42,  123, 155]],  // blue-teal — typical DK day
-    [1500, [127, 183, 62]],   // green-yellow — good soaring
-    [2000, [240, 183, 62]],   // yellow-orange — strong
-    [2500, [232, 90,  26]],   // orange-red — extreme
+    [0,    [110, 110, 120]],  // grey — no thermal
+    [300,  [120, 60,  170]],  // purple — too low to stay up
+    [600,  [215, 55,  150]],  // magenta — marginal, circuit only
+    [900,  [245, 125, 40]],   // orange — local soaring
+    [1200, [245, 215, 50]],   // yellow — cross-country possible
+    [1500, [110, 200, 70]],   // green — good soaring
+    [2000, [35,  150, 75]],   // dark green — strong
+    [2500, [15,  95,  60]],   // deep green — excellent
 ];
 
 function thermalTopToRgb(m) {
@@ -434,7 +437,7 @@ function updateLegend(layer) {
     if (layer === 'thermal-top') {
         el.innerHTML =
             '<div class="legend-bar legend-thermal"></div>' +
-            '<div class="legend-labels"><span>0m</span><span>1500m</span><span>2500m+</span></div>';
+            '<div class="legend-labels"><span>0</span><span>500</span><span>1000</span><span>1500</span><span>2000</span><span>2500m+</span></div>';
     } else {
         el.innerHTML =
             '<div class="legend-bar legend-score"></div>' +

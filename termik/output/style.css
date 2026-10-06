@@ -289,7 +289,16 @@ html, body {
 }
 
 .legend-thermal {
-    background: linear-gradient(to right, #2d1b4e, #5e3a8c, #2a7b9b, #7fb73e, #f0b73e, #e85a1a);
+    /* Stops match THERMAL_TOP_STOPS in app.js (0–2500 m, non-equidistant) */
+    background: linear-gradient(to right,
+        rgb(110,110,120) 0%,
+        rgb(120,60,170) 12%,
+        rgb(215,55,150) 24%,
+        rgb(245,125,40) 36%,
+        rgb(245,215,50) 48%,
+        rgb(110,200,70) 60%,
+        rgb(35,150,75) 80%,
+        rgb(15,95,60) 100%);
 }
 
 .legend-score {
