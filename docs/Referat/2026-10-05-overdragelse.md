@@ -134,7 +134,8 @@ Scoring:
     15/8). Ikke implementeret; saml flere dage med profilen. Jylland juli-
     september: 61 % i bånd på dage uden for kalibreringen. Se
     startlist-referatet, sidste afsnit.
-19. Termiktoppen mod FlightRadar (Referat 2026-10-06): fradraget følger nu
+25. Termiktoppen mod FlightRadar (Referat 2026-10-06; omnummereret fra 19,
+    som overdragelsen 2026-10-05 (2) også bruger): fradraget følger nu
     strålingen (modellens LCL er for høj i stærk sol). Tilbage: ~100 m for
     lavt om efteråret, og "inversion"-dommen viser 0 m i 25 timer hvor der
     blev fløjet til ~640 m AGL. Sjælland kan ikke kalibrere toppen uden

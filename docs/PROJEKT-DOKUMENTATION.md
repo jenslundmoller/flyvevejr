@@ -5,7 +5,7 @@
 Automatisk termik-vurdering for danske svæveflyvere. Systemet henter vejrdata fra Open-Meteo API, beregner for 262 punkter over hele Danmark:
 
 1. **Termik-score (0-10)** — samlet vurdering af flyveforhold
-2. **Termik-tophøjde (m)** — maks. brugbar termikhøjde via parcel-teori (jf. [Referat 2026-05-28](Referat/2026-05-28-termik-top.md))
+2. **Termik-tophøjde (m QNH)**: maks. brugbar termikhøjde over havet via parcel-teori (jf. [Referat 2026-05-28](Referat/2026-05-28-termik-top.md))
 
 Resultaterne vises som to skifteligbare interaktive kortlag på **https://flyvevejr.dk**. Data opdateres automatisk hver 3. time kl. 05-20 UTC via GitHub Actions på en selvhostet runner (OMV-maskinen derhjemme).
 
@@ -230,11 +230,13 @@ Ud over de syntetiske scenarier ([scoring-scenarios.md](scoring-scenarios.md), v
 
 Efterårsvalidering 2026-10-05 (3.-4. oktober, 24 plads-dage, plus regression mod sommerens 58): punkt 8-13 tager oktobers afvigelse fra 23.1 til 12.5 og bånd-træf fra 14/24 til 16/24, mens sommeren er uændret (38/58, afvigelse 85.3 -> 85.6). Samme dag blev der indført **validering time for time**: 873 timer med flyvninger på 18 sæsondage + 3.-4. oktober, hvor en time "bar" hvis en flyvning på 60+ min var i luften. Efter punkt 13 bar 24 / 43 / 62 / 73 / 85 % af timerne i scorebåndene 0-3 / 3-5 / 5-6.5 / 6.5-8 / 8+. Se [Referat 2026-10-05](Referat/2026-10-05-startlist-weekend-oktober.md) og [overdragelsen](Referat/2026-10-05-overdragelse.md); analysescripts i `docs/Referat/2026-10-05-analyse/`.
 
+Jylland alene 2026-10-06: alle weekenddage juli-september (26 dage, 113 plads-dage, 11 pladser). 69 % i bånd i alt, men 61 % og adskillelse 1.8 på de dage v2 ikke er kalibreret på; inden for samme dag adskiller scoren svage fra fløjne pladser med kun 1.6. 18/7 er den eneste regionale overcall og skyldes punkt 9 over et låg (åbent punkt 18). Termiktoppen er samme dag valideret mod FlightRadars termikbobler (1.612 plads-timer); se [Referat 2026-10-06](Referat/2026-10-06-termiktop-mod-flightradar.md) og [overdragelsen 2026-10-06](Referat/2026-10-06-overdragelse.md).
+
 ### Kommentargenerering
 
 `termik/comments.py` genererer en kort dansk kommentar (2-3 sætninger). Struktur (siden popup-redesignet 2026-08-26): tal der står i popup'ens felter og grafik gentages ikke; sætningerne har faste roller:
 
-- **Bindende faktor** (leder, når dagen er brugbar): "Toppen begrænses af skybasen, regn med ca. 1100 m." Styret af `thermal_top_limited_by`; "inversion"- og "saturated"-domme oversættes bevidst ikke ved brugbar score (de kan være falske hen over et superadiabatisk overfladelag): der falder teksten tilbage på stabilitetslinjen fra målt lapse rate. Siden 2026-10-05 er `lapse_rate` den scorede værdi (blandingslagets lapse når det gælder), så teksten og popup'ens lapse-måler følger scoren; 850 hPa-værdien står i `lapse_rate_850`.
+- **Bindende faktor** (leder, når dagen er brugbar): "Toppen begrænses af skybasen, regn med ca. 1100 m QNH." Styret af `thermal_top_limited_by`; "inversion"- og "saturated"-domme oversættes bevidst ikke ved brugbar score (de kan være falske hen over et superadiabatisk overfladelag): der falder teksten tilbage på stabilitetslinjen fra målt lapse rate. Siden 2026-10-05 er `lapse_rate` den scorede værdi (blandingslagets lapse når det gælder), så teksten og popup'ens lapse-måler følger scoren; 850 hPa-værdien står i `lapse_rate_850`.
 - **Advarsler/observationer** (op til 2, prioriteret): cirrus-banker, søbrise, vindstød/effektiv vind, vind der øger i højden, Cb-risiko, bagsidevejr, tørtermik.
 - **Termikvinduet** ("Termik ca. 11 til 19") genereres i frontenden af dagsforløbet og hører ikke til her.
 
@@ -294,12 +296,12 @@ aldrig. `icon_seamless` og `dmi_seamless` leverer flere lavniveau-felter (se
 | Beregning | Formel |
 |-----------|--------|
 | Spread | temperature_2m - dewpoint_2m |
-| Skybase (m) | spread × 125 |
-| Skybase (ft) | spread × 400 |
+| Skybase (m) | spread × 125, over terræn (QFE) |
+| Skybase (ft) | spread × 400, over terræn (QFE) |
 | Lapse rate | (temperature_2m - temperature_850hPa) / 15; i v2 erstattet af 2 m -> 925 hPa når det lag er konvektivt (>= 0.95) og grænselaget >= 900 m |
 | Tryktendens | Delta surface_pressure over 3 timer |
 | Nedbør seneste 6t | Sum af precipitation for foregående 6 timer |
-| Termik-tophøjde | TI=0 via tør-adiabatisk parcel-løft på multilevel-sondering (DALR = 9.8 K/km), cap'd med LCL (Bolton 1980 eq. 22), minus et fradrag (v2: 0.4 m pr. W/m² over 400 W/m², en rettelse af modellens for høje LCL i stærk sol; v1: Hcrit-margin 200-500 m, lineært skaleret med shortwave_radiation). Se Referat 2026-05-28 og 2026-10-06. |
+| Termik-tophøjde | Meter over havet (QNH). TI=0 via tør-adiabatisk parcel-løft på multilevel-sondering (DALR = 9.8 K/km), cap'd med LCL (Bolton 1980 eq. 22), minus et fradrag (v2: 0.4 m pr. W/m² over 400 W/m², en rettelse af modellens for høje LCL i stærk sol; v1: Hcrit-margin 200-500 m, lineært skaleret med shortwave_radiation). Se Referat 2026-05-28 og 2026-10-06. |
 
 ---
 
@@ -378,13 +380,15 @@ Mørkeblå (0) → Lyseblå (3) → Gul (5) → Orange (7) → Rød (10)
 - **Dagvælger**: 7 knapper (I dag, I morgen, Overmorgen, +3 til +6 dage)
 - **Timeslider**: Kl. 06-21, opdaterer heatmap og markører i realtid
 - **Favorit-plads**: vælg én flyveplads og se hele dagens forløb i sidepanelet
-- **Kortlag**: vælg mellem to lag — Flyveforhold (score-heatmap) eller Termik-tophøjde (glat interpoleret, med højde-labels per celle ved zoom ≥ 9). Valget huskes i localStorage.
+- **Kortlag**: vælg mellem to lag: Flyveforhold (score-heatmap) eller Termik-tophøjde i m QNH (glat interpoleret, med højde-labels per celle ved zoom ≥ 9). Valget huskes i localStorage.
 - **Opdater-knap**: ved siden af "Opdateret:"-teksten; henter nyeste data med `cache: no-cache` og genbygger markører, dagknapper og lag. Derudover genhenter appen automatisk ved `visibilitychange`, når den kommer i forgrunden og sidste hentning er over 30 min gammel (PWA'en genoptages ellers fra hukommelsen på mobil med timegamle data).
 - **Vejr-widget**: lille kort i kortets venstre top (under zoom-knapperne) der viser vejret lige nu for favorit-pladsen. Se eget afsnit nedenfor.
 
 ### Kortlag — termik-tophøjde
 
 Lag baseret på `compute_thermal_top()`-resultatet per grid-celle, renderet med samme glatte browser-interpolation og kystklipning som score-laget (siden 2026-08-25; null-celler udfyldes med nærmeste reelle værdi før interpolationen). Paletten (`THERMAL_TOP_STOPS` i `app.js`, legenden i `style.css`) lægger de fleste farveskift under 1500 m, hvor forskellen i flyvning er størst: 0 m grå (ingen termik), 300 m lilla (for lavt til at holde sig oppe), 600 m magenta (marginalt, kun platrunde), 900 m orange (lokal termikflyvning), 1200 m gul (strækflyvning mulig), 1500 m grøn (god dag), 2000 m mørkegrøn og 2500 m+ dybgrøn. Den undgår score-lagets blå → rød, så de to lag ikke forveksles. Legenden har ikke-equidistante stop og etiketter for hver 500 m. Højde-labels tegnes ovenpå ved zoom ≥ 9.
+
+Højderne er meter over havet, det højdemåleren viser med QNH. Popup'ens skybase (spread × 125 m) er over terræn, QFE; begge er mærket sådan siden 2026-10-06. Termiktoppen er efterprøvet mod 27.500 termikbobler fra FlightRadar (maj-oktober 2026), hvis højder er GPS-højde over havet (tjekket på 13.758 starter: feltets højde ±1 m, uafhængigt af lufttrykket). Se [Referat 2026-10-06](Referat/2026-10-06-termiktop-mod-flightradar.md).
 
 Indtil 2026-10-06 brugte laget en viridis-lignende palet (lilla → blå → grøn → orange), hvor hele 0-1000 m lå i mørke lilla nuancer. Typiske danske dage, og især efterårsdage med toppe under 900 m, så derfor ens ud på kortet.
 
@@ -415,7 +419,7 @@ Redesignet 2026-08-26 med prioriteret hierarki (design-forløbet ligger i sessio
 1. **Score-ring** med dagens gennemsnit kl. 10-18 (samme tal som favorit-panelet) og **termikvinduet** ("Termik ca. 11 til 19, bedst 13 til 15"), beregnet i frontenden af dagsforløbet (timer ≥5 hhv. ≥8.5).
 2. **Kommentar** (bindende faktor + advarsler, se Kommentargenerering), og under den, når et loft satte timens score, en gul linje på almindeligt dansk: "Holdes nede af cirrusslør der skærmer for solen (højst 3)." Teksterne står i `LIMIT_TEXT` i `app.js`; ukendte koder springes over.
 3. **Dagsforløb** (mini-søjlediagram).
-4. **Tre heltetal**: Termiktop (med begrænsnings-årsag), Skybase (m + ft), Vind (retningspil + kt + stød).
+4. **Tre heltetal**: Termiktop QNH (med begrænsnings-årsag), Skybase QFE (m + ft), Vind (retningspil + kt + stød).
 5. **Termik**: højdeakse med termiksøjle, base- og blandingslag-linjer og cirrusbånd, plus lapse-måler med scoringens zonegrænser.
 6. **Temperatur (°C)**: spread-termometer fra dugpunkt til temperatur på 0-30°-skala.
 7. **Vind (knob)**: kompas med drejningsvifte (10/80/180 m, pilene peger med vinden) og styrkesøjler pr. højde med stødmærke.

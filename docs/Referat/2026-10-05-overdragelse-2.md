@@ -1,5 +1,9 @@
 # Overdragelse 2026-10-05 (2): drift på OMV, begrænsende faktor, tre målinger
 
+> **Fortsat 6/10:** Jylland-validering, termiktoppen mod FlightRadar og
+> QNH/QFE-etiketter. Se [2026-10-06-overdragelse.md](2026-10-06-overdragelse.md),
+> som er den aktuelle overdragelse.
+
 Fortsættelse af [2026-10-05-overdragelse.md](2026-10-05-overdragelse.md)
 samme dag. Den session sluttede med punkt **13, 9, 1, 7** som næste skridt;
 alle fire er afsluttet her, og driften er flyttet fra GitHubs runnere til

@@ -7,8 +7,11 @@ prod-databasen på OMV), 19/5-4/10 2026. Scripts i
 ## Spørgsmålet
 
 Ligger den publicerede termik-tophøjde (`thermal_top_m`) i det rigtige
-område? Mod TopMeteo 4/10 så den ud til at være cirka halvdelen af det
-der blev fløjet.
+område? Udgangspunktet var TopMeteos skærmbilleder for 4/10 kl. 09-16
+UTC: TopMeteo viste flyvbar højde ~1000-1200 m over både Jylland og
+Sjælland (blå termik og cumulus), i tråd med Schleswig-sonden (cumulus
+1000-1250 m), mens vores top lå på 450-650 m. Den rå base (min(LCL,
+TI-nul)) lå på 800-1000 m.
 
 ## Metode
 
@@ -150,7 +153,17 @@ ikke årstiden.
 - 90 %-fraktilen af hvor piloter forlader boblen er én definition af
   toppen. Piloter forlader ofte før toppen, så den reelle top ligger
   snarere højere end lavere.
-- GPS-højde fra FLARM/OGN kan afvige op til ~40 m fra MSL.
+- **Højdedatum er tjekket.** FlightRadar gemmer OGN-beaconens `/A=`-højde
+  uændret. På 13.758 starter inden for 1 km af en flyveplads ligger den
+  laveste af de første fem positioner på feltets højde (median +1 m,
+  kvartiler -1 til +4 m) og følger ikke lufttrykket (korrelation -0.01 med
+  standard-trykhøjdens afvigelse, som ville have svinget -155 til +131 m).
+  Det er altså ikke trykhøjde (QNE). GPS og QNH er ens på jorden; i luften
+  peger knækket i Sjællands højder ved 1450-1500 m på GPS (loftet 1400 m
+  QNH ligger ~3.5 % højere i GPS-højde en varm dag). Modellens højder er
+  geometriske over havet, så sammenligningen er i samme datum. Havde data
+  været QNH, ville de sande højder være 2-4 % højere om sommeren, under
+  støjen.
 - Historical-forecast er ikke præcis det publicerede.
 - 20 km-radius blander pladsens terræn med omegnens; Danmark er fladt
   nok til at det er under 50 m de fleste steder.
@@ -163,3 +176,20 @@ ikke årstiden.
    ~640 m AGL.
 3. Sjælland: hvis dagens loft kan registreres (FlightRadar eller
    klubberne), kan Sjælland indgå som censurerede data.
+
+## Opfølgning: højde-etiketter
+
+Popup'en mærker nu højderne efter højdemålerens indstilling: "Termiktop
+QNH" (over havet) og "Skybase QFE" (over terræn, spread × 125 m).
+Kommentarteksten siger "regn med ca. 1150 m QNH", og kortlaget hedder
+"Termik-tophøjde (m QNH)". QNE (1013.25 hPa, trykhøjde) er bevidst ikke
+brugt; ingen af værdierne er trykhøjde.
+
+## Opfølgning: dagsscoren
+
+Ændringerne flytter ikke scoren (43.680 timer). Basehøjde-båndene i v2
+(punkt 4: cap 4 under 600 m, +0.5 over 1200 m) testes mod den rå base,
+som i stærk sol er op til 150 m for høj. At teste båndene mod den rettede
+base (rå base minus `hcrit_margin_v2`) på de 218 startlist-plads-dage gav
+153 mod 154 i bånd, afvigelse 110.9 mod 109.6 og adskillelse 2.86 mod
+2.88; kun 4 plads-dage flyttede sig 0.3 eller mere. Ikke ændret.
