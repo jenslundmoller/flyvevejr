@@ -3,7 +3,7 @@
 //   - App shell (html/css/js/icons/libs): cache-first, fall back to network.
 //   - Forecast data (data/*.json): network-first, fall back to cache.
 
-const CACHE_VERSION = 'termik-v21';
+const CACHE_VERSION = 'termik-v22';
 const APP_SHELL = [
   '/',
   '/index.html',
