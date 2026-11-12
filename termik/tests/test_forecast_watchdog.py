@@ -57,3 +57,16 @@ def test_main_prints_stuck_ids_one_per_line(capsys):
     runs = [run(7, "queued", 30), run(8, "queued", 1), run(9, "completed", 90)]
     wd.main(io.StringIO(json.dumps(runs)), now=NOW)
     assert capsys.readouterr().out == "7\n"
+
+
+def test_a_run_queued_for_many_hours_is_ignored():
+    """Kørsel 43097108052 (11/11 20:36 UTC) blev hængende hos GitHub som
+    'queued' uden jobs og kunne hverken aflyses eller slettes. Vagthunden
+    fejlede så hver halve time i døgnvis. En kørsel så gammel er alligevel
+    overhalet af den næste planlagte kørsel."""
+    ghost = run(1, "queued", wd.MAX_AGE_HOURS * 60)
+    assert wd.stuck_runs([ghost], NOW) == []
+
+
+def test_a_run_just_under_the_age_cap_is_still_stuck():
+    assert wd.stuck_runs([run(1, "queued", wd.MAX_AGE_HOURS * 60 - 1)], NOW) == [1]

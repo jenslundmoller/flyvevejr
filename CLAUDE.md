@@ -24,7 +24,7 @@ database, ingen API-nøgler. Ejer: Jens (privat projekt, selv svæveflyver).
 
 | Hvad | Kommando |
 |---|---|
-| Tests (fra worktreen, system-Python) | `python3 -m pytest termik/tests -q` (509 tests, ~2 s, ingen netkald) |
+| Tests (fra worktreen, system-Python) | `python3 -m pytest termik/tests -q` (511 tests, ~2 s, ingen netkald) |
 | Én testfil | `python3 -m pytest termik/tests/test_scoring_v2.py -q` |
 | Kør prognosen lokalt | `python3 -m termik` (koster ~1.000 Open-Meteo-kald, se Drift) |
 | Se siden lokalt | `cd termik/output && python3 -m http.server 8090` |

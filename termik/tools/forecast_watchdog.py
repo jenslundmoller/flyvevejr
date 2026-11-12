@@ -13,6 +13,11 @@ at den er nede. Reservekørsler (titel med "ubuntu-latest") aflyses aldrig:
 GitHubs egen kø kan være langsom, og at aflyse reserven ville efterlade et
 hul uden nogen kørsel.
 
+Kørsler ældre end MAX_AGE_HOURS ignoreres. 11/11 2026 blev en kørsel hængende
+hos GitHub som "queued" uden jobs; den kunne hverken aflyses eller slettes,
+og vagthunden fejlede hver halve time. Så gammel en kørsel er alligevel
+overhalet af den næste planlagte (hver 3. time).
+
 Brug: gh run list --workflow update-forecast.yml \\
         --json databaseId,status,createdAt,displayTitle \\
       | python -m termik.tools.forecast_watchdog
@@ -24,6 +29,7 @@ import sys
 from datetime import datetime, timezone
 
 MAX_QUEUED_MINUTES = 15
+MAX_AGE_HOURS = 6
 QUEUED_STATES = {"queued", "waiting", "pending", "requested"}
 FALLBACK_MARK = "ubuntu-latest"
 
@@ -34,7 +40,8 @@ def stuck_runs(runs, now):
         if r["status"] not in QUEUED_STATES or FALLBACK_MARK in r.get("displayTitle", ""):
             continue
         created = datetime.fromisoformat(r["createdAt"].replace("Z", "+00:00"))
-        if (now - created).total_seconds() >= MAX_QUEUED_MINUTES * 60:
+        age = (now - created).total_seconds()
+        if MAX_QUEUED_MINUTES * 60 <= age < MAX_AGE_HOURS * 3600:
             stuck.append(r["databaseId"])
     return stuck
 

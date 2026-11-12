@@ -13,7 +13,7 @@ paths:
 | Workflow | Gør |
 |---|---|
 | `update-forecast.yml` | Cron `15 5-20/3 * * *` UTC på `[self-hosted, flyvevejr]` (OMV). Kører `python -m termik`, committer `termik/output/data/`, pusher med op til 3 rebase-forsøg, starter deploy via `termik/tools/dispatch_workflow.py` |
-| `forecast-fallback.yml` | Hver halve time på GitHub: en kørsel i kø over 15 min aflyses og erstattes af én på `ubuntu-latest`. Logik i `termik/tools/forecast_watchdog.py` |
+| `forecast-fallback.yml` | Hver halve time på GitHub: en kørsel i kø 15 min til 6 timer aflyses og erstattes af én på `ubuntu-latest` (kun hvis aflysningen lykkes). Logik i `termik/tools/forecast_watchdog.py` |
 | `rerun-failed-forecast.yml` | Genstarter en fejlet kørsel (op til 3 forsøg). Kan ikke reparere en push-race |
 | `deploy-pages.yml` | Push til `termik/output/**` eller dispatch: deployer siden |
 

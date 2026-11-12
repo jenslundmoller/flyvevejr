@@ -349,7 +349,7 @@ flyvevejr/
 │   │       ├── current.json       # Alle punkter, alle timer, 3 dage
 │   │       ├── airfields.json     # Kun svæveflyvepladser
 │   │       └── meta.json          # Tidsstempel, antal punkter
-│   └── tests/                     # 509 tests (2026-10-06)
+│   └── tests/                     # 511 tests (2026-11-12)
 │       ├── conftest.py            # Stubber marine-kaldet; tests rammer aldrig nettet
 │       ├── test_locations.py
 │       ├── test_scoring.py        # v1 + termiktop
@@ -451,7 +451,7 @@ Vagthund: trigges når en forecast-kørsel slutter. Fejlede den (og attempt < 3)
 
 ### forecast-fallback.yml
 
-Vagthund for den selvhostede runner, kører på GitHub hver halve time kl. 05-21 UTC (`5,35 5-21 * * *`). Har en forecast-kørsel stået i kø i mindst 15 min (en online runner tager den på sekunder), aflyses den og erstattes af én kørsel på `ubuntu-latest`. Reservekørsler (titel "(ubuntu-latest)") aflyses aldrig. Logikken er `termik/tools/forecast_watchdog.py` med tests. En aflyst kørsel trigger ikke rerun-workflowet, som kun reagerer på `failure`.
+Vagthund for den selvhostede runner, kører på GitHub hver halve time kl. 05-21 UTC (`5,35 5-21 * * *`). Har en forecast-kørsel stået i kø i mindst 15 min (en online runner tager den på sekunder), aflyses den og erstattes af én kørsel på `ubuntu-latest`. Reservekørsler (titel "(ubuntu-latest)") aflyses aldrig. Kørsler over 6 timer gamle ignoreres, og afviser GitHub en aflysning, springes kørslen over med en advarsel; der startes kun en reservekørsel hvis mindst én aflysning lykkedes (se [Referat 2026-11-12](Referat/2026-11-12-vagthund-spoegelseskoersel.md)). Logikken er `termik/tools/forecast_watchdog.py` med tests. En aflyst kørsel trigger ikke rerun-workflowet, som kun reagerer på `failure`.
 
 ### Sikkerhed for den selvhostede runner (repoet er offentligt)
 
@@ -485,7 +485,7 @@ Cloudflare-proxy er slået fra for at undgå konflikt med GitHub Pages' eget SSL
 
 ## Test
 
-509 automatiserede tests i 11 moduler (2026-10-06). Ingen af dem rammer nettet: `conftest.py` stubber havtemperatur-kaldet, og referencedagene har timedata bagt ind.
+511 automatiserede tests i 11 moduler (2026-11-12). Ingen af dem rammer nettet: `conftest.py` stubber havtemperatur-kaldet, og referencedagene har timedata bagt ind.
 
 | Modul | Tests | Dækker |
 |-------|-------|--------|
@@ -497,7 +497,7 @@ Cloudflare-proxy er slået fra for at undgå konflikt med GitHub Pages' eget SSL
 | test_scenarios_v2_season.py | 11 | v2 over sæsonen (sæsonskaleret stråling) |
 | test_locations.py | 11 | Datastruktur, koordinatvalidering, grid-dækning |
 | test_reference_days.py | 10 | De to pilot-verificerede dage 8/8 og 9/8 |
-| test_forecast_watchdog.py | 7 | Hvornår en kørsel flyttes til GitHub |
+| test_forecast_watchdog.py | 9 | Hvornår en kørsel flyttes til GitHub |
 | test_dispatch_workflow.py | 4 | Deploy-trigger uden gh |
 | test_workflow_schedule.py | 4 | Kørselsplanen (dagtimer, frisk morgen) |
 

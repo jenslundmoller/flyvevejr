@@ -3,7 +3,7 @@ name: Forecast Fallback
 # Forecast-kørslerne går på den selvhostede runner derhjemme. Er maskinen
 # slukket, står jobbet i kø i op til et døgn, og kortet viser en gammel
 # prognose. Denne vagthund kører på en GitHub-hostet runner hver halve time i dagtimerne:
-# har en kørsel stået i kø i mindst 15 min, aflyses den og erstattes af én
+# har en kørsel stået i kø i 15 min til 6 timer, aflyses den og erstattes af én
 # kørsel på ubuntu-latest (langsom pga. droslingen, men den lykkes).
 # Logikken og testene står i termik/tools/forecast_watchdog.py.
 
@@ -35,9 +35,19 @@ jobs:
             echo "Ingen hængende kørsler."
             exit 0
           fi
+          cancelled=0
           for id in $stuck; do
             echo "Aflyser $id (i kø for længe, runneren derhjemme er nede?)"
-            gh run cancel "$id"
+            if gh run cancel "$id"; then
+              cancelled=$((cancelled + 1))
+            else
+              echo "::warning::Kunne ikke aflyse $id; springer den over."
+            fi
           done
+          # Ingen reservekørsel hvis intet blev aflyst: en kørsel GitHub ikke
+          # vil aflyse, ville ellers udløse ~1.000 Open-Meteo-kald hver halve time.
+          if [ "$cancelled" -eq 0 ]; then
+            exit 0
+          fi
           gh workflow run update-forecast.yml -f runner=ubuntu-latest
           echo "::warning::Selvhostet runner svarede ikke; forecast kører på ubuntu-latest."
